@@ -26,11 +26,15 @@ function xmap(shortcut, command)
   map('x', shortcut, command)
 end
 --Keybinds
-vim.cmd('map <Space> <Leader>')
+
 vim.g.mapleader = " ";
 --Cycle tabs with tab
 nmap('<tab>',':tabnext <CR>')
 nmap('<S-tab>',':tabprev <CR>')
+
+nmap('<leader><tab>n',':tabnew <CR>')
+nmap('<leader><tab>c',':tabclose <CR>')
+nmap('<leader><tab>o',':tabo <CR>')
 
 --Buffer movement
 nmap('<leader>l', '<c-w>l')
@@ -39,14 +43,15 @@ nmap('<leader>k', '<c-w>k')
 nmap('<leader>j', '<c-w>j')
 nmap('<leader>wq', '<c-w>q')
 nmap('<leader>wv', '<c-w>v')
+nmap('<leader>ws', '<c-w>s')
 nmap('<leader>wx', '<c-w>x')
 nmap('<leader>we', '<c-w>=')
 nmap('<leader>wt', '<c-w>T')
 
 --Quicklists
 nmap('<leader>co', ':copen <CR>')
-nmap('<leader>cn', ':cnext <CR>')
-nmap('<leader>cp', ':cprev <CR>')
+nmap('<leader>cn', ':cn <CR>')
+nmap('<leader>cp', ':cp <CR>')
 nmap('<leader>cc', ':cclose <CR>')
 
 -- keep search matches in the middle of the window
@@ -62,8 +67,8 @@ nmap('<leader>da','<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>')
 nmap('<leader>dr','<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>')
 nmap('<leader>dl','<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>')
 
-nmap( '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>')
-nmap( '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>' )
+nmap( '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>')
+nmap( '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>' )
 nmap( '<leader>s', '<cmd>lua vim.diagnostic.open_float()<CR>')
 nmap( '<leader>dp', '<cmd>lua vim.diagnostic.goto_prev()<CR>')
 nmap( '<leader>dn', '<cmd>lua vim.diagnostic.goto_next()<CR>')
@@ -94,7 +99,7 @@ nmap('<leader>tr', ':NvimTreeRefresh <CR>')
 
 --Git
 nmap('<leader>gh', ':Telescope git_commits <CR>')
-nmap('<leader>gs', ':G <CR>' )
+nmap('<leader>gs', ':G <CR> :resize 15 <CR>' )
 nmap('<leader>gl', ':Telescope git_branches theme=dropdown<CR>' )
 nmap('<leader>gb', ':G blame <CR>' )
 nmap('<leader>gc', ':G commit <CR>' )
