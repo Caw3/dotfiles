@@ -15,7 +15,7 @@ let g:nvim_tree_icons = {
     \   'renamed': "[r]",
     \   'untracked': "*",
     \   'deleted': "[D]",
-    \   'ignored': "i"
+    \   'ignored': "[i]"
     \   },
     \ 'folder': {
     \   'arrow_open': "",
@@ -54,8 +54,8 @@ require'nvim-tree'.setup {
     }
   },
   update_focused_file = {
-    enable      = false,
-    update_cwd  = false,
+    enable      = true,
+    update_cwd  = true,
     ignore_list = {}
   },
   system_open = {
@@ -76,8 +76,8 @@ require'nvim-tree'.setup {
     height = 30,
     hide_root_folder = false,
     side = 'left',
-    auto_resize = false,
-    mappings = {
+	auto_resize = false,
+	mappings = {
       custom_only = false,
       list = {}
     },

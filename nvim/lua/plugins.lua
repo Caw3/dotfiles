@@ -37,10 +37,7 @@ return require('packer').startup(function(use)
 	--File navigation
 	use 'kyazdani42/nvim-tree.lua'
 	use 'ahmedkhalf/project.nvim'
-	use {
-		'nvim-telescope/telescope.nvim',
-		requires = { {'nvim-lua/plenary.nvim'} }
-		}
+	use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}}}
 	use {'nvim-telescope/telescope-fzf-native.nvim', run='make' }
 
 	--Git wrapper
