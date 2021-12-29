@@ -47,6 +47,8 @@ nmap('<leader>ws', '<c-w>s')
 nmap('<leader>wx', '<c-w>x')
 nmap('<leader>we', '<c-w>=')
 nmap('<leader>wt', '<c-w>T')
+nmap('<leader>w+', '<c-w>+')
+nmap('<leader>w-', '<c-w>-')
 
 --Quicklists
 nmap('<leader>co', ':copen <CR>')
