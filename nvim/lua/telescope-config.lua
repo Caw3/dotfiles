@@ -16,6 +16,8 @@ require('telescope').setup{
       '--smart-case'
     },
 	initial_mode = "insert",
+	dynamic_preview_title=true,
+	color_devicons = false,
     mappings = {
       i = {
         ["<C-h>"] = "which_key",
