@@ -39,6 +39,7 @@ return require('packer').startup(function(use)
 	use 'ahmedkhalf/project.nvim'
 	use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}}}
 	use {'nvim-telescope/telescope-fzf-native.nvim', run='make' }
+	use 'seblj/nvim-tabline'
 
 	--Git wrapper
 	use 'tpope/vim-fugitive'
@@ -53,3 +54,4 @@ return require('packer').startup(function(use)
 		require('packer').sync()
 	end
 end)
+

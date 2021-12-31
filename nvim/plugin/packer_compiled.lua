@@ -144,6 +144,11 @@ _G.packer_plugins = {
     path = "/home/carl/.local/share/nvim/site/pack/packer/start/plenary.nvim",
     url = "https://github.com/nvim-lua/plenary.nvim"
   },
+  ["project.nvim"] = {
+    loaded = true,
+    path = "/home/carl/.local/share/nvim/site/pack/packer/start/project.nvim",
+    url = "https://github.com/ahmedkhalf/project.nvim"
+  },
   ["startuptime.vim"] = {
     loaded = true,
     path = "/home/carl/.local/share/nvim/site/pack/packer/start/startuptime.vim",
@@ -178,11 +183,6 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/carl/.local/share/nvim/site/pack/packer/start/vim-gruvbox8",
     url = "https://github.com/lifepillar/vim-gruvbox8"
-  },
-  ["vim-rooter"] = {
-    loaded = true,
-    path = "/home/carl/.local/share/nvim/site/pack/packer/start/vim-rooter",
-    url = "https://github.com/airblade/vim-rooter"
   },
   ["vim-surround"] = {
     loaded = true,
