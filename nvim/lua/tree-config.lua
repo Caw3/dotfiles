@@ -9,11 +9,11 @@ let g:nvim_tree_icons = {
     \ 'default': '',
     \ 'symlink': 's',
     \ 'git': {
-    \   'unstaged': "[u]",
+    \   'unstaged': "*",
     \   'staged': "[s]",
     \   'unmerged': "[-m]",
     \   'renamed': "[r]",
-    \   'untracked': "*",
+    \   'untracked': "[u]",
     \   'deleted': "[D]",
     \   'ignored': "[i]"
     \   },
