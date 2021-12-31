@@ -33,6 +33,7 @@ return require('packer').startup(function(use)
 	use 'lifepillar/vim-gruvbox8'
 	use	'nvim-lualine/lualine.nvim'
 	use 'tomasiser/vim-code-dark'
+	use 'goolord/alpha-nvim'
 
 	--File navigation
 	use 'kyazdani42/nvim-tree.lua'

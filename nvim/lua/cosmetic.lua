@@ -29,7 +29,7 @@ require'lualine'.setup {
     theme = custom_codedark,
 	component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},
-    disabled_filetypes = {'NvimTree','packer'},
+    disabled_filetypes = {'NvimTree','packer','alpha'},
     always_divide_middle = true,
   },
   sections = {
