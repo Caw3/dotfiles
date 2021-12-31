@@ -6,12 +6,6 @@ vim.o.background = 'dark'
 vim.cmd('colorscheme codedark')
 vim.cmd('highlight clear SignColumn')
 vim.cmd('hi EndOfBuffer guifg=#1E1E1E')
--- vim.cmd([[
--- 	hi TabLineSeperatorActive guibg=#
--- 	hi TabLineSeperatorInactive guibg=#
--- 	hi TabLineModifiedSeperatorInactive guibg=#
--- 	hi TabLineModifiedSeperatorActive guibg=#
--- ]])
 
 vim.cmd('set nu rnu')
 

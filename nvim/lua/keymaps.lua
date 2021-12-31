@@ -35,6 +35,7 @@ nmap('<S-tab>',':tabprev <CR>')
 nmap('<leader><tab>n',':tabnew <CR>')
 nmap('<leader><tab>c',':tabclose <CR>')
 nmap('<leader><tab>o',':tabo <CR>')
+nmap('<leader><tab>r',"<cmd>lua require('tabline.actions').set_tabname()<CR>")
 
 --Buffer movement
 nmap('<leader>l', '<c-w>l')
@@ -111,4 +112,3 @@ nmap('<leader>gv', ':Gvdiffsplit <CR>' )
 --Terminal
 tmap('<esc>', [[<C-\><C-n>]])
 nmap(';', ':sp <CR> :term <CR> :resize 15 <CR> :set nonu <CR> :set norelativenumber <CR> i')
-
