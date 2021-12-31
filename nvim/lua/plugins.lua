@@ -9,11 +9,11 @@ return require('packer').startup(function(use)
 	use 'wbthomason/packer.nvim'
 
 	--Autocompletion and Workflow
-	use 'raimondi/delimitmate'
 	use 'tpope/vim-commentary'
 	use 'tpope/vim-surround'
 	use 'L3MON4D3/LuaSnip'
 	use 'saadparwaiz1/cmp_luasnip'
+	use 'windwp/nvim-autopairs'
 	-- CMP
 	use 'hrsh7th/nvim-cmp'
 	use 'hrsh7th/cmp-buffer'
