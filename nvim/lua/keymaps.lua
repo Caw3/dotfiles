@@ -62,6 +62,9 @@ nmap('n', 'nzzzv')
 nmap('N', 'Nzzzv')
 
 --Plugins
+nmap('<leader>pi',':PackerInstall <CR>')
+nmap('<leader>pu',':PackerSync <CR>')
+nmap('<leader>ps',':PackerStatus <CR>')
 --LSP
 nmap('<leader>gD','<cmd>lua vim.lsp.buf.declaration()<CR>')
 nmap('<leader>K','<cmd>lua vim.lsp.buf.hover()<CR>')
@@ -73,8 +76,8 @@ nmap('<leader>dl','<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders
 nmap( '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>')
 nmap( '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>' )
 nmap( '<leader>s', '<cmd>lua vim.diagnostic.open_float()<CR>')
-nmap( '<leader>gE', '<cmd>lua vim.diagnostic.goto_prev()<CR>')
-nmap( '<leader>ge', '<cmd>lua vim.diagnostic.goto_next()<CR>')
+nmap( '<leader>dN', '<cmd>lua vim.diagnostic.goto_prev()<CR>')
+nmap( '<leader>dn', '<cmd>lua vim.diagnostic.goto_next()<CR>')
 nmap( '<leader>cr', '<cmd>lua vim.lsp.buf.formatting()<CR>')
 
 --Telescope
@@ -85,7 +88,7 @@ nmap( '<leader>ca', ':Telescope lsp_code_actions theme=cursor<CR>')
 nmap('<leader>fd',":Telescope diagnostics<CR>")
 nmap('<leader>fR',':Telescope find_files hidden=true cwd=~<CR>')
 nmap('<leader>fF',':Telescope find_files hidden=true <CR>')
-nmap('<leader>fr',':Telescope find_files prompt_title="Find in Root (hidden)" cwd=~<CR>')
+nmap('<leader>fr',':Telescope find_files cwd=~<CR>')
 nmap('<leader>ff',":Telescope find_files <CR>")
 nmap('<leader>fc', ":Telescope find_files prompt_title=~/.config/nvim cwd=~/.config/nvim theme=dropdown previewer=false<CR>")
 nmap('<leader>fo',":Telescope oldfiles theme=dropdown previewer=false<CR>")

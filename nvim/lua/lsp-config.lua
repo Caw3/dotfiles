@@ -18,12 +18,6 @@ lsp_installer.on_server_ready(function(server)
 				  workspace = {
 					library = vim.list_extend({[vim.fn.expand("$VIMRUNTIME/lua")] = true},{}),
 					  },
-				  completion = {
-					callSnippet = 'Both',
-					displayContext = 5,
-					keywordSnippet = 'Both',
-					showWord = 'enable'
-				  },
 				  telemetry = {
 					  enable = false
 				  }
