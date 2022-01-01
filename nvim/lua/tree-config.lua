@@ -18,7 +18,7 @@ let g:nvim_tree_icons = {
     \   'ignored': "[i]"
     \   },
     \ 'folder': {
-    \   'arrow_open': "",
+    \   'arrow_open': "v",
     \   'arrow_closed': ">",
     \   'default': "",
     \   'open': "",

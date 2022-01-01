@@ -24,12 +24,12 @@ dashboard.section.header.val = {
 
 -- Set menu
 dashboard.section.buttons.val = {
-    dashboard.button( "SPC f o", "> Recent"),
-    dashboard.button( "SPC f P", "> Find project"),
-    dashboard.button( "SPC f f", "> Find file"),
-    dashboard.button( "SPC f c", "> Config"),
-    dashboard.button( "SPC e", "> New file" , ":ene <BAR> startinsert <CR>"),
-    dashboard.button( "SPC q", "> Quit ", ":qa<CR>"),
+    dashboard.button( "SPC f o", "Recent"),
+    dashboard.button( "SPC f P", "Find project"),
+    dashboard.button( "SPC f f", "Find file"),
+    dashboard.button( "SPC f c", "Config"),
+    dashboard.button( "SPC e", "New file" , ":ene <BAR> startinsert <CR>"),
+    dashboard.button( "SPC q", "Quit ", ":qa<CR>"),
 }
 
 
