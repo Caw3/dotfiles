@@ -43,7 +43,18 @@ require'lualine'.setup {
     lualine_a = {'mode'},
     lualine_b = {'branch'},
     lualine_c = {'filename'},
-    lualine_x = { 'diff', 'diagnostics',},
+    lualine_x = {
+		{
+		'diff',
+      	colored = true,
+      	diff_color = {
+			-- added    = {fg = colors.blue},
+       	 	modified = {fg = colors.blue},
+       	 	removed  = {fg = colors.red},
+     	},
+		},
+		'diagnostics',
+	},
     lualine_y = { 'encoding','filetype'},
 	lualine_z = { '%l/%L'}
   },

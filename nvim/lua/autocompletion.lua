@@ -39,21 +39,21 @@ cmp.setup({
       ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
       ['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
       ['<C-y>'] = cmp.config.disable,
-      ['<C-e>'] = cmp.mapping({
+      ['<C-space>'] = cmp.mapping({
         i = cmp.mapping.abort(),
         c = cmp.mapping.close(),
       }),
       ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     },
     sources = cmp.config.sources({
+      { name = 'luasnip' , max_item_count=2, keyword_length=3, group_index=0},
       { name = 'nvim_lsp', max_item_count=5, group_index=1,keyword_length=3},
-      { name = 'luasnip' , max_item_count=2, keyword_length=3, group_index=1},
       { name = 'buffer',   max_item_count=5,group_index = 2, keyword_length=4},
       { name = 'path', max_item_count=10 },
     }),
 	experimental = {
 		native_menu = false,
-		ghost_text = true
+		ghost_text = false
 	},
 	formatting = {
 		format = function(entry, vim_item)
@@ -62,7 +62,7 @@ cmp.setup({
 			treesitter = "[TS]",
 			path = "/",
 			buffer = "[B]",
-			luasnip = "~",
+			luasnip = "",
 		  })[entry.source.name]
 		  return vim_item
 		end,
