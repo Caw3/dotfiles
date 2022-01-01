@@ -1,3 +1,10 @@
+vim.o.background = 'dark'
+vim.cmd('colorscheme codedark')
+vim.cmd('highlight clear SignColumn')
+vim.cmd('hi EndOfBuffer guifg=#1E1E1E')
+vim.cmd('se cursorline')
+vim.cmd('hi clear cursorline')
+
 local custom_codedark = require'lualine.themes.codedark'
 
 local colors = {
@@ -29,16 +36,16 @@ require'lualine'.setup {
     theme = custom_codedark,
 	component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},
-    disabled_filetypes = {'NvimTree','packer','alpha'},
+    disabled_filetypes = {'fugitive', 'NvimTree','packer','alpha'},
     always_divide_middle = true,
   },
   sections = {
     lualine_a = {'mode'},
-    lualine_b = {'branch', 'diff', 'diagnostics'},
+    lualine_b = {'branch'},
     lualine_c = {'filename'},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
-    lualine_y = {'progress'},
-	lualine_z = { '%l% /%L'}
+    lualine_x = { 'diff', 'diagnostics',},
+    lualine_y = { 'encoding','filetype'},
+	lualine_z = { '%l/%L'}
   },
   inactive_sections = {
     lualine_a = {},
@@ -56,7 +63,7 @@ require'lualine'.setup {
     -- lualine_y = {},
     -- lualine_z = {},
   },
-  extensions = {'quickfix','fugitive'}
+  extensions = {'quickfix'}
 }
 require('tabline').setup{
     no_name = '[No Name]',    -- Name for buffers with no name
