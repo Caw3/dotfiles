@@ -23,9 +23,11 @@ vim.o.backup = false
 
 vim.o.wrap = false
 vim.o.splitbelow = true
+vim.o.splitright = true
 vim.o.scrolloff = 8
 
 vim.o.mouse = "a"
+
 -- Search
 vim.o.incsearch = true -- starts searching as soon as typing, without enter needed
 vim.o.ignorecase = true -- ignore letter case when searching

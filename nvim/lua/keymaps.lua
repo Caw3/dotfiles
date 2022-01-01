@@ -28,9 +28,16 @@ end
 --Keybinds
 
 vim.g.mapleader = " ";
---Cycle tabs with tab
-nmap('<tab>',':tabnext <CR>')
-nmap('<S-tab>',':tabprev <CR>')
+--Tab navigation
+
+nmap('<leader>1','1gt')
+nmap('<leader>2','2gt')
+nmap('<leader>3','3gt')
+nmap('<leader>4','4gt')
+nmap('<leader>5','5gt')
+nmap('<leader>6','6gt')
+nmap('<leader>7','7gt')
+nmap('<leader>8','8gt')
 
 nmap('<leader><tab>n',':tabnew <CR>')
 nmap('<leader><tab>c',':tabclose <CR>')
@@ -60,6 +67,12 @@ nmap('<leader>cc', ':cclose <CR>')
 -- keep search matches in the middle of the window
 nmap('n', 'nzzzv')
 nmap('N', 'Nzzzv')
+
+-- Search and replace
+nmap('<leader>rs',':%s/')
+
+-- Jump prev file
+nmap('<C-p>','<c-^><cr>')
 
 --Plugins
 nmap('<leader>pi',':PackerInstall <CR>')
