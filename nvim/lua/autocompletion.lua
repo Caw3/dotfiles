@@ -11,15 +11,15 @@ cmp.setup({
 	},
     snippet = {
       expand = function(args)
-        require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        require('luasnip').lsp_expand(args.body)
       end,
     },
     mapping = {
 		["<Tab>"] = cmp.mapping(function(fallback)
 		  if cmp.visible() then
 			cmp.select_next_item()
-		  elseif luasnip.expand_or_jumpable() then
-			luasnip.expand_or_jump()
+		  elseif luasnip.expandable() then
+			luasnip.expand()
 		  elseif has_words_before() then
 			cmp.complete()
 		  else
@@ -36,10 +36,17 @@ cmp.setup({
 			fallback()
 		  end
 		end, { "i", "s" }),
+
+	  ["<C-space>"] = cmp.mapping(function(fallback)
+		  if luasnip.jumpable(1) then
+			  luasnip.jump(1)
+		  end
+		end, { "i", "s"}),
+
       ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
       ['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
       ['<C-y>'] = cmp.config.disable,
-      ['<C-space>'] = cmp.mapping({
+      ['<C-e>'] = cmp.mapping({
         i = cmp.mapping.abort(),
         c = cmp.mapping.close(),
       }),
