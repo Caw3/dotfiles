@@ -39,6 +39,6 @@ precmd() { vcs_info }
 # Enable substitution in the prompt.
 setopt prompt_subst
 
-PROMPT="%B[%b%B%F{green}%n%f%b%B%F{green}@%f%b%F{green}%m%f] %F{blue}%~%f"
+PROMPT="%B[%b%B%F{green}%n%f%b%B%F{green}@%f%F{green}%m%f]%b %F{blue}%~%f"
 PROMPT+='${vcs_info_msg_0_} '
 
