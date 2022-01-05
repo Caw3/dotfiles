@@ -33,12 +33,12 @@ bindkey '^ ' autosuggest-accept
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git svn
 # This line obtains information from the vcs.
-zstyle ':vcs_info:git*' formats " %F{white}(%F{green}%b%F{white})"
+zstyle ':vcs_info:git*' formats "%F{white}(%F{green}%b%F{white}) "
 precmd() { vcs_info }
 
 # Enable substitution in the prompt.
 setopt prompt_subst
 
-PROMPT="%B[%b%B%F{green}%n%f%b%B%F{green}@%f%F{green}%m%f]%b %F{blue}%~%f"
-PROMPT+='${vcs_info_msg_0_} '
+PROMPT="%B[%b%B%F{green}%n%f%b%B%F{green}@%f%F{green}%m%f%F{blue}%~%f]%b "
+PROMPT+='${vcs_info_msg_0_}'
 
