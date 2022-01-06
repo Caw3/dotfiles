@@ -28,6 +28,8 @@ zsh_add_plugin "hlissner/zsh-autopair"
 
 #Key bindings
 bindkey '^ ' autosuggest-accept
+bindkey '^n' down-history 
+bindkey '^p' up-history 
 
 #Cosmetic
 autoload -Uz vcs_info
