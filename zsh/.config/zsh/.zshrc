@@ -8,12 +8,6 @@ setopt autocd extendedglob nomatch menucomplete
 setopt interactive_comments
 unsetopt BEEP
 
-
-# Remap caps to escape
-setxkbmap -option caps:escape
-# Set Zathura to default app
-xdg-mime default org.pwnt.zathura.desktop application/pdf
-
 #Load files
 source "$ZDOTDIR/zsh-utils"
 zsh_add_file  "zsh-exports"

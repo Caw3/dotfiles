@@ -4,3 +4,4 @@ set recolor-keephue
 set default-bg \#1e1e1e
 set statusbar-fg "#d2d2d2"
 set statusbar-bg "#191818"
+set selection-clipboard clipboard
