@@ -1,0 +1,13 @@
+#! /bin/bash
+
+FONT="JetBrains Mono:size=10"
+COLOR_BG="#1e1e1e"
+COLOR_FG="#e4e4e4"
+
+if [ $(pgrep panel_bar -c) -gt 0 ]; then
+	pkill panel_bar
+fi
+
+~/.config/panel/panel_bar | lemonbar -f "$FONT" -B $COLOR_BG -F $COLOR_FG
+
+exit j

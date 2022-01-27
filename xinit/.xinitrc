@@ -47,7 +47,12 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  done
  unset f
 fi
-
+#Cursor Theme
+xsetroot -cursor_name left_ptr &
+#Lockscreen
+betterlockscreen -w dim
+#Set Background
+feh --bg-fill --randomize ~/Pictures/wallpapers
 #Remap Caps to Escape
 setxkbmap -option caps:escape
 #Hotkey daemon

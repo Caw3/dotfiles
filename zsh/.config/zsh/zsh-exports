@@ -3,3 +3,4 @@ HISTSIZE=1000000
 SAVEHIST=1000000
 
 export MANPAGER='nvim +Man!'
+export EDITOR='nvim'
