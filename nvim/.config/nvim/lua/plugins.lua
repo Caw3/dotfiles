@@ -26,20 +26,17 @@ return require('packer').startup(function(use)
 	use 'williamboman/nvim-lsp-installer'
 
 	--Treesitter
-	use {
-		'nvim-treesitter/nvim-treesitter',
-		run = ':TSUpdate'
-    }
+	use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+
 	--Cosmetic
-	use 'lifepillar/vim-gruvbox8'
 	use	'nvim-lualine/lualine.nvim'
 	use 'tomasiser/vim-code-dark'
 
 	--File navigation
 	use 'kyazdani42/nvim-tree.lua'
-	use 'ahmedkhalf/project.nvim'
 	use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}}}
 	use {'nvim-telescope/telescope-fzf-native.nvim', run='make' }
+	use 'ygm2/rooter.nvim'
 	use 'seblj/nvim-tabline'
 
 	--Git wrapper

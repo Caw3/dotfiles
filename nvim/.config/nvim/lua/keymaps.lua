@@ -94,7 +94,7 @@ nmap( '<leader>dn', '<cmd>lua vim.diagnostic.goto_next()<CR>')
 nmap( '<leader>cr', '<cmd>lua vim.lsp.buf.formatting()<CR>')
 
 --Telescope
-nmap('<leader>gd',':Telescope lsp_definitions <CR>')
+nmap( '<leader>gd',':Telescope lsp_definitions <CR>')
 nmap( '<leader>gr', ':Telescope lsp_references theme=dropdown<CR>')
 nmap( '<leader>ca', ':Telescope lsp_code_actions theme=cursor<CR>')
 
@@ -110,9 +110,8 @@ nmap('<leader>fC', ":Telescope git_files hidden=true prompt_title=~/.dotfiles cw
 
 nmap('<leader>fo',":Telescope oldfiles theme=dropdown previewer=false<CR>")
 nmap('<leader>fp',":Telescope git_files <CR>")
-nmap('<leader>fP',":Telescope projects theme=dropdown<CR>")
 nmap('<leader>fg',":Telescope live_grep <CR>")
-nmap('<leader>fb',":Telescope buffers theme=dropdown <CR>")
+nmap('<leader>fb',":Telescope buffers theme=dropdown previewer=false<CR>")
 nmap('<leader>fM',":Telescope man_pages <CR>")
 nmap('<leader>fH',":Telescope help_tags <CR>")
 nmap('<leader>f:',":Telescope command_history <CR>")
@@ -127,9 +126,9 @@ nmap('<leader>tr', ':NvimTreeRefresh <CR>')
 --Git
 nmap('<leader>gh', ':Telescope git_commits <CR>')
 nmap('<leader>gs', ':G <CR> :resize 15 <CR>' )
-nmap('<leader>gl', ':Telescope git_branches theme=dropdown<CR>' )
+nmap('<leader>gb', ':Telescope git_branches theme=dropdown<CR>' )
 nmap('<leader>gp', ':Telescope git_status <CR>' )
-nmap('<leader>gb', ':G blame <CR>' )
+nmap('<leader>gl', ':G blame <CR>' )
 nmap('<leader>gc', ':G commit <CR>' )
 nmap('<leader>gv', ':Gvdiffsplit <CR>' )
 
