@@ -21,7 +21,7 @@ network()
 	IPADDR=$(ip -brief address | grep UP )
 	IP=$(echo "$IPADDR" | grep -Eo "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}")
 	INTERFACE=$( echo "$IPADDR" | awk '{print $1}' )
-	[[ "$INTERFACE" == "" ]] && echo "dowm" || echo "$INTERFACE: $IP"
+	[[ "$INTERFACE" == "" ]] && echo "down" || echo "$INTERFACE: $IP"
 }
 
 Volume()

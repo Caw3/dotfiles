@@ -1,24 +1,11 @@
 #! /bin/bash
 
-# modules
+# Reads from fifo and writes to lemonbar
 
-
-# desktops () 
-# {
-# 	DESKTOPS=$(bspc query -D --names)
-# 	FOCUSED=$(bspc query -D -d focused --names)
-
-# 	echo "$DESKTOPS" | while read line; do
-# 		echo "$FOCUSED" | while read foc; do
-# 			[[ "$line" == "$foc" ]] && echo -n  " %{F#e4e4e4}$foc%{F-}" || echo -n " %{F#3A3A3A}$line%{F-}" 
-# 		done
-# 	done
-# }
-#TODO modularize color selection in a config
-# $COLOR_FREE="#3A3A3A"
-# $COLOR_OCCUPIED="#e4e4e4"
-# $COLOR_FOCUSED="#2472c8"
-# $COLOR_URGENT="#cd3131"
+COLOR_FREE="#3A3A3A"
+COLOR_OCCUPIED="#e4e4e4"
+COLOR_FOCUSED="#9CDCFE"
+COLOR_URGENT="#cd3131"
 
 while read -r input ; do
 	case $input in
@@ -44,39 +31,33 @@ while read -r input ; do
 				case $elem in
 					f*)
 						#free desktop
-						# DESKTOPS+="%{F${COLOR_FREE}}${elem:1}%{F-} "
-						DESKTOPS+="%{F#3A3A3A}${elem:1}%{F-} "
+						DESKTOPS+="%{F$COLOR_FREE}${elem:1}%{F-} "
 						;;
 					F*) 
 						#focused free desktop
-						# DESKTOPS+="%{F${COLOR_FOCUSED}}${elem:1}%{F-} "
-						DESKTOPS+="%{F#2472c8}${elem:1}%{F-} "
+						DESKTOPS+="%{F$COLOR_FOCUSED}${elem:1}%{F-} "
 						;;
 					o*)
 						#occupied desktop
-						# DESKTOPS+="%{F${COLOR_OCCUPIED}${elem:1}%{F-} "
-						DESKTOPS+="%{F#e4e4e4}${elem:1}%{F-} "
+						DESKTOPS+="%{F$COLOR_OCCUPIED}${elem:1}%{F-} "
 						;;
 					O*)
 						#focused occupied desktop
-						# DESKTOPS+="%{F${COLOR_FOCUSED}}${elem:1}%{F-} "
-						DESKTOPS+="%{F#2472c8}${elem:1}%{F-} "
+						DESKTOPS+="%{F$COLOR_FOCUSED}${elem:1}%{F-} "
 						;;
 					u*)
 						#urgent desktop
-						# DESKTOPS+="%{F${COLOR_URGENT}}${elem:1}%{F-} "
-						DESKTOPS+="%{F#cd3131}${elem:1}%{F-} "
+						DESKTOPS+="%{F$COLOR_URGENT}${elem:1}%{F-} "
 						;;
 					U*)
-						#urgent occupied desktop
-						# DESKTOPS+="%{F${COLOR_FOCUSED}}${elem:1}%{F-} "
-						DESKTOPS+="%{F#2472c8}${elem:1}%{F-} "
+						#urgent focused desktop
+						DESKTOPS+="%{F$COLOR_FOCUSED}${elem:1}%{F-} "
 						;;
 				esac
 			done
 			;;
 	esac
 	#Format
-	echo "%{l} $DESKTOPS  %{c}$CLOCK%{r} $VOLUME | $NETWORK | $BATTERY "
+	echo "%{l}  $DESKTOPS  %{c}$CLOCK%{r} $VOLUME | $NETWORK | $BATTERY "
 done
 
