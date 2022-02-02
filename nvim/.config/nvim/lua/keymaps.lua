@@ -93,6 +93,8 @@ nmap( '<leader>dN', '<cmd>lua vim.diagnostic.goto_prev()<CR>')
 nmap( '<leader>dn', '<cmd>lua vim.diagnostic.goto_next()<CR>')
 nmap( '<leader>cr', '<cmd>lua vim.lsp.buf.formatting()<CR>')
 
+nmap('<leader>ls', '<cmd>lua vim.lsp.stop_client(vim.lsp.get_active_clients(),true)<CR>')
+
 --Telescope
 nmap( '<leader>gd',':Telescope lsp_definitions <CR>')
 nmap( '<leader>gr', ':Telescope lsp_references theme=dropdown<CR>')

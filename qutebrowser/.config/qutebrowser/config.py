@@ -1890,7 +1890,7 @@ c.tabs.indicator.width = 0
 
 ## Padding (in pixels) around text for tabs.
 ## Type: Padding
-c.tabs.padding = {'top': 10, 'bottom': 8, 'left': 8, 'right': 8}
+c.tabs.padding = {'top': 5, 'bottom': 5, 'left': 8, 'right': 8}
 
 ## Force pinned tabs to stay at fixed URL.
 ## Type: Bool
@@ -2077,7 +2077,7 @@ c.tabs.padding = {'top': 10, 'bottom': 8, 'left': 8, 'right': 8}
 # c.zoom.text_only = False
 
 # Bitwarden 
-config.bind('<Ctrl-l>', 'spawn --userscript qute-bitwarden --auto-lock 14400', mode='insert')
+config.bind('<Ctrl-l>', 'spawn --userscript ~/.config/qutebrowser/userscripts/bw-script ', mode='insert')
 
 ## Bindings for normal mode
 # config.bind("'", 'mode-enter jump_mark')
