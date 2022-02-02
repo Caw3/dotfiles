@@ -121,7 +121,7 @@ nmap('<leader>fl',":Telescope current_buffer_fuzzy_find <CR>")
 nmap('<leader>fm',":Telescope keymaps <CR>")
 
 --tree
-nmap('<leader>tt', ':NvimTreeToggle <CR>')
+ nmap('<leader>tt', ':NvimTreeToggle <CR>')
 nmap('<leader>tf', ':NvimTreeFindFile <CR>')
 nmap('<leader>tr', ':NvimTreeRefresh <CR>')
 
@@ -137,3 +137,11 @@ nmap('<leader>gv', ':Gvdiffsplit <CR>' )
 --Terminal
 tmap('<esc>', [[<C-\><C-n>]])
 nmap('<leader>;', ':sp<CR>:term<CR>:resize 15<CR>:set nonu<CR>:set norelativenumber<CR>i')
+
+-- Jupyter
+nmap('<leader>jqt',':call jobstart("jupyter qtconsole --JupyterWidget.include_other_output=True")<CR>')
+nmap('<leader>jqk',':IPython --existing --no-window <CR>')
+nmap('<leader>jk',':IPython<CR><C-w>H')
+nmap('<leader>jc', ':call IPyRunCell()<CR>')
+vim.cmd("nmap <leader>ja <Plug>(IPy-RunAll)")
+vim.cmd("nmap <leader>jt <Plug>(IPy-Terminate)")

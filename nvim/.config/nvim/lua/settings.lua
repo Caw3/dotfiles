@@ -25,8 +25,8 @@ vim.o.scrolloff = 8
 vim.o.mouse = "a"
 
 -- Search
-vim.o.incsearch = true 
-vim.o.ignorecase = true 
+vim.o.incsearch = true
+vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.cmd('set nohlsearch')
 
@@ -37,4 +37,4 @@ vim.cmd('set noshowcmd')
 vim.cmd('set shortmess+=F')
 
 vim.g.jupytext_fmt = 'py:percent'
-	
+vim.g.ipy_celldef = '# %%'

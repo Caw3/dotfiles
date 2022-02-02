@@ -44,9 +44,9 @@ return require('packer').startup(function(use)
 
 	--Filetypes
 	use 'lervag/vimtex'
-	use 'untitled-ai/jupyter_ascending.vim'
 	use 'goerz/jupytext.vim'
-	
+	use 'bfredl/nvim-ipy'
+
 	--Profiler
 	use 'tweekmonster/startuptime.vim'
 
