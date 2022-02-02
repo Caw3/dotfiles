@@ -37,7 +37,7 @@ super + Return
 
 #browser
 super + b
-	firefox
+	qutebrowser
 # program launcher
 super + @space
 	dmenu_run -fn '--fixed-bold-r-normal--10-----*-iso10646-1'

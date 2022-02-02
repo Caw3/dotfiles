@@ -25,8 +25,8 @@ vim.o.scrolloff = 8
 vim.o.mouse = "a"
 
 -- Search
-vim.o.incsearch = true -- starts searching as soon as typing, without enter needed
-vim.o.ignorecase = true -- ignore letter case when searching
+vim.o.incsearch = true 
+vim.o.ignorecase = true 
 vim.o.smartcase = true
 vim.cmd('set nohlsearch')
 
@@ -36,3 +36,5 @@ vim.cmd('set noshowmode')
 vim.cmd('set noshowcmd')
 vim.cmd('set shortmess+=F')
 
+vim.g.jupytext_fmt = 'py:percent'
+	
