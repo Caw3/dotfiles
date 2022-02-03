@@ -139,7 +139,7 @@ tmap('<esc>', [[<C-\><C-n>]])
 nmap('<leader>;', ':sp<CR>:term<CR>:resize 15<CR>:set nonu<CR>:set norelativenumber<CR>i')
 
 -- Jupyter
-nmap('<leader>jqt',':call jobstart("jupyter qtconsole --JupyterWidget.include_other_output=True")<CR>')
+nmap('<leader>jqt',':call jobstart("jupyter qtconsole --JupyterWidget.include_other_output=True --style native")<CR>')
 nmap('<leader>jqk',':IPython --existing --no-window <CR>')
 nmap('<leader>jk',':IPython<CR><C-w>H')
 nmap('<leader>jc', ':call IPyRunCell()<CR>')
