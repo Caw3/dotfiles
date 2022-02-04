@@ -47,7 +47,7 @@ return require("packer").startup(function(use)
 	use({ "seblj/nvim-tabline", config = [[require('config.tabline')]] })
 	use({ "tomasiser/vim-code-dark" })
 	use({ "norcalli/nvim-colorizer.lua", config = [[require('config.colorizer')]] })
-	use({"lukas-reineke/indent-blankline.nvim", config = [[require("config.indent-blankline")]]})
+	use({ "lukas-reineke/indent-blankline.nvim", config = [[require("config.indent-blankline")]] })
 
 	--File navigation
 	use({ "kyazdani42/nvim-tree.lua", config = [[require('config.nvim-tree')]] })
