@@ -61,8 +61,8 @@ return require("packer").startup(function(use)
 
 	--Filetypes
 	use({ "lervag/vimtex", ft = { "latex" } })
-	use({ "goerz/jupytext.vim" })
-	use({ "bfredl/nvim-ipy", ft = { "python" } })
+	use({ "goerz/jupytext.vim", config = [[require('config.ipynb')]] })
+	use({ "bfredl/nvim-ipy", ft = { "python" }, after = 'juptext'})
 
 	--Profiler
 	use({ "tweekmonster/startuptime.vim" })
