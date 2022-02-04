@@ -1,9 +1,9 @@
 -- Settings
-vim.o.shell = '/bin/zsh'
-vim.cmd('set termguicolors')
-vim.cmd('set scl=yes')
+vim.o.shell = "/bin/zsh"
+vim.cmd("set termguicolors")
+vim.cmd("set scl=yes")
 
-vim.cmd('set nu rnu')
+vim.cmd("set nu rnu")
 
 vim.o.encoding = "utf-8"
 
@@ -28,13 +28,10 @@ vim.o.mouse = "a"
 vim.o.incsearch = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
-vim.cmd('set nohlsearch')
+vim.cmd("set nohlsearch")
 
-vim.cmd('set nocompatible')
+vim.cmd("set nocompatible")
 vim.cmd("filetype plugin indent on")
-vim.cmd('set noshowmode')
-vim.cmd('set noshowcmd')
-vim.cmd('set shortmess+=F')
-
-vim.g.jupytext_fmt = 'py:percent'
-vim.g.ipy_celldef = '# %%'
+vim.cmd("set noshowmode")
+vim.cmd("set noshowcmd")
+vim.cmd("set shortmess+=F")
