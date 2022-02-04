@@ -70,8 +70,8 @@ nmap("n", "nzzzv")
 nmap("N", "Nzzzv")
 
 -- Search and replace
-nmap("-", "/") -- swedish keyboard
-nmap("_", "?") -- swedish keyboard
+nmap("-", "/<C-n>") -- swedish keyboard
+nmap("_", "?<C-n>") -- swedish keyboard
 nmap("<leader>rs", ":%s/")
 
 -- Jump prev file

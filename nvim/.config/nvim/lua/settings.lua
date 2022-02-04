@@ -3,7 +3,7 @@ vim.o.shell = "/bin/zsh"
 vim.cmd("set termguicolors")
 vim.cmd("set scl=yes")
 
-vim.cmd("set nu rnu")
+vim.cmd("set nu")
 
 vim.o.encoding = "utf-8"
 
