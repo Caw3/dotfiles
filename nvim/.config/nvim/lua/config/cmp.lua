@@ -89,6 +89,5 @@ cmp.setup.cmdline(":", {
 		{ name = "cmdline" },
 	}),
 })
-require("luasnip/loaders/from_vscode").lazy_load() -- You can pass { path = "./my-snippets/"} as wel
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))

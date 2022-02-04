@@ -7,15 +7,15 @@ let g:nvim_tree_show_icons = {
     \ }
 let g:nvim_tree_icons = {
     \ 'default': '',
-    \ 'symlink': 's',
+    \ 'symlink': '>>',
     \ 'git': {
     \   'unstaged': "*",
-    \   'staged': "[s]",
-    \   'unmerged': "[-m]",
-    \   'renamed': "[r]",
-    \   'untracked': "[u]",
-    \   'deleted': "[D]",
-    \   'ignored': "[i]"
+    \   'staged': "+",
+    \   'unmerged': "-m",
+    \   'renamed': "->",
+    \   'untracked': "?",
+    \   'deleted': "-",
+    \   'ignored': "i"
     \   },
     \ 'folder': {
     \   'arrow_open': "v",
@@ -24,11 +24,13 @@ let g:nvim_tree_icons = {
     \   'open': "",
     \   'empty': "",
     \   'empty_open': "",
-    \   'symlink': "s",
+    \   'symlink': ">>",
     \   'symlink_open': "",
     \   }
     \ }
 ]])
+vim.g.nvim_tree_indent_markers = 1
+vim.cmd("let g:nvim_tree_special_files = { 'README.md': 1, 'Makefile': 1, 'MAKEFILE': 1 }")
 
 require("nvim-tree").setup({
 	disable_netrw = true,
@@ -71,11 +73,11 @@ require("nvim-tree").setup({
 		timeout = 500,
 	},
 	view = {
-		width = 30,
+		width = 35,
 		height = 30,
 		hide_root_folder = false,
 		side = "left",
-		auto_resize = false,
+		auto_resize = true,
 		mappings = {
 			custom_only = false,
 			list = {},

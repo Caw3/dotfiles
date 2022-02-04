@@ -1,4 +1,4 @@
---Install Package manager if not found
+-- Install Package manager if not found
 local fn = vim.fn
 local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
 if fn.empty(fn.glob(install_path)) > 0 then
@@ -16,18 +16,19 @@ return require("packer").startup(function(use)
 	use({ "wbthomason/packer.nvim" })
 
 	--Autocompletion and Workflow
-	use({ "tpope/vim-commentary" })
 	use({ "tpope/vim-surround" })
+
+	use({ "terrortylor/nvim-comment", config = [[require("config.nvim-comment")]] })
 	use({ "L3MON4D3/LuaSnip" })
-	use({ "rafamadriz/friendly-snippets", after = "LuaSnip" })
+	use({ "rafamadriz/friendly-snippets", config = [[require('config.snippets')]], after = "LuaSnip" })
+	use({ "windwp/nvim-autopairs", config = [[require('config.nvim-autopairs')]] })
 	-- CMP
-	use({ "hrsh7th/nvim-cmp", config = [[require('config.cmp')]] })
+	use({ "hrsh7th/nvim-cmp", config = [[require('config.cmp')]], after = "nvim-autopairs" })
 	use({ "hrsh7th/cmp-buffer", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-path", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-cmdline", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-nvim-lsp", after = "nvim-cmp" })
 	use({ "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" })
-	use({ "windwp/nvim-autopairs", after = "nvim-cmp" })
 
 	--LSP
 	use({ "neovim/nvim-lspconfig" })
@@ -45,6 +46,8 @@ return require("packer").startup(function(use)
 	use({ "nvim-lualine/lualine.nvim", config = [[require('config.lualine')]] })
 	use({ "seblj/nvim-tabline", config = [[require('config.tabline')]] })
 	use({ "tomasiser/vim-code-dark" })
+	use({ "norcalli/nvim-colorizer.lua", config = [[require('config.colorizer')]] })
+	use({"lukas-reineke/indent-blankline.nvim", config = [[require("config.indent-blankline")]]})
 
 	--File navigation
 	use({ "kyazdani42/nvim-tree.lua", config = [[require('config.nvim-tree')]] })
@@ -62,7 +65,7 @@ return require("packer").startup(function(use)
 	--Filetypes
 	use({ "lervag/vimtex", ft = { "latex" } })
 	use({ "goerz/jupytext.vim", config = [[require('config.ipynb')]] })
-	use({ "bfredl/nvim-ipy", ft = { "python" }, after = 'juptext'})
+	use({ "bfredl/nvim-ipy", ft = { "python" }, after = "jupytext.vim" })
 
 	--Profiler
 	use({ "tweekmonster/startuptime.vim" })

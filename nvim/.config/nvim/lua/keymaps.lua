@@ -81,8 +81,8 @@ nmap("<leader>pu", ":PackerSync <CR>")
 nmap("<leader>ps", ":PackerStatus <CR>")
 --LSP
 nmap("<leader>gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-nmap("<leader>K", "<cmd>lua vim.lsp.buf.hover()<CR>")
 nmap("<leader>gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
+nmap("<leader>K", "<cmd>lua vim.lsp.buf.hover()<CR>")
 nmap("<leader>da", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>")
 nmap("<leader>dr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>")
 nmap("<leader>dl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>")
@@ -92,9 +92,8 @@ nmap("<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>")
 nmap("<leader>s", "<cmd>lua vim.diagnostic.open_float()<CR>")
 nmap("<leader>dN", "<cmd>lua vim.diagnostic.goto_prev()<CR>")
 nmap("<leader>dn", "<cmd>lua vim.diagnostic.goto_next()<CR>")
+nmap("<leader>ds", "<cmd>lua vim.lsp.stop_client(vim.lsp.get_active_clients(),true)<CR>")
 nmap("<leader>cr", "<cmd>lua vim.lsp.buf.formatting()<CR>")
-
-nmap("<leader>ls", "<cmd>lua vim.lsp.stop_client(vim.lsp.get_active_clients(),true)<CR>")
 
 --Telescope
 nmap("<leader>gd", ":Telescope lsp_definitions <CR>")
@@ -111,7 +110,7 @@ nmap(
 	":Telescope find_files prompt_title=~/.config/nvim cwd=~/.config/nvim theme=dropdown previewer=false<CR>"
 )
 
--- NOTE: hardcoded for .dotfiles
+-- NOTE: hardcoded for ~/.dotfiles
 nmap(
 	"<leader>fC",
 	":Telescope git_files hidden=true prompt_title=~/.dotfiles cwd=~/.dotfiles theme=dropdown previewer=false<CR>"
@@ -144,3 +143,10 @@ nmap("<leader>gv", ":Gvdiffsplit <CR>")
 --Terminal
 tmap("<esc>", [[<C-\><C-n>]])
 nmap("<leader>;", ":sp<CR>:term<CR>:resize 15<CR>:set nonu<CR>:set norelativenumber<CR>i")
+-- Juptext
+nmap("<leader>pqt", ':call jobstart("jupyter qtconsole --JupyterWidget.include_other_output=True --style native")<CR>')
+nmap("<leader>pqk", ":IPython --existing --no-window <CR>")
+nmap("<leader>pk", ":IPython<CR><C-w>H")
+nmap("<leader>pc", ":call IPyRunCell()<CR>")
+vim.cmd("nmap <leader>pa <Plug>(IPy-RunAll)")
+vim.cmd("nmap <leader>pt <Plug>(IPy-Terminate)")

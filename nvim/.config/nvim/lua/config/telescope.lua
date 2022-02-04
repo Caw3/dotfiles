@@ -11,6 +11,7 @@ require("telescope").setup({
 			"--smart-case",
 		},
 		initial_mode = "insert",
+		file_ignore_patterns = {"^node_modules/", "^.git/", "^cache/"},
 		dynamic_preview_title = true,
 		color_devicons = false,
 		mappings = {
