@@ -1,8 +1,8 @@
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
-local has_words_before = function()
-	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-end
+-- local has_words_before = function()
+-- 	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+-- 	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+-- end
 local luasnip = require("luasnip")
 local cmp = require("cmp")
 cmp.setup({
@@ -14,30 +14,22 @@ cmp.setup({
 	},
 	mapping = {
 		["<Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
+			if luasnip.jumpable() then
+				luasnip.jump(1)
+			elseif cmp.visible() then
 				cmp.select_next_item()
-			elseif luasnip.expandable() then
-				luasnip.expand()
-			elseif has_words_before() then
-				cmp.complete()
 			else
 				fallback()
 			end
 		end, { "i", "s" }),
 
 		["<S-Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				cmp.select_prev_item()
-			elseif luasnip.jumpable(-1) then
+			if luasnip.jumpable(-1) then
 				luasnip.jump(-1)
+			elseif cmp.visible() then
+				cmp.select_prev_item()
 			else
 				fallback()
-			end
-		end, { "i", "s" }),
-
-		["<C-space>"] = cmp.mapping(function(fallback)
-			if luasnip.jumpable(1) then
-				luasnip.jump(1)
 			end
 		end, { "i", "s" }),
 
@@ -48,7 +40,7 @@ cmp.setup({
 			i = cmp.mapping.abort(),
 			c = cmp.mapping.close(),
 		}),
-		["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+		["<C-space>"] = cmp.mapping.confirm({ select = true }),
 	},
 	sources = cmp.config.sources({
 		{ name = "luasnip", max_item_count = 2, keyword_length = 3, group_index = 0 },
