@@ -17,7 +17,6 @@ return require("packer").startup(function(use)
 
 	--Autocompletion and Workflow
 	use({ "tpope/vim-surround" })
-
 	use({ "terrortylor/nvim-comment", config = [[require("config.nvim-comment")]] })
 	use({ "L3MON4D3/LuaSnip" })
 	use({ "rafamadriz/friendly-snippets", config = [[require('config.snippets')]], after = "LuaSnip" })
@@ -65,7 +64,7 @@ return require("packer").startup(function(use)
 	--Filetypes
 	use({ "lervag/vimtex", ft = { "latex" } })
 	use({ "goerz/jupytext.vim", config = [[require('config.ipynb')]] })
-	use({ "bfredl/nvim-ipy", ft = { "python" }, after = "jupytext.vim" })
+	use({ "bfredl/nvim-ipy"})
 
 	--Profiler
 	use({ "tweekmonster/startuptime.vim" })
