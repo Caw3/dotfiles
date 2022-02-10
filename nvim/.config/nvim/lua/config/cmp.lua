@@ -1,9 +1,10 @@
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
--- local has_words_before = function()
--- 	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
--- 	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
--- end
+
 local luasnip = require("luasnip")
+luasnip.config.set_config({
+	history = false,
+})
+
 local cmp = require("cmp")
 cmp.setup({
 	completion = {},
@@ -43,9 +44,10 @@ cmp.setup({
 		["<C-space>"] = cmp.mapping.confirm({ select = true }),
 	},
 	sources = cmp.config.sources({
-		{ name = "luasnip", max_item_count = 2, keyword_length = 3, group_index = 0 },
-		{ name = "nvim_lsp", max_item_count = 5, group_index = 1, keyword_length = 3 },
-		{ name = "buffer", max_item_count = 5, group_index = 2, keyword_length = 4 },
+		{ name = "luasnip", max_item_count = 2, keyword_length = 2, group_index = 0 },
+		{ name = "nvim_lsp", max_item_count = 3, group_index = 1, keyword_length = 3 },
+		{ name = "latex_symbols", max_item_count = 3, group_index = 2, keyword_length = 3 },
+		{ name = "buffer", max_item_count = 3, group_index = 2, keyword_length = 4 },
 		{ name = "path", max_item_count = 10 },
 	}),
 	experimental = {
@@ -56,16 +58,16 @@ cmp.setup({
 		format = function(entry, vim_item)
 			vim_item.menu = ({
 				nvim_lsp = "[LS]",
-				treesitter = "[TS]",
 				path = "/",
 				buffer = "[B]",
-				luasnip = "",
+				luasnip = "[S]",
 			})[entry.source.name]
 			return vim_item
 		end,
 	},
 	documentation = {},
 })
+
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline("/", {
 	sources = {
@@ -81,5 +83,3 @@ cmp.setup.cmdline(":", {
 		{ name = "cmdline" },
 	}),
 })
-local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))

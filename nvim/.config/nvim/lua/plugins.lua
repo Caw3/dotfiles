@@ -20,14 +20,15 @@ return require("packer").startup(function(use)
 	use({ "terrortylor/nvim-comment", config = [[require("config.nvim-comment")]] })
 	use({ "L3MON4D3/LuaSnip" })
 	use({ "rafamadriz/friendly-snippets", config = [[require('config.snippets')]], after = "LuaSnip" })
-	use({ "windwp/nvim-autopairs", config = [[require('config.nvim-autopairs')]] })
 	-- CMP
-	use({ "hrsh7th/nvim-cmp", config = [[require('config.cmp')]], after = "nvim-autopairs" })
+	use({ "hrsh7th/nvim-cmp", config = [[require('config.cmp')]] })
 	use({ "hrsh7th/cmp-buffer", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-path", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-cmdline", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-nvim-lsp", after = "nvim-cmp" })
 	use({ "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" })
+	use({ "kdheepak/cmp-latex-symbols", ft = { "tex" }, after = "nvim-cmp" })
+	use({ "windwp/nvim-autopairs", config = [[require('config.autopairs')]], after = "nvim-cmp" })
 
 	--LSP
 	use({ "neovim/nvim-lspconfig" })
@@ -62,9 +63,9 @@ return require("packer").startup(function(use)
 	use({ "tpope/vim-fugitive" })
 
 	--Filetypes
-	use({ "lervag/vimtex", ft = { "latex" } })
+	use({ "lervag/vimtex", ft = { "tex" } })
 	use({ "goerz/jupytext.vim", config = [[require('config.ipynb')]] })
-	use({ "bfredl/nvim-ipy"})
+	use({ "bfredl/nvim-ipy" })
 
 	--Profiler
 	use({ "tweekmonster/startuptime.vim" })
