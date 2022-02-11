@@ -19,7 +19,7 @@ return require("packer").startup(function(use)
 	use({ "tpope/vim-surround" })
 	use({ "terrortylor/nvim-comment", config = [[require("config.nvim-comment")]] })
 	use({ "L3MON4D3/LuaSnip" })
-	use({ "rafamadriz/friendly-snippets", config = [[require('config.snippets')]], after = "LuaSnip" })
+	use({ "rafamadriz/friendly-snippets",config = [[require('config.snippets')]], after = "LuaSnip" })
 	-- CMP
 	use({ "hrsh7th/nvim-cmp", config = [[require('config.cmp')]] })
 	use({ "hrsh7th/cmp-buffer", after = "nvim-cmp" })
@@ -50,7 +50,11 @@ return require("packer").startup(function(use)
 	use({ "lukas-reineke/indent-blankline.nvim", config = [[require("config.indent-blankline")]] })
 
 	--File navigation
-	use({ "kyazdani42/nvim-tree.lua", config = [[require('config.nvim-tree')]] })
+	use({
+		"kyazdani42/nvim-tree.lua",
+		cmd = { "NvimTreeToggle", "NvimTreeFindFile" },
+		config = [[require('config.nvim-tree')]],
+	})
 	use({
 		"nvim-telescope/telescope.nvim",
 		config = [[require('config.telescope')]],
@@ -65,10 +69,10 @@ return require("packer").startup(function(use)
 	--Filetypes
 	use({ "lervag/vimtex", ft = { "tex" } })
 	use({ "goerz/jupytext.vim", config = [[require('config.ipynb')]] })
-	use({ "bfredl/nvim-ipy" })
+	use({ "bfredl/nvim-ipy", ft = { "python" } })
 
 	--Profiler
-	use({ "tweekmonster/startuptime.vim" })
+	use({ "tweekmonster/startuptime.vim", cmd = "StartupTime" })
 
 	if packer_bootstrap then
 		require("packer").sync()

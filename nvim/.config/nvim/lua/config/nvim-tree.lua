@@ -20,10 +20,10 @@ let g:nvim_tree_icons = {
     \ 'folder': {
     \   'arrow_open': "v",
     \   'arrow_closed': ">",
-    \   'default': "",
-    \   'open': "",
-    \   'empty': "",
-    \   'empty_open': "",
+    \   'default': ">",
+    \   'open': "v",
+    \   'empty': ">",
+    \   'empty_open': "v",
     \   'symlink': ">>",
     \   'symlink_open': "",
     \   }
@@ -93,7 +93,7 @@ require("nvim-tree").setup({
 		},
 	},
 	update_focused_file = {
-		enable = true,
+		enable = false,
 		update_cwd = true,
 		ignore_list = {},
 	},

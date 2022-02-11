@@ -35,3 +35,8 @@ vim.cmd("filetype plugin indent on")
 vim.cmd("set noshowmode")
 vim.cmd("set noshowcmd")
 vim.cmd("set shortmess+=F")
+
+--autocommands
+vim.cmd' augroup packer-sync \
+		 	autocmd BufWritePost plugins.lua source <afile> | PackerCompile \
+		 augroup END'
