@@ -12,7 +12,6 @@ XF86AudioRaiseVolume
 XF86AudioLowerVolume
 	pactl set-sink-volume @DEFAULT_SINK@ -10%
 
-
 # Mute volume
 XF86AudioMute
 	pactl set-sink-mute @DEFAULT_SINK@ toggle
@@ -29,7 +28,6 @@ XF86MonBrightnessDown
 XF86MonBrightnessUp
 	xbacklight -inc 5
 
-
 # terminal emulator
 # Set static scalefactor 
 super + Return
@@ -38,6 +36,9 @@ super + Return
 #browser
 super + b
 	qutebrowser
+#lock the screen
+super + ctrl + l
+	betterlockscreen -l
 # program launcher
 super + @space
 	dmenu_run -fn '--fixed-bold-r-normal--10-----*-iso10646-1'
@@ -90,17 +91,13 @@ super + ctrl + {m,x,y,z}
 super + {_,shift + }{h,j,k,l}
 	bspc node -{f,s} {west,south,north,east}
 
-# focus the node for the given path jump
-super + {p,b,comma,period}
-	bspc node -f @{parent,brother,first,second}
-
 # focus the next/previous window in the current desktop
 super + {_,shift + }c
 	bspc node -f {next,prev}.local.!hidden.window
 
-# focus the next/previous desktop in the current monitor
-super + bracket{left,right}
-	bspc desktop -f {prev,next}.local
+# focus or send the next/previous desktop in the current monitor
+super + {_,shift} + {p,n}
+	bspc {desktop -f, node -d} {prev,next}.local
 
 # focus the last node/desktop
 super + {grave,Tab}
@@ -116,9 +113,6 @@ super + {o,i}
 super + {_,shift + }{1-9,0}
 	bspc {desktop -f,node -d} '^{1-9,10}'
 
-# Jump to a desktop
-super + {1-9,0}
-	bspc desktop --focus ^{1-9,10}
 #
 # preselect
 #
