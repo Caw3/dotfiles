@@ -151,7 +151,7 @@ nmap("<leader>gp", ":Gitsigns preview_hunk<CR>")
 nmap("<leader>hs", ":Gitsigns stage_hunk<CR>")
 nmap("<leader>hS", ":Gitsigns stage_buffer<CR>")
 nmap("<leader>hr", ":Gitsigns reset_hunk<CR>")
-nmap("<leader>hr", ":Gitsigns reset_buffer<CR>")
+nmap("<leader>hR", ":Gitsigns reset_buffer<CR>")
 nmap("<leader>hd", ":Gitsigns toggle_deleted<CR>")
 
 -- Text object
