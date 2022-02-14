@@ -30,11 +30,10 @@ end
 local function xmap(shortcut, command)
 	map("x", shortcut, command)
 end
---Keybinds
 
 vim.g.mapleader = " "
---Tab navigation
 
+--Tab navigation
 nmap("<leader>1", "1gt")
 nmap("<leader>2", "2gt")
 nmap("<leader>3", "3gt")
@@ -76,15 +75,16 @@ nmap("N", "Nzzzv")
 -- Search and replace
 nmap("-", "/<C-n>") -- swedish keyboard
 nmap("_", "?<C-n>") -- swedish keyboard
-nmap("<leader>rs", ":%s/")
+nmap("<leader>rs", ":%s/<C-n>")
 
 -- Jump prev file
 nmap("<C-p>", "<c-^><cr>")
 
 --Plugins
 nmap("<leader>pi", ":PackerInstall <CR>")
-nmap("<leader>pu", ":PackerSync <CR>")
-nmap("<leader>ps", ":PackerStatus <CR>")
+nmap("<leader>ps", ":PackerSync <CR>")
+nmap("<leader>pc", ":PackerCompile <CR>")
+nmap("<leader>pl", ":PackerStatus <CR>")
 --LSP
 nmap("<leader>gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
 nmap("<leader>gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
@@ -155,8 +155,8 @@ nmap("<leader>hr", ":Gitsigns reset_buffer<CR>")
 nmap("<leader>hd", ":Gitsigns toggle_deleted<CR>")
 
 -- Text object
-omap("ih",":<C-U>Gitsigns select_hunk<CR>")
-xmap("ih",":<C-U>Gitsigns select_hunk<CR>")
+omap("ih", ":<C-U>Gitsigns select_hunk<CR>")
+xmap("ih", ":<C-U>Gitsigns select_hunk<CR>")
 
 --Terminal
 tmap("<esc>", [[<C-\><C-n>]])
