@@ -1,10 +1,3 @@
-vim.o.background = "dark"
-vim.cmd("colorscheme codedark")
-vim.cmd("highlight clear SignColumn")
-vim.cmd("hi EndOfBuffer guifg=#1E1E1E")
-vim.cmd("se cursorline")
-vim.cmd("hi clear cursorline")
-
 local custom_codedark = require("lualine.themes.codedark")
 
 local colors = {

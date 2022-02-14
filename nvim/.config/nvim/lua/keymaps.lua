@@ -7,6 +7,10 @@ local function nmap(shortcut, command)
 	map("n", shortcut, command)
 end
 
+local function omap(shortcut, command)
+	map("i", shortcut, command)
+end
+
 local function imap(shortcut, command)
 	map("i", shortcut, command)
 end
@@ -137,14 +141,27 @@ nmap("<leader>tr", ":NvimTreeRefresh <CR>")
 nmap("<leader>gh", ":Telescope git_commits <CR>")
 nmap("<leader>gs", ":G <CR> :resize 15 <CR>")
 nmap("<leader>gb", ":Telescope git_branches theme=dropdown<CR>")
-nmap("<leader>gp", ":Telescope git_status <CR>")
 nmap("<leader>gl", ":G blame <CR>")
 nmap("<leader>gc", ":G commit <CR>")
 nmap("<leader>gv", ":Gvdiffsplit <CR>")
+-- Hunks
+nmap("<leader>gn", ":Gitsigns next_hunk<CR>")
+nmap("<leader>gN", ":Gitsigns prev_hunk<CR>")
+nmap("<leader>gp", ":Gitsigns preview_hunk<CR>")
+nmap("<leader>hs", ":Gitsigns stage_hunk<CR>")
+nmap("<leader>hS", ":Gitsigns stage_buffer<CR>")
+nmap("<leader>hr", ":Gitsigns reset_hunk<CR>")
+nmap("<leader>hr", ":Gitsigns reset_buffer<CR>")
+nmap("<leader>hd", ":Gitsigns toggle_deleted<CR>")
+
+-- Text object
+omap("ih",":<C-U>Gitsigns select_hunk<CR>")
+xmap("ih",":<C-U>Gitsigns select_hunk<CR>")
 
 --Terminal
 tmap("<esc>", [[<C-\><C-n>]])
 nmap("<leader>;", ":sp<CR>:term<CR>:resize 15<CR>:set nonu<CR>:set norelativenumber<CR>i")
+
 -- Juptext
 nmap("<leader>pqt", ':call jobstart("jupyter qtconsole --JupyterWidget.include_other_output=True --style native")<CR>')
 nmap("<leader>pqk", ":IPython --existing --no-window <CR>")

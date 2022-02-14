@@ -17,9 +17,10 @@ return require("packer").startup(function(use)
 
 	--Autocompletion and Workflow
 	use({ "tpope/vim-surround" })
+	use({ "tpope/vim-endwise", ft = { "ruby", "lua", "haskell", "zsh", "bash" } })
 	use({ "terrortylor/nvim-comment", config = [[require("config.nvim-comment")]] })
 	use({ "L3MON4D3/LuaSnip" })
-	use({ "rafamadriz/friendly-snippets",config = [[require('config.snippets')]], after = "LuaSnip" })
+	use({ "rafamadriz/friendly-snippets", config = [[require('config.snippets')]], after = "LuaSnip" })
 	-- CMP
 	use({ "hrsh7th/nvim-cmp", config = [[require('config.cmp')]] })
 	use({ "hrsh7th/cmp-buffer", after = "nvim-cmp" })
@@ -65,6 +66,11 @@ return require("packer").startup(function(use)
 
 	--Git wrapper
 	use({ "tpope/vim-fugitive" })
+	use({
+		"lewis6991/gitsigns.nvim",
+		config = [[require('config.gitsigns')]],
+		requires = { { "nvim-lua/plenary.nvim" } },
+	})
 
 	--Filetypes
 	use({ "lervag/vimtex", ft = { "tex" } })

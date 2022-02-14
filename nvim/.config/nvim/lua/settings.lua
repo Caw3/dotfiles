@@ -36,7 +36,22 @@ vim.cmd("set noshowmode")
 vim.cmd("set noshowcmd")
 vim.cmd("set shortmess+=F")
 
+-- Cosemetic
+vim.o.background = "dark"
+vim.cmd("colorscheme codedark")
+vim.cmd("highlight clear SignColumn")
+vim.cmd("hi EndOfBuffer guifg=#1E1E1E")
+vim.cmd("se cursorline")
+vim.cmd("hi clear cursorline")
+
+-- Highlights
+vim.cmd([[
+hi DiffAdd guibg=#1e1e1e guifg=green
+hi DiffDelete guibg=#1e1e1e guifg=#cd3131
+hi DiffChange guibg=#1e1e1e guifg=#bc3fbc
+]])
+
 --autocommands
-vim.cmd' augroup packer-sync \
+vim.cmd(" augroup packer-sync \
 		 	autocmd BufWritePost plugins.lua source <afile> | PackerCompile \
-		 augroup END'
+		 augroup END")
