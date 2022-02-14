@@ -8,7 +8,7 @@ local function nmap(shortcut, command)
 end
 
 local function omap(shortcut, command)
-	map("i", shortcut, command)
+	map("o", shortcut, command)
 end
 
 local function imap(shortcut, command)
