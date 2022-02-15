@@ -51,6 +51,7 @@ cmp.setup({
 	sources = cmp.config.sources({
 		{ name = "luasnip", max_item_count = 2, keyword_length = 2, group_index = 0 },
 		{ name = "nvim_lsp", max_item_count = 3, group_index = 1, keyword_length = 3 },
+		{ name = "treesitter", max_item_count = 3, group_index = 1, keyword_length = 3 },
 		{ name = "latex_symbols", max_item_count = 3, group_index = 2, keyword_length = 3 },
 		{ name = "buffer", max_item_count = 3, group_index = 2, keyword_length = 4 },
 		{ name = "path", max_item_count = 10 },
@@ -63,6 +64,7 @@ cmp.setup({
 		format = function(entry, vim_item)
 			vim_item.menu = ({
 				nvim_lsp = "[LS]",
+				treesitter = "[TS]",
 				path = "/",
 				buffer = "[B]",
 				luasnip = "[S]",
