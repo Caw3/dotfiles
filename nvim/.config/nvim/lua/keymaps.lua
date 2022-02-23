@@ -145,5 +145,5 @@ utils.nmap(
 utils.nmap("<leader>pqk", ":IPython --existing --no-window <CR>")
 utils.nmap("<leader>pk", ":IPython<CR><C-w>H")
 utils.nmap("<leader>pc", ":call IPyRunCell()<CR>")
-vim.cmd("map.utils.nmap <leader>pa <Plug>(IPy-RunAll)")
-vim.cmd("map.utils.nmap <leader>pt <Plug>(IPy-Terminate)")
+vim.cmd("nmap <leader>pa <Plug>(IPy-RunAll)")
+vim.cmd("nmap <leader>pt <Plug>(IPy-Terminate)")
