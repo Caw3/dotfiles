@@ -7,7 +7,7 @@ let g:nvim_tree_show_icons = {
     \ }
 let g:nvim_tree_icons = {
     \ 'default': '',
-    \ 'symlink': '>>',
+    \ 'symlink': '',
     \ 'git': {
     \   'unstaged': "*",
     \   'staged': "+",
@@ -24,7 +24,7 @@ let g:nvim_tree_icons = {
     \   'open': "v",
     \   'empty': ">",
     \   'empty_open': "v",
-    \   'symlink': ">>",
+    \   'symlink': "",
     \   'symlink_open': "",
     \   }
     \ }
@@ -80,16 +80,16 @@ require("nvim-tree").setup({
 	hijack_cursor = true,
 	update_cwd = true,
 	update_to_buf_dir = {
-		enable = true,
+		enable = false,
 		auto_open = true,
 	},
 	diagnostics = {
 		enable = false,
 		icons = {
-			hint = "",
-			info = "",
-			warning = "",
-			error = "",
+			hint = "h",
+			info = "i",
+			warning = "w",
+			error = "e",
 		},
 	},
 	update_focused_file = {
