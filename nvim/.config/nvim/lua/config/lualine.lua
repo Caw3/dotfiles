@@ -1,27 +1,43 @@
-local custom_codedark = require("lualine.themes.codedark")
-
 local colors = {
 	white = "#E4E4E4",
-	black = "#3A3A3A",
+	black = "#1e1e1e",
+	grey = "#282828",
 	blue = "#9CDCFE",
 	pink = "#C586C0",
 	red = "#F44747",
 }
-custom_codedark.normal.a.bg = colors.black
-custom_codedark.normal.a.fg = colors.white
-custom_codedark.normal.b.fg = colors.white
 
-custom_codedark.insert.a.bg = colors.black
-custom_codedark.insert.a.fg = colors.blue
-custom_codedark.insert.b.fg = colors.blue
-
-custom_codedark.visual.a.bg = colors.black
-custom_codedark.visual.a.fg = colors.pink
-custom_codedark.visual.b.fg = colors.pink
-
-custom_codedark.replace.a.bg = colors.black
-custom_codedark.replace.a.fg = colors.red
-custom_codedark.replace.b.fg = colors.red
+local custom_codedark = {
+  normal = {
+    b = { fg = colors.white, bg = colors.black },
+    a = { fg = colors.white, bg = colors.black, gui = 'bold' },
+    c = { fg = colors.white, bg = colors.black },
+  },
+  visual = {
+    b = { fg = colors.white, bg = colors.black },
+    a = { fg = colors.white, bg = colors.black, gui = 'bold' },
+  },
+  inactive = {
+    b = { fg = colors.white, bg = colors.grey },
+    a = { fg = colors.white, bg = colors.grey, gui = 'bold' },
+    c = { fg = colors.white, bg = colors.grey },
+  },
+  replace = {
+    b = { fg = colors.lightred, bg = colors.black },
+    a = { fg = colors.white, bg = colors.black, gui = 'bold' },
+    c = { fg = colors.white, bg = colors.black },
+  },
+  insert = {
+    b = { fg = colors.white, bg = colors.black },
+    a = { fg = colors.white, bg = colors.black, gui = 'bold' },
+    c = { fg = colors.white, bg = colors.black },
+  },
+  terminal = {
+    b = { fg = colors.black, bg = colors.black },
+    a = { fg = colors.black, bg = colors.black, gui = 'bold' },
+    c = { fg = colors.black, bg = colors.black },
+  }
+}
 
 require("lualine").setup({
 	options = {
@@ -29,21 +45,21 @@ require("lualine").setup({
 		theme = custom_codedark,
 		component_separators = { left = "", right = "" },
 		section_separators = { left = "", right = "" },
-		disabled_filetypes = { "Outline", "fugitive", "NvimTree", "packer", "alpha" },
+		disabled_filetypes = { "fugitive", "NvimTree", "packer" },
 		always_divide_middle = true,
 	},
 	sections = {
-		lualine_a = { "mode" },
-		lualine_b = { "branch" },
+		lualine_a = { "branch" },
+		lualine_b = {},
 		lualine_c = { { "filename", file_status = true, path = 1 } },
 		lualine_x = {
 			{
 				"diff",
 				colored = true,
 				diff_color = {
-					-- added    = {fg = colors.blue},
-					modified = { fg = colors.blue },
-					removed = { fg = colors.red },
+					added = "DiffAdd",
+					modified = "DiffChange",
+					removed = "DiffDelete",
 				},
 			},
 			"diagnostics",
