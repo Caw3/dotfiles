@@ -55,3 +55,6 @@ hi DiffChange guibg=#1e1e1e guifg=#bc3fbc
 vim.cmd(" augroup packer-sync \
 		 	autocmd BufWritePost plugins.lua source <afile> | PackerCompile \
 		 augroup END")
+
+vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1

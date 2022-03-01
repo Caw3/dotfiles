@@ -18,6 +18,7 @@ return require("packer").startup(function(use)
 	--Autocompletion and Workflow
 	use({ "tpope/vim-surround" })
 	use({ "tpope/vim-endwise", ft = { "ruby", "lua", "haskell", "zsh", "bash" } })
+	use({ "wellle/targets.vim" })
 	use({ "terrortylor/nvim-comment", config = [[require("config.nvim-comment")]] })
 	use({ "L3MON4D3/LuaSnip" })
 	use({ "rafamadriz/friendly-snippets", config = [[require('config.snippets')]], after = "LuaSnip" })
@@ -52,6 +53,7 @@ return require("packer").startup(function(use)
 	use({ "lukas-reineke/indent-blankline.nvim", config = [[require("config.indent-blankline")]] })
 
 	--File navigation
+	use({ "elihunter173/dirbuf.nvim" })
 	use({
 		"kyazdani42/nvim-tree.lua",
 		cmd = { "NvimTreeToggle", "NvimTreeFindFile" },
