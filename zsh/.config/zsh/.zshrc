@@ -1,6 +1,6 @@
 #!/bin/sh
-export ZDOTDIR=$HOME/.config/zsh
-HISTFILE=~/.zsh_history
+
+HISTFILE=~/.cache/.zsh_history
 setopt appendhistory
 
 # Misc
@@ -10,14 +10,21 @@ unsetopt BEEP
 
 #Load files
 source "$ZDOTDIR/zsh-utils"
-zsh_add_file  "zsh-aliases"
-zsh_add_file  "zsh-vi"
 
+# auto/tab complete:
+autoload -U compinit
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
+_comp_options+=(globdots)
 
 #Load Plugins
 zsh_add_plugin "zsh-users/zsh-autosuggestions"
 zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
 zsh_add_plugin "hlissner/zsh-autopair"
+
+zsh_add_file  "zsh-aliases"
+zsh_add_file  "zsh-vi"
 
 #Key bindings
 bindkey '^ ' autosuggest-accept
