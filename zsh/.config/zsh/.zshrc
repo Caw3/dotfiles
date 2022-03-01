@@ -10,7 +10,6 @@ unsetopt BEEP
 
 #Load files
 source "$ZDOTDIR/zsh-utils"
-zsh_add_file  "zsh-exports"
 zsh_add_file  "zsh-aliases"
 zsh_add_file  "zsh-vi"
 
