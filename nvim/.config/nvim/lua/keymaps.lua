@@ -133,7 +133,7 @@ utils.omap("ih", ":<C-U>Gitsigns select_hunk<CR>")
 utils.xmap("ih", ":<C-U>Gitsigns select_hunk<CR>")
 
 --Terminal
-utils.tmap("<esc>", [[<C-\><C-n>]])
+utils.tmap("<C-e>", [[<C-\><C-n>]])
 utils.nmap("<leader>;", ":sp<CR>:term<CR>:resize 15<CR>:set nonu<CR>:set norelativenumber<CR>i")
 
 -- Juptext
