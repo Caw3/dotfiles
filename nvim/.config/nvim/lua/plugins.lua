@@ -44,6 +44,7 @@ return require("packer").startup(function(use)
 
 	--Treesitter
 	use({ "nvim-treesitter/nvim-treesitter", config = [[require('config.treesitter')]], run = ":TSUpdate" })
+	use({ "nvim-treesitter/nvim-treesitter-textobjects", after='nvim-treesitter'})
 
 	--Cosmetic
 	use({ "nvim-lualine/lualine.nvim", config = [[require('config.lualine')]] })
