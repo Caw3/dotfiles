@@ -21,9 +21,6 @@ alias psmem='ps auxf | sort -nr -k 4 | head -5'
 # get top process eating cpu ##
 alias pscpu='ps auxf | sort -nr -k 3 | head -5'
 
-# fzf jump
-alias cdf='cd $(find -type d | fzf --reverse)'
-
 alias gl='git log --oneline --graph --abbrev-commit'
 
 alias battery='cat /sys/class/power_supply/BAT0/capacity'

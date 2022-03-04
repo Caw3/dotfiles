@@ -316,16 +316,16 @@ font:
 colors:
   primary:
     background: '#1e1e1e'
-    foreground: '#e5e5e5'
+    foreground: '#e4e4e4'
   normal: 
     black: '#000000'
-    red: '#cd3131'
-    green: '#0dbc79'
-    yellow: '#e5e510'
-    blue: '#2472c8'
-    magenta: '#bc3fbc'
-    cyan: '#11a8cd'
-    white: '#e5e5e5'
+    red: '#F44747'
+    green: '#B5CEA8'
+    yellow: '#DCDCAA'
+    blue: '#569CD6'
+    magenta: '#C586C0'
+    cyan: '#9CDCFE'
+    white: '#e4e4e4'
   bright:
     black: '#666666'
     red: '#f14c4c'

@@ -79,34 +79,26 @@ utils.nmap("<leader>cr", "<cmd>lua vim.lsp.buf.formatting()<CR>")
 
 --Telescope
 utils.nmap("<leader>gd", ":Telescope lsp_definitions <CR>")
-utils.nmap("<leader>gr", ":Telescope lsp_references theme=dropdown<CR>")
+utils.nmap("<leader>gr", ":Telescope lsp_references<CR>")
 utils.nmap("<leader>ca", ":Telescope lsp_code_actions theme=cursor<CR>")
 
 utils.nmap("<leader>fd", ":Telescope diagnostics<CR>")
-utils.nmap("<leader>fR", ":Telescope find_files hidden=true cwd=~<CR>")
-utils.nmap("<leader>fF", ":Telescope find_files hidden=true <CR>")
-utils.nmap("<leader>fr", ":Telescope find_files cwd=~<CR>")
-utils.nmap("<leader>ff", ":Telescope find_files <CR>")
-utils.nmap(
-	"<leader>fc",
-	":Telescope find_files prompt_title=~/.config/nvim cwd=~/.config/nvim theme=dropdown previewer=false<CR>"
-)
+utils.nmap("<leader>fF", ":FZF ~<CR>")
+utils.nmap("<leader>ff", ":FZF<CR>")
+utils.nmap("<leader>fc", ":FZF ~/.config/nvim <CR>")
 
 -- NOTE: hardcoded for ~/.dotfiles
-utils.nmap(
-	"<leader>fC",
-	":Telescope git_files hidden=true prompt_title=~/.dotfiles cwd=~/.dotfiles theme=dropdown previewer=false<CR>"
-)
+utils.nmap("<leader>fC", ":FZF ~/.dotfiles <CR>")
 
-utils.nmap("<leader>fo", ":Telescope oldfiles theme=dropdown previewer=false<CR>")
-utils.nmap("<leader>fp", ":Telescope git_files <CR>")
+utils.nmap("<leader>fo", ":History <CR>")
+utils.nmap("<leader>fp", ":GFiles <CR>")
 utils.nmap("<leader>fg", ":Telescope live_grep <CR>")
-utils.nmap("<leader>fb", ":Telescope buffers theme=dropdown previewer=false<CR>")
+utils.nmap("<leader>fb", ":Buffers <CR>")
 utils.nmap("<leader>fM", ":Telescope man_pages <CR>")
-utils.nmap("<leader>fH", ":Telescope help_tags <CR>")
-utils.nmap("<leader>f:", ":Telescope command_history <CR>")
+utils.nmap("<leader>fH", ":Helptags <CR>")
+utils.nmap("<leader>f:", ":Commands <CR>")
 utils.nmap("<leader>fl", ":Telescope current_buffer_fuzzy_find <CR>")
-utils.nmap("<leader>fm", ":Telescope keymaps <CR>")
+utils.nmap("<leader>fm", ":Maps <CR>")
 
 --tree
 utils.nmap("<leader>tt", ":NvimTreeToggle <CR>")
@@ -114,9 +106,9 @@ utils.nmap("<leader>tf", ":NvimTreeFindFile <CR>")
 utils.nmap("<leader>tr", ":NvimTreeRefresh <CR>")
 
 --Git
-utils.nmap("<leader>gc", ":Telescope git_commits <CR>")
+utils.nmap("<leader>gc", ":Commits <CR>")
 utils.nmap("<leader>gs", ":G <CR> :resize 15 <CR>")
-utils.nmap("<leader>gb", ":Telescope git_branches theme=dropdown<CR>")
+utils.nmap("<leader>gb", ":Telescope git_branches<CR>")
 utils.nmap("<leader>gl", ":G blame <CR>")
 utils.nmap("<leader>gv", ":Gvdiffsplit <CR>")
 utils.nmap("<leader>gn", ":Gitsigns next_hunk<CR>")

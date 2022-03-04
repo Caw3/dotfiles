@@ -44,7 +44,7 @@ return require("packer").startup(function(use)
 
 	--Treesitter
 	use({ "nvim-treesitter/nvim-treesitter", config = [[require('config.treesitter')]], run = ":TSUpdate" })
-	use({ "nvim-treesitter/nvim-treesitter-textobjects", after='nvim-treesitter'})
+	use({ "nvim-treesitter/nvim-treesitter-textobjects", after = "nvim-treesitter" })
 
 	--Cosmetic
 	use({ "nvim-lualine/lualine.nvim", config = [[require('config.lualine')]] })
@@ -53,6 +53,13 @@ return require("packer").startup(function(use)
 	use({ "lukas-reineke/indent-blankline.nvim", config = [[require("config.indent-blankline")]] })
 
 	--File navigation
+	use({
+		"junegunn/fzf",
+		run = function()
+			vim.fn["fzf#install"]()
+		end,
+	})
+	use({ "junegunn/fzf.vim" })
 	use({ "elihunter173/dirbuf.nvim" })
 	use({
 		"kyazdani42/nvim-tree.lua",
