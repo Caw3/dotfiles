@@ -46,9 +46,9 @@ vim.cmd("hi clear cursorline")
 
 -- Highlights
 vim.cmd([[
-hi DiffAdd guibg=#1e1e1e guifg=green
-hi DiffDelete guibg=#1e1e1e guifg=#cd3131
-hi DiffChange guibg=#1e1e1e guifg=#bc3fbc
+hi DiffAdd guibg=#1e1e1e guifg=#608B4E
+hi DiffDelete guibg=#1e1e1e guifg=#F44747
+hi DiffChange guibg=#1e1e1e guifg=#C586C0
 ]])
 
 --autocommands
