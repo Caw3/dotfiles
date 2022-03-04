@@ -35,9 +35,9 @@ Volume()
 
 # Capitol letter is to map the output
 while true; do
-	echo "C$(Clock)"
+	echo "C$(Clock)" || exit 1
 	echo "N$(network)"
-	[ -f /sys/class/power_supply/BAT0 ] && echo "B$(Battery)"
+	[ -f /sys/class/power_supply/BAT0 ] && echo "B$(Battery)" 
 	echo "V$(Volume)"
 	sleep 1
 done

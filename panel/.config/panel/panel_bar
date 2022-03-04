@@ -58,6 +58,6 @@ while read -r input ; do
 			;;
 	esac
 	#Format
-	echo "%{Sl}%{l}  $DESKTOPS %{c}$CLOCK%{r} $VOLUME | $NETWORK $BATTERY "
+	echo "%{Sl}%{l}  $DESKTOPS %{c}$CLOCK%{r} $VOLUME | $NETWORK $BATTERY " || exit 1
 done
 

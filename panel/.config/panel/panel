@@ -19,7 +19,7 @@ mkfifo $PANEL_FIFO
 
 #Modules
 bspc subscribe report > $PANEL_FIFO &
-~/.config/panel/panel_loop> $PANEL_FIFO &
+~/.config/panel/panel_loop > $PANEL_FIFO &
 
 # Run the bar
 ~/.config/panel/panel_bar < $PANEL_FIFO | lemonbar -f "$FONT" -B $COLOR_BG -F $COLOR_FG
