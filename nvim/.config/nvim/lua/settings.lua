@@ -59,4 +59,9 @@ vim.cmd(" augroup packer-sync \
 vim.g.loaded_netrwPlugin = 1
 vim.g.loaded_netrw = 1
 
-vim.cmd("let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.4, 'yoffset': 1.0, 'border': 'horizontal' } }")
+-- FZF
+vim.cmd([[
+let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.4, 'yoffset': 1.0, 'border': 'top' } }
+let g:fzf_buffers_jump = 1
+]])
+
