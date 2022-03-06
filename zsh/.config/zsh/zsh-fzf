@@ -3,7 +3,7 @@ BINDS=" --bind '?:toggle-preview' --bind 'ctrl-d:preview-half-page-down' --bind 
 COLORS=" --color='bg:#1e1e1e,bg+:#1e1e1e,fg:#e4e4e4,fg+:#e4e4e4,info:#C586C0,marker:#C586C0,pointer:#569CD6,header:#569CD6,spinner:#C586C0,hl:#9CDCFE,hl+:#9CDCFE,prompt:#6c6c6c'"
 
 export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
-export FZF_DEFAULT_COMMAND='rg --files --hidden -g "!.git" '
+export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git"'
 
 source /usr/share/fzf/key-bindings.zsh
 source /usr/share/fzf/completion.zsh
