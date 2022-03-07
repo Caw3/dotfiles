@@ -11,7 +11,7 @@ Clock()
 
 Battery() 
 {
-		if [ -f /sys/class/power_supply/BAT0 ]; then
+		if [ -f /sys/class/power_supply/BAT0/capacity ]; then
 			local CAPACITY=$(cat /sys/class/power_supply/BAT0/capacity)
 			local STATUS=$(cat /sys/class/power_supply/BAT0/status)
 			[[ "$STATUS" == "Discharging" ]] &&  echo -n "$CAPACITY%" || echo -n "$STATUS, $CAPACITY%" 
@@ -37,7 +37,7 @@ Volume()
 while true; do
 	echo "C$(Clock)" || exit 1
 	echo "N$(network)"
-	[ -f /sys/class/power_supply/BAT0 ] && echo "B$(Battery)" 
+	echo "B$(Battery)" 
 	echo "V$(Volume)"
 	sleep 1
 done
