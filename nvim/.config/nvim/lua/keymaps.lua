@@ -108,7 +108,7 @@ utils.nmap("<leader>tr", ":NvimTreeRefresh <CR>")
 
 --Git
 utils.nmap("<leader>gc", ":Commits <CR>")
-utils.nmap("<leader>gs", ":vert Git <CR> :vertical resize 80 <CR>")
+utils.nmap("<leader>gs", ":vert Git | vertical resize 80 <CR>")
 utils.nmap("<leader>gb", ":Telescope git_branches<CR>")
 utils.nmap("<leader>gl", ":G blame <CR>")
 utils.nmap("<leader>gv", ":Gvdiffsplit <CR>")

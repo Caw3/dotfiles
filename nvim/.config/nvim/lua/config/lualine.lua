@@ -45,7 +45,7 @@ require("lualine").setup({
 		theme = custom_codedark,
 		component_separators = { left = "", right = "" },
 		section_separators = { left = "", right = "" },
-		disabled_filetypes = { "fugitive", "NvimTree", "packer" },
+		disabled_filetypes = { "fugitiveblame","fugitive", "NvimTree", "packer" },
 		always_divide_middle = true,
 	},
 	sections = {
