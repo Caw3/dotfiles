@@ -72,7 +72,7 @@ return require("packer").startup(function(use)
 		requires = { { "nvim-lua/plenary.nvim" } },
 	})
 	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
-	use({ "ygm2/rooter.nvim" })
+	use({ "airblade/vim-rooter" })
 
 	--Git wrapper
 	use({ "tpope/vim-fugitive" })
