@@ -48,6 +48,7 @@ return require("packer").startup(function(use)
 
 	--Cosmetic
 	use({ "nvim-lualine/lualine.nvim", config = [[require('config.lualine')]] })
+	use({ "seblj/nvim-tabline", config = [[require('config.tabline')]] })
 	use({ "tomasiser/vim-code-dark" })
 	use({ "norcalli/nvim-colorizer.lua", config = [[require('config.colorizer')]] })
 	use({ "lukas-reineke/indent-blankline.nvim", config = [[require("config.indent-blankline")]] })

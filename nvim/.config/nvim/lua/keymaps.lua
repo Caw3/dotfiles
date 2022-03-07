@@ -15,6 +15,7 @@ utils.nmap("<leader>8", "8gt")
 utils.nmap("<leader><tab>n", ":tabnew <CR>")
 utils.nmap("<leader><tab>c", ":tabclose <CR>")
 utils.nmap("<leader><tab>o", ":tabo <CR>")
+utils.nmap("<leader><tab>r", "<cmd>lua require('tabline.actions').set_tabname()<CR>")
 
 --Buffer movement
 utils.nmap("<leader>l", "<c-w>l")
