@@ -49,6 +49,7 @@ vim.cmd([[
 hi DiffAdd guibg=#1e1e1e guifg=#608B4E
 hi DiffDelete guibg=#1e1e1e guifg=#F44747
 hi DiffChange guibg=#1e1e1e guifg=#C586C0
+hi StatusLine guibg=#252526
 ]])
 
 --autocommands

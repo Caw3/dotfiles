@@ -1,7 +1,7 @@
 local colors = {
 	white = "#E4E4E4",
 	black = "#1e1e1e",
-	grey = "#282828",
+	grey = "#252526",
 	blue = "#9CDCFE",
 	pink = "#C586C0",
 	red = "#F44747",
