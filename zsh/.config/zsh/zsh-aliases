@@ -28,3 +28,5 @@ alias battery='cat /sys/class/power_supply/BAT0/capacity'
 alias pm="pulsemixer"
 
 alias tm="(tmux a || tmux)"
+
+alias pdfo='xdg-open $(find ~/Documents -regex ".*\.pdf" | fzf)'
