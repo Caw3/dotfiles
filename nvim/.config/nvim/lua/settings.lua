@@ -51,6 +51,9 @@ hi DiffDelete guibg=#1e1e1e guifg=#F44747
 hi DiffChange guibg=#1e1e1e guifg=#C586C0
 hi StatusLine guibg=#252526
 hi TabLineFill guibg=#1e1e1e
+hi! link GitSignsAdd DiffAdd
+hi! link GitSignsChange DiffChange
+hi! link GitSignsDelete DiffDelete
 ]])
 
 --autocommands
