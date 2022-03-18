@@ -29,4 +29,6 @@ alias pm="pulsemixer"
 
 alias tm="(tmux a || tmux)"
 
-alias pdfo='xdg-open $(find ~/Documents -regex ".*\.pdf" | fzf)'
+alias lf="clear;lf"
+
+alias pdfo='xdg-open $(find ~/Documents -regex ".*\.pdf" | fzf) &'
