@@ -13,7 +13,7 @@ fg+:white,\
 info:magenta,\
 marker:magenta,\
 pointer:blue,\
-header:blue,\
+header:magenta,\
 spinner:magenta,\
 hl:cyan,\
 hl+:cyan,\

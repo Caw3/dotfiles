@@ -1,42 +1,43 @@
 local colors = {
-	white = "#E4E4E4",
+	white = "#e4e4e4",
 	black = "#1e1e1e",
 	grey = "#252526",
 	blue = "#9CDCFE",
-	pink = "#C586C0",
+	green = "#608B4E",
+	magenta = "#C586C0",
 	red = "#F44747",
 }
 
 local custom_codedark = {
-  normal = {
-    b = { fg = colors.white, bg = colors.black },
-    a = { fg = colors.white, bg = colors.black, gui = 'bold' },
-    c = { fg = colors.white, bg = colors.black },
-  },
-  visual = {
-    b = { fg = colors.white, bg = colors.black },
-    a = { fg = colors.white, bg = colors.black, gui = 'bold' },
-  },
-  inactive = {
-    b = { fg = colors.white, bg = colors.grey },
-    a = { fg = colors.white, bg = colors.grey, gui = 'bold' },
-    c = { fg = colors.white, bg = colors.grey },
-  },
-  replace = {
-    b = { fg = colors.lightred, bg = colors.black },
-    a = { fg = colors.white, bg = colors.black, gui = 'bold' },
-    c = { fg = colors.white, bg = colors.black },
-  },
-  insert = {
-    b = { fg = colors.white, bg = colors.black },
-    a = { fg = colors.white, bg = colors.black, gui = 'bold' },
-    c = { fg = colors.white, bg = colors.black },
-  },
-  terminal = {
-    b = { fg = colors.black, bg = colors.black },
-    a = { fg = colors.black, bg = colors.black, gui = 'bold' },
-    c = { fg = colors.black, bg = colors.black },
-  }
+	normal = {
+		b = { fg = colors.white, bg = colors.grey },
+		a = { fg = colors.white, bg = colors.grey, gui = "bold" },
+		c = { fg = colors.white, bg = colors.grey },
+	},
+	visual = {
+		b = { fg = colors.white, bg = colors.grey },
+		a = { fg = colors.white, bg = colors.grey, gui = "bold" },
+	},
+	inactive = {
+		b = { fg = colors.white, bg = colors.grey },
+		a = { fg = colors.white, bg = colors.grey, gui = "bold" },
+		c = { fg = colors.white, bg = colors.grey },
+	},
+	replace = {
+		b = { fg = colors.lightred, bg = colors.grey },
+		a = { fg = colors.white, bg = colors.grey, gui = "bold" },
+		c = { fg = colors.white, bg = colors.grey },
+	},
+	insert = {
+		b = { fg = colors.white, bg = colors.grey },
+		a = { fg = colors.white, bg = colors.grey, gui = "bold" },
+		c = { fg = colors.white, bg = colors.grey },
+	},
+	terminal = {
+		b = { fg = colors.grey, bg = colors.grey },
+		a = { fg = colors.grey, bg = colors.grey, gui = "bold" },
+		c = { fg = colors.grey, bg = colors.grey },
+	},
 }
 
 require("lualine").setup({
@@ -45,7 +46,7 @@ require("lualine").setup({
 		theme = custom_codedark,
 		component_separators = { left = "", right = "" },
 		section_separators = { left = "", right = "" },
-		disabled_filetypes = { "fugitiveblame","fugitive", "NvimTree", "packer" },
+		disabled_filetypes = { "fugitiveblame", "fugitive", "NvimTree", "packer" },
 		always_divide_middle = true,
 	},
 	sections = {
@@ -57,9 +58,9 @@ require("lualine").setup({
 				"diff",
 				colored = true,
 				diff_color = {
-					added = "DiffAdd",
-					modified = "DiffChange",
-					removed = "DiffDelete",
+					added = { fg = colors.green },
+					modified = { fg = colors.magenta },
+					removed = { fg = colors.red },
 				},
 			},
 			"diagnostics",
@@ -75,13 +76,6 @@ require("lualine").setup({
 		lualine_y = {},
 		lualine_z = {},
 	},
-	tabline = {
-		-- lualine_a = {},
-		-- lualine_b = {},
-		-- lualine_c = {},
-		-- lualine_x = {},
-		-- lualine_y = {},
-		-- lualine_z = {},
-	},
+	tabline = {},
 	extensions = { "quickfix" },
 })

@@ -32,9 +32,6 @@ vim.cmd("set nohlsearch")
 
 vim.cmd("set nocompatible")
 vim.cmd("filetype plugin indent on")
-vim.cmd("set noshowmode")
-vim.cmd("set noshowcmd")
-vim.cmd("set shortmess+=F")
 
 -- Cosemetic
 vim.o.background = "dark"
@@ -54,6 +51,7 @@ hi TabLineFill guibg=#1e1e1e
 hi! link GitSignsAdd DiffAdd
 hi! link GitSignsChange DiffChange
 hi! link GitSignsDelete DiffDelete
+hi! link ModeMsg Normal
 ]])
 
 --autocommands
