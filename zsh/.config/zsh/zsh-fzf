@@ -3,7 +3,8 @@ OPTIONS="--reverse --preview='cat {}' --preview-window=hidden "
 BINDS="\
 --bind '?:toggle-preview' \
 --bind 'ctrl-d:preview-half-page-down' \
---bind 'ctrl-u:preview-half-page-up'"
+--bind 'ctrl-u:preview-half-page-up' \
+--bind 'ctrl-a:select-all'"
 
 COLORS=" --color='\
 bg:-1,\
