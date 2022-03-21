@@ -39,6 +39,10 @@ super + b
 #lock the screen
 super + ctrl + l
 	betterlockscreen -l
+
+#run window selecter
+super + w
+	dmenu-win
 # program launcher
 super + @space
 	dmenu_run -fn '--fixed-bold-r-normal--10-----*-iso10646-1'
