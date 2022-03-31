@@ -1,10 +1,5 @@
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
-local has_words_before = function()
-	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-end
-
 local luasnip = require("luasnip")
 luasnip.config.set_config({
 	history = false,
@@ -20,9 +15,7 @@ cmp.setup({
 	},
 	mapping = {
 		["<Tab>"] = cmp.mapping(function(fallback)
-			if luasnip.jumpable() and has_words_before() then
-				luasnip.jump(1)
-			elseif cmp.visible() then
+			if cmp.visible() then
 				cmp.select_next_item()
 			else
 				fallback()
@@ -30,9 +23,7 @@ cmp.setup({
 		end, { "i", "s" }),
 
 		["<S-Tab>"] = cmp.mapping(function(fallback)
-			if luasnip.jumpable(-1) then
-				luasnip.jump(-1)
-			elseif cmp.visible() then
+			if cmp.visible() then
 				cmp.select_prev_item()
 			else
 				fallback()
@@ -47,19 +38,25 @@ cmp.setup({
 			c = cmp.mapping.close(),
 		}),
 		["<C-space>"] = cmp.mapping.confirm({ select = true }),
+		["<C-j>"] = cmp.mapping(function()
+			if luasnip.jumpable() then
+				luasnip.jump(1)
+			end
+		end, { "i", "s" }),
+		["<C-k>"] = cmp.mapping(function()
+			if luasnip.jumpable(-1) then
+				luasnip.jump(-1)
+			end
+		end, { "i", "s" }),
 	},
 	sources = cmp.config.sources({
-		{ name = "luasnip", max_item_count = 2, keyword_length = 2, group_index = 0 },
-		{ name = "nvim_lsp", max_item_count = 3, group_index = 1, keyword_length = 3 },
-		{ name = "treesitter", max_item_count = 3, group_index = 1, keyword_length = 3 },
-		{ name = "latex_symbols", max_item_count = 3, group_index = 2, keyword_length = 3 },
-		{ name = "buffer", max_item_count = 3, group_index = 2, keyword_length = 4 },
+		{ name = "luasnip", max_item_count = 3, group_index = 0, keyword_length = 2 },
+		{ name = "nvim_lsp", max_item_count = 5, group_index = 1, keyword_length = 2 },
+		{ name = "treesitter", max_item_count = 3, group_index = 3, keyword_length = 3 },
+		{ name = "latex_symbols", max_item_count = 3, group_index = 3, keyword_length = 3 },
+		{ name = "buffer", max_item_count = 3, group_index = 4, keyword_length = 4 },
 		{ name = "path", max_item_count = 10 },
 	}),
-	experimental = {
-		native_menu = false,
-		ghost_text = false,
-	},
 	formatting = {
 		format = function(entry, vim_item)
 			vim_item.menu = ({
@@ -75,14 +72,12 @@ cmp.setup({
 	documentation = {},
 })
 
--- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline("/", {
 	sources = {
 		{ name = "buffer" },
 	},
 })
 
--- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(":", {
 	sources = cmp.config.sources({
 		{ name = "path" },
