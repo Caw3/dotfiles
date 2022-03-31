@@ -44,13 +44,7 @@ utils.nmap("<leader>cn", ":cn <CR>")
 utils.nmap("<leader>cp", ":cp <CR>")
 utils.nmap("<leader>cc", ":cclose <CR>")
 
--- keep search matches in the middle of the window
-utils.nmap("n", "nzzzv")
-utils.nmap("N", "Nzzzv")
-
 -- Search and replace
-utils.nmap("-", "/<C-n>") -- swedish keyboard
-utils.nmap("_", "?<C-n>") -- swedish keyboard
 utils.nmap("<leader>rs", ":%s/<C-n>")
 
 -- Jump prev file
