@@ -21,7 +21,7 @@ XF86AudioMicMute
 	pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 # Decrease screen brightness
-XF86MonBrightnessDown	
+XF86MonBrightnessDown
 	xbacklight -dec 5
 
 # Increase screen brightness
@@ -29,13 +29,18 @@ XF86MonBrightnessUp
 	xbacklight -inc 5
 
 # terminal emulator
-# Set static scalefactor 
+# Set static scalefactor
 super + Return
-	WINIT_X11_SCALE_FACTOR=1 alacritty
+	WINIT_X11_SCALE_FACTOR=1 $TERMINAL
+
+#Open new terminal with tmux
+super + shift + Return
+	WINIT_X11_SCALE_FACTOR=1 $TERMINAL -e tmux a || tmux
 
 #browser
 super + b
-	qutebrowser
+	$BROWSER
+
 #lock the screen
 super + ctrl + l
 	betterlockscreen -l
@@ -127,7 +132,7 @@ super + ctrl + {h,j,k,l}
 
 # preselect the ratio
 super + ctrl + {1-9}
-	bspc node -o 0.{1-9} 
+	bspc node -o 0.{1-9}
 
 # cancel the preselection for the focused node
 super + ctrl + space
