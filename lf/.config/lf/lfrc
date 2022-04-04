@@ -107,7 +107,7 @@ cmd fzf_jump ${{
 }}
 cmd fzf_search ${{
     res="$( \
-        RG_PREFIX="rg --column --line-number --no-heading --color=always \
+        RG_PREFIX="rga --column --line-number --no-heading --color=always \
             --smart-case "
         FZF_DEFAULT_COMMAND="$RG_PREFIX ''" \
             fzf --bind "change:reload:$RG_PREFIX {q} || true" \
@@ -116,7 +116,6 @@ cmd fzf_search ${{
     )"
     [ ! -z "$res" ] && lf -remote "send $id select \"$res\""
 }}
-
 
 cmd open_directory ${{ $EDITOR $OLDPWD}}
 
