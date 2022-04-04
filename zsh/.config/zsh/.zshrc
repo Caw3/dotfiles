@@ -38,11 +38,10 @@ bindkey '^p' up-history
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git svn
 # This line obtains information from the vcs.
-zstyle ':vcs_info:git*' formats "%F{#6c6c6c}%b "
+zstyle ':vcs_info:git*' formats "%F{white}%b%f "
 precmd() { vcs_info }
 
 # Enable substitution in the prompt.
 setopt prompt_subst
 
-PROMPT="%F{#6c6c6c}%n@%m%f %F{#569CD6}%~%f "
-PROMPT+='${vcs_info_msg_0_}'
+PROMPT='%F{green}%n@%m%f %F{blue}%~%f ${vcs_info_msg_0_}'
