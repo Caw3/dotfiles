@@ -69,7 +69,6 @@ cmp.setup({
 			return vim_item
 		end,
 	},
-	documentation = {},
 })
 
 cmp.setup.cmdline("/", {
