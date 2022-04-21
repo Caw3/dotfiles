@@ -1,5 +1,5 @@
 -- Settings
-vim.o.shell = "/bin/zsh"
+vim.o.shell = "/bin/bash"
 vim.cmd("set termguicolors")
 vim.cmd("set scl=yes")
 
