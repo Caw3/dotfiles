@@ -5,6 +5,13 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+duckduckgo () {
+	input=$*
+	url="${input// /+}"
+	w3m "https://duckduckgo.com/lite?q=$url"
+}
+alias "?"=duckduckgo
+
 ## Prompt
 function parse_git_dirty {
   [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo "*"
@@ -66,5 +73,29 @@ alias lf="clear;lf"
 bind "\C-e":edit-and-execute-command
 
 # FZF
+OPTIONS="--reverse --preview='cat {}' --preview-window=hidden "
+
+BINDS="\
+--bind '?:toggle-preview' \
+--bind 'ctrl-d:preview-half-page-down' \
+--bind 'ctrl-u:preview-half-page-up' \
+--bind 'ctrl-a:select-all'"
+
+COLORS=" --color='\
+bg:-1,\
+bg+:-1,\
+fg:white,\
+fg+:white,\
+info:magenta,\
+marker:magenta,\
+pointer:blue,\
+header:magenta,\
+spinner:magenta,\
+hl:cyan,\
+hl+:cyan,\
+prompt:bright-black'"
+
+export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
+export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git" -g "!node_modules"'
 [[ -f /usr/share/fzf/completion.bash ]] && . /usr/share/fzf/completion.bash
 [[ -f /usr/share/fzf/key-bindings.bash ]] && . /usr/share/fzf/key-bindings.bash
