@@ -41,6 +41,7 @@ bind "set completion-ignore-case on"
 set -o vi
 
 # Exports
+export VISUAL='vim'
 export BASHDIR=$HOME/.config/bash
 export TERMINAL='alacritty'
 export MANPAGER='nvim +Man!'

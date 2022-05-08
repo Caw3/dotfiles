@@ -35,7 +35,7 @@ super + Return
 
 #Open new terminal with tmux
 super + shift + Return
-	WINIT_X11_SCALE_FACTOR=1 $TERMINAL -e tmux a || tmux
+	WINIT_X11_SCALE_FACTOR=1 $TERMINAL -e tmux
 
 #browser
 super + b
