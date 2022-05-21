@@ -17,9 +17,8 @@ return require("packer").startup(function(use)
 
 	--Autocompletion and Workflow
 	use({ "tpope/vim-surround" })
-	use({ "tpope/vim-endwise", ft = { "ruby", "lua", "haskell", "zsh", "bash" } })
-	use({ "wellle/targets.vim" })
-	use({ "terrortylor/nvim-comment", config = [[require("config.nvim-comment")]] })
+	use({ "tpope/vim-commentary" })
+	use({ "tpope/vim-endwise", ft = { "ruby", "lua", "haskell", "bash" } })
 	use({ "L3MON4D3/LuaSnip" })
 	use({ "rafamadriz/friendly-snippets", config = [[require('config.snippets')]], after = "LuaSnip" })
 	-- CMP
@@ -28,9 +27,7 @@ return require("packer").startup(function(use)
 	use({ "hrsh7th/cmp-path", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-cmdline", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-nvim-lsp", after = "nvim-cmp" })
-	use({ "ray-x/cmp-treesitter", after = "nvim-cmp" })
 	use({ "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" })
-	use({ "kdheepak/cmp-latex-symbols", ft = { "tex" }, after = "nvim-cmp" })
 	use({ "windwp/nvim-autopairs", config = [[require('config.autopairs')]], after = "nvim-cmp" })
 
 	--LSP
@@ -44,7 +41,6 @@ return require("packer").startup(function(use)
 
 	--Treesitter
 	use({ "nvim-treesitter/nvim-treesitter", config = [[require('config.treesitter')]], run = ":TSUpdate" })
-	use({ "nvim-treesitter/nvim-treesitter-textobjects", after = "nvim-treesitter" })
 
 	--Cosmetic
 	use({ "nvim-lualine/lualine.nvim", config = [[require('config.lualine')]] })
@@ -63,11 +59,6 @@ return require("packer").startup(function(use)
 	use({ "junegunn/fzf.vim" })
 	use({ "elihunter173/dirbuf.nvim" })
 	use({
-		"kyazdani42/nvim-tree.lua",
-		cmd = { "NvimTreeToggle", "NvimTreeFindFile" },
-		config = [[require('config.nvim-tree')]],
-	})
-	use({
 		"nvim-telescope/telescope.nvim",
 		config = [[require('config.telescope')]],
 		requires = { { "nvim-lua/plenary.nvim" } },
@@ -85,6 +76,7 @@ return require("packer").startup(function(use)
 
 	--Filetypes
 	use({ "lervag/vimtex", ft = { "tex" } })
+	use({ "kdheepak/cmp-latex-symbols", ft = { "tex" }, after = "nvim-cmp" })
 	-- use({ "goerz/jupytext.vim", config = [[require('config.ipynb')]] })
 	-- use({ "bfredl/nvim-ipy", ft = { "python" } })
 

@@ -52,7 +52,6 @@ cmp.setup({
 	sources = cmp.config.sources({
 		{ name = "luasnip", max_item_count = 3, group_index = 0, keyword_length = 2 },
 		{ name = "nvim_lsp", max_item_count = 5, group_index = 1, keyword_length = 2 },
-		{ name = "treesitter", max_item_count = 3, group_index = 3, keyword_length = 3 },
 		{ name = "latex_symbols", max_item_count = 3, group_index = 3, keyword_length = 3 },
 		{ name = "buffer", max_item_count = 3, group_index = 4, keyword_length = 4 },
 		{ name = "path", max_item_count = 10 },

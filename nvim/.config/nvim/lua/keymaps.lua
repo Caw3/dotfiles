@@ -2,42 +2,6 @@ vim.g.mapleader = " "
 
 local utils = require("utils.map")
 
---Tab navigation
-utils.nmap("<leader>1", "1gt")
-utils.nmap("<leader>2", "2gt")
-utils.nmap("<leader>3", "3gt")
-utils.nmap("<leader>4", "4gt")
-utils.nmap("<leader>5", "5gt")
-utils.nmap("<leader>6", "6gt")
-utils.nmap("<leader>7", "7gt")
-utils.nmap("<leader>8", "8gt")
-
-utils.nmap("<leader><tab>n", ":tabnew <CR>")
-utils.nmap("<leader><tab>c", ":tabclose <CR>")
-utils.nmap("<leader><tab>o", ":tabo <CR>")
-utils.nmap("<leader><tab>r", "<cmd>lua require('tabline.actions').set_tabname()<CR>")
-
---Buffer movement
-utils.nmap("<leader>l", "<c-w>l")
-utils.nmap("<leader>h", "<c-w>h")
-utils.nmap("<leader>k", "<c-w>k")
-utils.nmap("<leader>j", "<c-w>j")
-utils.nmap("<leader>wq", "<c-w>q")
-utils.nmap("<leader>wo", "<c-w><c-o>")
-utils.nmap("<leader>wv", "<c-w>v")
-utils.nmap("<leader>ws", "<c-w>s")
-utils.nmap("<leader>wx", "<c-w>x")
-utils.nmap("<leader>we", "<c-w>=")
-utils.nmap("<leader>wt", "<c-w>T")
-utils.nmap("<leader>w+", "<c-w>+")
-utils.nmap("<leader>w-", "<c-w>-")
-utils.nmap("<leader>w<", "<c-w<")
-utils.nmap("<leader>w>", "<c-w>")
-utils.nmap("<leader>wL", "<c-w>L")
-utils.nmap("<leader>wH", "<c-w>H")
-utils.nmap("<leader>wK", "<c-w>K")
-utils.nmap("<leader>wJ", "<c-w>J")
-
 --Quicklists
 utils.nmap("<leader>co", ":copen <CR>")
 utils.nmap("<leader>cn", ":cn <CR>")
@@ -95,11 +59,6 @@ utils.nmap("<leader>f:", ":Commands <CR>")
 utils.nmap("<leader>fl", ":Telescope current_buffer_fuzzy_find <CR>")
 utils.nmap("<leader>fm", ":Maps <CR>")
 
---tree
-utils.nmap("<leader>tt", ":NvimTreeToggle <CR>")
-utils.nmap("<leader>tf", ":NvimTreeFindFile <CR>")
-utils.nmap("<leader>tr", ":NvimTreeRefresh <CR>")
-
 --Git
 utils.nmap("<leader>gc", ":Commits <CR>")
 utils.nmap("<leader>gs", ":vert Git | vertical resize 80 <CR>")
@@ -119,17 +78,13 @@ utils.nmap("<leader>gtd", ":Gitsigns toggle_deleted<CR>")
 utils.omap("ih", ":<C-U>Gitsigns select_hunk<CR>")
 utils.xmap("ih", ":<C-U>Gitsigns select_hunk<CR>")
 
---Terminal
-utils.tmap("<C-e>", [[<C-\><C-n>]])
-utils.nmap("<leader>;", ":sp<CR>:term<CR>:resize 15<CR>:set nonu<CR>:set norelativenumber<CR>i")
-
 -- Juptext
-utils.nmap(
-	"<leader>pqt",
-	':call jobstart("jupyter qtconsole --JupyterWidget.include_other_output=True --style native")<CR>'
-)
-utils.nmap("<leader>pqk", ":IPython --existing --no-window <CR>")
-utils.nmap("<leader>pk", ":IPython<CR><C-w>H")
-utils.nmap("<leader>pc", ":call IPyRunCell()<CR>")
-vim.cmd("nmap <leader>pa <Plug>(IPy-RunAll)")
-vim.cmd("nmap <leader>pt <Plug>(IPy-Terminate)")
+-- utils.nmap(
+-- 	"<leader>pqt",
+-- 	':call jobstart("jupyter qtconsole --JupyterWidget.include_other_output=True --style native")<CR>'
+-- )
+-- utils.nmap("<leader>pqk", ":IPython --existing --no-window <CR>")
+-- utils.nmap("<leader>pk", ":IPython<CR><C-w>H")
+-- utils.nmap("<leader>pc", ":call IPyRunCell()<CR>")
+-- vim.cmd("nmap <leader>pa <Plug>(IPy-RunAll)")
+-- vim.cmd("nmap <leader>pt <Plug>(IPy-Terminate)")
