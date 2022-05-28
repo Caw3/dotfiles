@@ -17,6 +17,7 @@ return require("packer").startup(function(use)
 
 	--Autocompletion and Workflow
 	use({ "tpope/vim-surround" })
+	use({ "tpope/vim-repeat" })
 	use({ "tpope/vim-commentary" })
 	use({ "tpope/vim-endwise", ft = { "ruby", "lua", "haskell", "bash" } })
 	use({ "L3MON4D3/LuaSnip" })
@@ -43,7 +44,6 @@ return require("packer").startup(function(use)
 	use({ "nvim-treesitter/nvim-treesitter", config = [[require('config.treesitter')]], run = ":TSUpdate" })
 
 	--Cosmetic
-	use({ "nvim-lualine/lualine.nvim", config = [[require('config.lualine')]] })
 	use({ "tomasiser/vim-code-dark" })
 	use({ "norcalli/nvim-colorizer.lua", config = [[require('config.colorizer')]] })
 

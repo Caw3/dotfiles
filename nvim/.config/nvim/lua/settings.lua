@@ -40,9 +40,23 @@ vim.cmd("highlight clear SignColumn")
 vim.cmd("hi EndOfBuffer guifg=#1E1E1E")
 vim.cmd("se cursorline")
 vim.cmd("hi clear cursorline")
+vim.o.laststatus=1
+
 
 -- Highlights
 vim.cmd([[
+set ruf=
+set ruf +=%35(%=%#LineNr#%.50F\%m\ [%{strlen(&ft)?&ft:'none'}]\ %l:%c\ %P%)
+
+set statusline=
+set statusline +=\ %F
+set statusline +=\%m
+set statusline +=\ [%{strlen(&ft)?&ft:'none'}]
+
+set statusline +=\ %=%l:%c
+set statusline +=\ %P
+
+
 hi DiffAdd guibg=#1e1e1e guifg=#608B4E
 hi DiffDelete guibg=#1e1e1e guifg=#F44747
 hi DiffChange guibg=#1e1e1e guifg=#C586C0
