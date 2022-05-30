@@ -1,49 +1,38 @@
-let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
-if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
-call plug#begin(data_dir . '/vim-plug')
-
-Plug 'junegunn/vim-plug'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'airblade/vim-rooter'
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-endwise'
-Plug 'raimondi/delimitmate'
-Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
-Plug 'tomasiser/vim-code-dark'
-Plug 'lervag/vimtex', { 'for': 'latex'}
-
-call plug#end()
-
 "General
+filetype plugin indent on
+set nocompatible
+set nofixendofline
+set autoread
+set mouse=a
+set ttyfast
+
+set wildmenu
+set wildoptions="pum,tagfile"
+
 set shiftwidth=4
 set tabstop=4
-filetype plugin indent on
-set hidden
-set nocompatible
-set noswapfile
-set smartindent
+set expandtab
+set smarttab
 set autoindent
+set smartindent
+set textwidth=72
+set nowrap
+
+set hidden
+set history=100
+set noswapfile
 set undofile 
 set backup
-set nowrap
+
 set splitbelow
 set splitright
 set scrolloff=8
+set nu
+
 set incsearch
 set ignorecase
 set smartcase
 set nohlsearch
-set scl=yes
-set nu
 
 "Cosmetic
 set ruf=
@@ -51,66 +40,99 @@ set ruf +=%35(%=%#LineNr#%.50F\%m\ [%{strlen(&ft)?&ft:'none'}]\ %l:%c\ %P%)
 
 set laststatus=1
 set statusline=
-set statusline +=\ %F
+set statusline +=\ %4F
 set statusline +=\%m
 set statusline +=\ [%{strlen(&ft)?&ft:'none'}]
-
 set statusline +=\ %=%l:%c
-set statusline +=\ %P
+set statusline +=\ %-4P
 
-set termguicolors
-set term=xterm-256color
 set background=dark
-colorscheme codedark
-highlight clear SignColumn
-hi EndOfBuffer guifg=#1E1E1E
-hi DiffAdd guibg=#1e1e1e guifg=#608B4E
-hi DiffDelete guibg=#1e1e1e guifg=#F44747
-hi DiffChange guibg=#1e1e1e guifg=#C586C0
-" hi TabLineFill guibg=#1e1e1e
-hi StatusLine guibg=#252526
-hi! link GitSignsAdd DiffAdd
-hi! link GitSignsChange DiffChange
-hi! link GitSignsDelete DiffDelete
-hi! link ModeMsg Normal
+syntax enable
 
+"Keymaps
 map <Space> <Leader>
-map <C-p> <C-^>
-"FZF keybind
-nnoremap <Leader>fR :Files ~<CR>
-nnoremap <Leader>ff :Files <CR>
-nnoremap <Leader>fp :GitFiles <CR>
-nnoremap <Leader>fg :Rg .<CR>
-nnoremap <Leader>fH :Help <CR>
-nnoremap <Leader>fb :Buffers <CR>
-nnoremap <Leader>fo :History <CR>
-nnoremap <Leader>f: :History: <CR>
-nnoremap <Leader>fl :BLines <CR>
-nnoremap <Leader>gc :Commits <CR>
-nnoremap <Leader>fm :Maps <CR>
 
-let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.4, 'yoffset': 1.0, 'border': 'top' } }
+nnoremap <C-p> <C-^>
+nnoremap <Leader>rs :%s/
+nnoremap <Leader>rr <cmd>source % <CR><cmd><CR>
 
-let g:fzf_buffers_jump = 1
-
-function! s:build_quickfix_list(lines)
-  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-  copen
-  cc
-endfunction
-
-let g:fzf_action = {
-  \ 'ctrl-q': function('s:build_quickfix_list'),
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-v': 'vsplit' }
+nnoremap <Leader>co <cmd>copen<CR><cmd><CR>
+nnoremap <Leader>cc <cmd>cclose<CR><cmd><CR>
+nnoremap <Leader>cn <cmd>cnext<CR><cmd><CR>
+nnoremap <Leader>cp <cmd>cprev<CR><cmd><CR>
 
 
-"Git
-nnoremap <Leader>gs :vert Git <CR> vertical resize 80 <CR> 
-nnoremap <Leader>gb :G blame <CR>
-nnoremap <Leader>gv :Gvdiffsplit <CR>
+"Plugins
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall
+endif
 
-"Vim-plug
-nnoremap <Leader>pi :PlugInstall<CR>
-nnoremap <Leader>pu :PlugUpdate<CR>
+if filereadable(expand("~/.vim/autoload/plug.vim"))
+    call plug#begin('~/.vim/vim-plug')
+    Plug 'junegunn/vim-plug'
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
+    Plug 'airblade/vim-rooter'
+    Plug 'christoomey/vim-tmux-navigator'
+    Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-repeat'
+    Plug 'tpope/vim-commentary'
+    Plug 'tpope/vim-endwise'
+    Plug 'raimondi/delimitmate'
+    Plug 'tpope/vim-fugitive'
+    Plug 'tomasiser/vim-code-dark'
+    Plug 'lervag/vimtex', { 'for': 'latex'}
+    call plug#end()
+
+    "FZF
+    nnoremap <Leader>fR :Files ~<CR>
+    nnoremap <Leader>ff :Files <CR>
+    nnoremap <Leader>fp :GitFiles <CR>
+    nnoremap <Leader>fg :Rg .<CR>
+    nnoremap <Leader>fH :Help <CR>
+    nnoremap <Leader>fb :Buffers <CR>
+    nnoremap <Leader>fo :History <CR>
+    nnoremap <Leader>f: :History: <CR>
+    nnoremap <Leader>fl :BLines <CR>
+    nnoremap <Leader>gc :Commits <CR>
+    nnoremap <Leader>fm :Maps <CR>
+
+    noremap <Leader>fc :Files ~/.dotfiles<CR>
+
+    let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.4, 'yoffset': 1.0, 'border': 'top' } }
+
+    let g:fzf_buffers_jump = 1
+
+    function! s:build_quickfix_list(lines)
+      call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+      copen
+      cc
+    endfunction
+
+    let g:fzf_action = {
+      \ 'ctrl-q': function('s:build_quickfix_list'),
+      \ 'ctrl-t': 'tab split',
+      \ 'ctrl-x': 'split',
+      \ 'ctrl-v': 'vsplit' }
+
+    "Fugitive
+    nnoremap <Leader>gs :vert Git \|vertical resize 80 <CR>
+    nnoremap <Leader>gb :G blame <CR>
+    nnoremap <Leader>gv :Gvdiffsplit <CR>
+
+    "Vim-plug
+    nnoremap <Leader>pi :PlugInstall<CR>
+    nnoremap <Leader>pu :PlugUpdate<CR>
+
+    "Set colorsheme if installed
+    colorscheme codedark
+endif
+
+"Highlights
+hi Normal ctermbg=NONE guibg=NONE
+hi EndOfBuffer ctermbg=NONE guibg=NONE
+hi SignColumn ctermbg=NONE guibg=NONE
+hi LineNr ctermbg=NONE guibg=NONE
+hi! link ModeMsg Normal
