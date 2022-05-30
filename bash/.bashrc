@@ -5,13 +5,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-duckduckgo () {
-	input=$*
-	url="${input// /+}"
-	w3m "https://duckduckgo.com/lite?q=$url"
-}
-alias "?"=duckduckgo
-
 ## Prompt
 function parse_git_dirty {
   [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo "*"
@@ -42,9 +35,9 @@ set -o vi
 
 # Exports
 export VISUAL='vim'
+export MANPAGER="vim -M +MANPAGER -"
 export BASHDIR=$HOME/.config/bash
 export TERMINAL='alacritty'
-export MANPAGER='nvim +Man!'
 export EDITOR='nvim'
 export BROWSER='qutebrowser'
 
@@ -69,9 +62,11 @@ alias pm="pulsemixer"
 alias ta="tmux a"
 alias tm="tmux"
 alias lf="clear;lf"
+alias emacs="emacsclient -c -a 'emacs'" 
 
 # Bindings
 bind "\C-e":edit-and-execute-command
+bind "\C-l":clear-screen
 
 # FZF
 OPTIONS="--reverse --preview='cat {}' --preview-window=hidden "
