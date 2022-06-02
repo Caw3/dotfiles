@@ -46,6 +46,7 @@ set statusline +=\ [%{strlen(&ft)?&ft:'none'}]
 set statusline +=\ %=%l:%c
 set statusline +=\ %-4P
 
+set fillchars=vert:\│
 set background=dark
 syntax enable
 
