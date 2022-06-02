@@ -64,7 +64,7 @@ nnoremap <Leader>cp <cmd>cprev<CR><cmd><CR>
 
 "Plugins
 if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
 endif
@@ -82,7 +82,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-endwise'
     Plug 'raimondi/delimitmate'
     Plug 'tpope/vim-fugitive'
-    Plug 'tomasiser/vim-code-dark'
+    Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
     Plug 'lervag/vimtex', { 'for': 'latex'}
     call plug#end()
 
@@ -125,9 +125,10 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     "Vim-plug
     nnoremap <Leader>pi :PlugInstall<CR>
     nnoremap <Leader>pu :PlugUpdate<CR>
+    nnoremap <Leader>pl :PlugStatus<CR>
 
     "Set colorsheme if installed
-    colorscheme codedark
+    silent! colorscheme codedark
 endif
 
 "Highlights
