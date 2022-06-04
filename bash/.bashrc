@@ -6,10 +6,10 @@
 [[ $- != *i* ]] && return
 
 ## Prompt
-function parse_git_dirty {
+parse_git_dirty() {
   [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo "*"
 }
-function parse_git_branch {
+parse_git_branch() {
   git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty)) /"
 }
 
@@ -35,14 +35,12 @@ set -o vi
 
 # Exports
 export VISUAL='vim'
+export EDITOR='vim'
 export MANPAGER="vim -M +MANPAGER -"
-export BASHDIR=$HOME/.config/bash
 export TERMINAL='alacritty'
-export EDITOR='nvim'
 export BROWSER='qutebrowser'
 
 # Aliases
-
 alias nv=nvim
 alias py=python3
 alias grep='grep --color=auto'
@@ -63,10 +61,6 @@ alias ta="tmux a"
 alias tm="tmux"
 alias lf="clear;lf"
 alias emacs="emacsclient -c -a 'emacs'" 
-
-# Bindings
-bind "\C-e":edit-and-execute-command
-bind "\C-l":clear-screen
 
 # FZF
 OPTIONS="--reverse --preview='cat {}' --preview-window=hidden "
@@ -92,6 +86,9 @@ hl+:cyan,\
 prompt:bright-black'"
 
 export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
+command -v rg > /dev/null && \
 export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git" -g "!node_modules"'
+
+
 [[ -f /usr/share/fzf/completion.bash ]] && . /usr/share/fzf/completion.bash
 [[ -f /usr/share/fzf/key-bindings.bash ]] && . /usr/share/fzf/key-bindings.bash

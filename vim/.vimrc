@@ -7,7 +7,7 @@ set mouse=a
 set ttyfast
 
 set wildmenu
-set wildoptions="pum,tagfile"
+set wildoptions="fuzzy,pum,tagfile"
 
 set shiftwidth=4
 set tabstop=4
@@ -80,12 +80,27 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
-    Plug 'tpope/vim-endwise'
+    Plug 'tpope/vim-endwise', { 'for' : ['lua','ruby','bash','haskell'] }
     Plug 'raimondi/delimitmate'
     Plug 'tpope/vim-fugitive'
     Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
-    Plug 'lervag/vimtex', { 'for': 'latex'}
+    Plug 'lervag/vimtex', { 'for': 'latex' }
+    Plug 'dense-analysis/ale', { 'on' : 'ALEToggle' }
+    Plug 'tweekmonster/startuptime.vim', { 'on': 'StartupTime' }
     call plug#end()
+
+    "ALE
+    nnoremap <Leader>cs <Cmd>ALEToggle<CR>
+    nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
+    nnoremap <Leader>cr <Cmd>ALEFix<CR>
+    nnoremap <Leader>ci <Cmd>ALEHover<CR>
+    nnoremap <Leader>rn <Cmd>ALERename<CR>
+    nnoremap <silent> <Leader>dp <Plug>(ale_previous_wrap)
+    nnoremap <silent> <Leader>dn <Plug>(ale_next_wrap)
+    let g:ale_enabled = 0
+    let g:ale_sign_column_always = 1
+    let g:ale_set_loclist = 0
+    let g:ale_set_quickfix = 1
 
     "FZF
     nnoremap <Leader>fR :Files ~<CR>
@@ -99,12 +114,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>fl :BLines <CR>
     nnoremap <Leader>gc :Commits <CR>
     nnoremap <Leader>fm :Maps <CR>
-
     noremap <Leader>fc :Files ~/.dotfiles<CR>
-
     let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.4, 'yoffset': 1.0, 'border': 'top' } }
-
-    let g:fzf_buffers_jump = 1
+    let g:fzf_buffers_jump = 0
 
     function! s:build_quickfix_list(lines)
       call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -119,7 +131,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
       \ 'ctrl-v': 'vsplit' }
 
     "Fugitive
-    nnoremap <Leader>gs :vert Git \|vertical resize 80 <CR>
+    nnoremap <silent> <Leader>gs :vert Git \|vertical resize 80 <CR>
     nnoremap <Leader>gb :G blame <CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
 
@@ -128,9 +140,10 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>pu :PlugUpdate<CR>
     nnoremap <Leader>pl :PlugStatus<CR>
 
-    "Set colorsheme if installed
-    silent! colorscheme codedark
 endif
+
+"Set colorsheme if installed
+silent! colorscheme codedark
 
 "Highlights
 hi Normal ctermbg=NONE guibg=NONE
