@@ -36,7 +36,7 @@ set nohlsearch
 
 "Cosmetic
 set ruf=
-set ruf +=%35(%=%#LineNr#%.50F\%m\ [%{strlen(&ft)?&ft:'none'}]\ %l:%c\ %P%)
+set ruf +=%45(%=%#LineNr#%.50F\%m\ [%{strlen(&ft)?&ft:'none'}]\ %l:%c\ %P%)
 
 set laststatus=1
 set statusline=
@@ -90,14 +90,18 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     call plug#end()
 
     "ALE
-    nnoremap <Leader>cs <Cmd>ALEToggle<CR>
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
     nnoremap <Leader>cr <Cmd>ALEFix<CR>
-    nnoremap <Leader>ci <Cmd>ALEHover<CR>
     nnoremap <Leader>rn <Cmd>ALERename<CR>
+    nnoremap <Leader>K <Cmd>ALEHover<CR>
+    nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
+    nnoremap <Leader>gr <Cmd>ALEFindReferences<CR>
+    nnoremap <Leader>ds <Cmd>ALEToggle<CR>
     nnoremap <silent> <Leader>dp <Plug>(ale_previous_wrap)
     nnoremap <silent> <Leader>dn <Plug>(ale_next_wrap)
     let g:ale_enabled = 0
+    let g:ale_hover_cursor = 0
+    let g:ale_set_highlights = 0
     let g:ale_sign_column_always = 1
     let g:ale_set_loclist = 0
     let g:ale_set_quickfix = 1
@@ -115,8 +119,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>gc :Commits <CR>
     nnoremap <Leader>fm :Maps <CR>
     noremap <Leader>fc :Files ~/.dotfiles<CR>
-    let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.4, 'yoffset': 1.0, 'border': 'top' } }
-    let g:fzf_buffers_jump = 0
 
     function! s:build_quickfix_list(lines)
       call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -124,11 +126,18 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
       cc
     endfunction
 
+    let g:fzf_buffers_jump = 0
+    let g:fzf_layout = {
+        \ 'window': {
+            \ 'width': 1.0,
+            \ 'height': 0.4,
+            \ 'yoffset': 1.0,
+            \ 'border': 'top' } }
     let g:fzf_action = {
-      \ 'ctrl-q': function('s:build_quickfix_list'),
-      \ 'ctrl-t': 'tab split',
-      \ 'ctrl-x': 'split',
-      \ 'ctrl-v': 'vsplit' }
+        \ 'ctrl-q': function('s:build_quickfix_list'),
+        \ 'ctrl-t': 'tab split',
+        \ 'ctrl-x': 'split',
+        \ 'ctrl-v': 'vsplit' }
 
     "Fugitive
     nnoremap <silent> <Leader>gs :vert Git \|vertical resize 80 <CR>
