@@ -20,7 +20,7 @@ HISTSIZE=1000000
 SAVEHIST=1000000
 HISTFILE=~/.cache/.bash_history
 
-### SHOPT
+# ### SHOPT
 shopt -s autocd
 shopt -s cdspell
 shopt -s cmdhist
@@ -30,8 +30,13 @@ shopt -s extglob
 shopt -s histappend
 shopt -s expand_aliases
 shopt -s checkwinsize
-bind "set completion-ignore-case on"
+
 set -o vi
+bind -m vi-command 'Control-l: clear-screen'
+bind -m vi-command 'Control-e: edit-and-execute-command'
+
+bind -m vi-insert 'Control-l: clear-screen'
+bind -m vi-insert 'Control-e: edit-and-execute-command'
 
 # Exports
 export VISUAL='vim'
@@ -41,16 +46,12 @@ export TERMINAL='alacritty'
 export BROWSER='qutebrowser'
 
 # Aliases
-alias nv=nvim
 alias py=python3
-alias grep='grep --color=auto'
-alias ls='ls --color'
 alias la='ls -a'
+alias ll='ls -l'
 alias cp="cp -i"
 alias mv='mv -i'
 alias rm='rm -i'
-alias psmem='ps auxf | sort -nr -k 4 | head -5'
-alias pscpu='ps auxf | sort -nr -k 3 | head -5'
 alias gP='git push'
 alias gp='git pull'
 alias gs='git status -s'
@@ -88,7 +89,6 @@ prompt:bright-black'"
 export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
 command -v rg > /dev/null && \
 export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git" -g "!node_modules"'
-
 
 [[ -f /usr/share/fzf/completion.bash ]] && . /usr/share/fzf/completion.bash
 [[ -f /usr/share/fzf/key-bindings.bash ]] && . /usr/share/fzf/key-bindings.bash
