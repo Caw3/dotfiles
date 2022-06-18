@@ -4,6 +4,7 @@ set nocompatible
 set nofixendofline
 set autoread
 set mouse=a
+set ttimeoutlen=0
 set ttyfast
 
 set wildmenu
@@ -12,9 +13,10 @@ set wildoptions="fuzzy,pum,tagfile"
 set shiftwidth=4
 set tabstop=4
 set expandtab
-set smarttab
 set autoindent
 set smartindent
+set cindent
+
 set textwidth=72
 set nowrap
 
@@ -26,6 +28,7 @@ set backup
 
 set splitbelow
 set splitright
+
 set scrolloff=8
 set nu
 
@@ -70,6 +73,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
     autocmd VimEnter * PlugInstall
 endif
 
+
 if filereadable(expand("~/.vim/autoload/plug.vim"))
     call plug#begin('~/.vim/vim-plug')
     Plug 'junegunn/vim-plug'
@@ -81,7 +85,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-endwise', { 'for' : ['lua','ruby','bash','haskell'] }
-    Plug 'raimondi/delimitmate'
+    Plug 'jiangmiao/auto-pairs'
     Plug 'tpope/vim-fugitive'
     Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
     Plug 'lervag/vimtex', { 'for': 'latex' }
@@ -105,6 +109,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     let g:ale_sign_column_always = 1
     let g:ale_set_loclist = 0
     let g:ale_set_quickfix = 1
+
+    "Autopairs
+    let g:AutoPairsCenterLine = 0
 
     "FZF
     nnoremap <Leader>fR :Files ~<CR>
