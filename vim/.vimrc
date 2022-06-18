@@ -22,9 +22,7 @@ set nowrap
 
 set hidden
 set history=100
-set noswapfile
-set undofile 
-set backup
+set nobk nowb noswf noudf 
 
 set splitbelow
 set splitright
@@ -89,18 +87,28 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-fugitive'
     Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
     Plug 'lervag/vimtex', { 'for': 'latex' }
-    Plug 'dense-analysis/ale', { 'on' : 'ALEToggle' }
+    Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
     Plug 'tweekmonster/startuptime.vim', { 'on': 'StartupTime' }
     call plug#end()
 
     "ALE
+    function! ToggleAle()
+        execute 'ALEToggle'
+        if g:ale_enabled
+            set scl=yes
+        else
+            set scl=no
+        endif
+    endfunction
+
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
     nnoremap <Leader>cr <Cmd>ALEFix<CR>
     nnoremap <Leader>rn <Cmd>ALERename<CR>
     nnoremap <Leader>K <Cmd>ALEHover<CR>
     nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
     nnoremap <Leader>gr <Cmd>ALEFindReferences<CR>
-    nnoremap <Leader>ds <Cmd>ALEToggle<CR>
+    nnoremap <Leader>di <Cmd>ALEDetail<CR>
+    nnoremap <Leader>ds <Cmd>call ToggleAle()<CR>
     nnoremap <silent> <Leader>dp <Plug>(ale_previous_wrap)
     nnoremap <silent> <Leader>dn <Plug>(ale_next_wrap)
     let g:ale_enabled = 0
@@ -155,6 +163,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>pi :PlugInstall<CR>
     nnoremap <Leader>pu :PlugUpdate<CR>
     nnoremap <Leader>pl :PlugStatus<CR>
+    nnoremap <Leader>pc :PlugClean<CR>
 
 endif
 
