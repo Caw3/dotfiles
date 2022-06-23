@@ -83,12 +83,13 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-endwise', { 'for' : ['lua','ruby','bash','haskell'] }
-    Plug 'jiangmiao/auto-pairs'
     Plug 'tpope/vim-fugitive'
     Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
     Plug 'lervag/vimtex', { 'for': 'latex' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
     Plug 'tweekmonster/startuptime.vim', { 'on': 'StartupTime' }
+    Plug 'jiangmiao/auto-pairs'
+    Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
     call plug#end()
 
     "ALE
