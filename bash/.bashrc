@@ -18,7 +18,6 @@ export PS1='\e[32m\u@\h\e[0m \e[34m\w\e[0m $(parse_git_branch)'
 ## HIST
 HISTSIZE=1000000
 SAVEHIST=1000000
-HISTFILE=~/.cache/.bash_history
 
 # ### SHOPT
 shopt -s autocd
@@ -32,18 +31,12 @@ shopt -s expand_aliases
 shopt -s checkwinsize
 
 set -o vi
-bind -m vi-command 'Control-l: clear-screen'
-bind -m vi-command 'Control-e: edit-and-execute-command'
-
-bind -m vi-insert 'Control-l: clear-screen'
-bind -m vi-insert 'Control-e: edit-and-execute-command'
 
 # Exports
-export VISUAL='vim'
 export EDITOR='vim'
 export MANPAGER="vim -M +MANPAGER -"
 export TERMINAL='alacritty'
-export BROWSER='qutebrowser'
+export BROWSER='firefox'
 
 # Aliases
 alias py=python3
@@ -52,15 +45,16 @@ alias ll='ls -l'
 alias cp="cp -i"
 alias mv='mv -i'
 alias rm='rm -i'
+alias gd='git diff'
+alias gc='git checkout'
+alias gb='git branch'
 alias gP='git push'
 alias gp='git pull'
 alias gs='git status -s'
 alias gl='git log --oneline --graph --abbrev-commit'
 alias battery='cat /sys/class/power_supply/BAT0/capacity'
-alias pm="pulsemixer"
 alias ta="tmux a"
 alias tm="tmux"
-alias lf="clear;lf"
 alias emacs="emacsclient -c -a 'emacs'" 
 
 # FZF
@@ -90,5 +84,5 @@ export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
 command -v rg > /dev/null && \
 export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git" -g "!node_modules"'
 
-[[ -f /usr/share/fzf/completion.bash ]] && . /usr/share/fzf/completion.bash
-[[ -f /usr/share/fzf/key-bindings.bash ]] && . /usr/share/fzf/key-bindings.bash
+# [[ -f /usr/share/fzf/completion.bash ]] && . /usr/share/fzf/completion.bash
+# [[ -f /usr/share/fzf/key-bindings.bash ]] && . /usr/share/fzf/key-bindings.bash
