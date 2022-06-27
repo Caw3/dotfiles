@@ -8,12 +8,14 @@
 ## Functions
 vimgrep() {
     HELP="Usage: vimgrep {pattern} {files}..." 
-    [[ $# -lt 1  ]] && echo "$HELP"; return 1
+    PATTERN=$1
+    [[ $# -lt 1  ]] && echo "$HELP" && return 1
     
     git status &> /dev/null && [[ $# -eq 1 ]] \
-        && exec vim -c "vimgrep /$1/g \`git ls-files\`"
-    [[ $# -eq 1  ]] && exec vim -c "vimgrep /$1/g  \`find .\`"
-    [[ $# -gt 1  ]] && exec vim -c "vimgrep /$1/g $*"
+        && vim -c "vimgrep /$PATTERN/g \`git ls-files\`" && return 0
+
+    [[ $# -eq 1  ]] && vim -c "vimgrep /$PATTERN/g  \`find .\`" && return 0
+    [[ $# -gt 1  ]] && shift && vim -c "vimgrep /$PATTERN/g $*" && return 0
 }
 export -f vimgrep
 
