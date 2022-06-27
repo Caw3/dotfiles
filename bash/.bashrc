@@ -5,6 +5,18 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+## Functions
+vimgrep() {
+    HELP="Usage: vimgrep {pattern} {files}..." 
+    [[ $# -lt 1  ]] && echo "$HELP"; return 1
+    
+    git status &> /dev/null && [[ $# -eq 1 ]] \
+        && exec vim -c "vimgrep /$1/g \`git ls-files\`"
+    [[ $# -eq 1  ]] && exec vim -c "vimgrep /$1/g  \`find .\`"
+    [[ $# -gt 1  ]] && exec vim -c "vimgrep /$1/g $*"
+}
+export -f vimgrep
+
 ## Prompt
 parse_git_dirty() {
   [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo "*"
@@ -19,7 +31,7 @@ export PS1='\e[32m\u@\h\e[0m \e[34m\w\e[0m $(parse_git_branch)'
 HISTSIZE=1000000
 SAVEHIST=1000000
 
-# ### SHOPT
+## SHOPT
 shopt -s autocd
 shopt -s cdspell
 shopt -s cmdhist
@@ -32,13 +44,13 @@ shopt -s checkwinsize
 
 set -o vi
 
-# Exports
+## Exports
 export EDITOR='vim'
 export MANPAGER="vim -M +MANPAGER -"
 export TERMINAL='alacritty'
 export BROWSER='firefox'
 
-# Aliases
+## Aliases
 alias py=python3
 alias la='ls -a'
 alias ll='ls -l'
@@ -57,7 +69,7 @@ alias ta="tmux a"
 alias tm="tmux"
 alias emacs="emacsclient -c -a 'emacs'" 
 
-# FZF
+## FZF
 OPTIONS="--reverse --preview='cat {}' --preview-window=hidden "
 
 BINDS="\
