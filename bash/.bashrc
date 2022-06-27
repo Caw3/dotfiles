@@ -19,6 +19,12 @@ vimgrep() {
 }
 export -f vimgrep
 
+cht() {
+    curl -s cht.sh/$1 | less -R
+}
+export -f cht
+
+
 ## Prompt
 parse_git_dirty() {
   [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo "*"
@@ -53,12 +59,13 @@ export TERMINAL='alacritty'
 export BROWSER='firefox'
 
 ## Aliases
-alias py=python3
+alias py='python3'
 alias la='ls -a'
 alias ll='ls -l'
 alias cp="cp -i"
 alias mv='mv -i'
 alias rm='rm -i'
+
 alias gd='git diff'
 alias gc='git checkout'
 alias gb='git branch'
@@ -66,10 +73,12 @@ alias gP='git push'
 alias gp='git pull'
 alias gs='git status -s'
 alias gl='git log --oneline --graph --abbrev-commit'
+
 alias battery='cat /sys/class/power_supply/BAT0/capacity'
 alias ta="tmux a"
 alias tm="tmux"
 alias emacs="emacsclient -c -a 'emacs'" 
+alias py='python3'
 
 ## FZF
 OPTIONS="--reverse --preview='cat {}' --preview-window=hidden "

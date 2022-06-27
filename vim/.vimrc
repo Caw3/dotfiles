@@ -16,8 +16,6 @@ set expandtab
 set autoindent
 set smartindent
 set cindent
-
-set textwidth=72
 set nowrap
 
 set hidden
