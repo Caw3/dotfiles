@@ -67,6 +67,9 @@ nnoremap <Leader>lc <cmd>lclose<CR><cmd><CR>
 nnoremap <Leader>ln <cmd>lnext<CR><cmd><CR>
 nnoremap <Leader>lp <cmd>lprev<CR><cmd><CR>
 
+nnoremap <silent> gr :vimgrep /<C-R><C-W>/g `git ls-files` \| copen<CR><CR>
+nnoremap gR :vimgrep /<C-R><C-W>/g
+
 "Plugins
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
@@ -141,7 +144,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>fl :BLines <CR>
     nnoremap <Leader>gc :Commits <CR>
     nnoremap <Leader>fm :Maps <CR>
-    noremap <Leader>fc :Files ~/.dotfiles<CR>
+    nnoremap <Leader>fc :Files ~/.dotfiles<CR>
 
     function! s:build_quickfix_list(lines)
       call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
