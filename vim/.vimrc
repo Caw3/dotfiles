@@ -62,6 +62,11 @@ nnoremap <Leader>cn <cmd>cnext<CR><cmd><CR>
 nnoremap <Leader>cp <cmd>cprev<CR><cmd><CR>
 
 
+nnoremap <Leader>lo <cmd>lopen<CR><cmd><CR>
+nnoremap <Leader>lc <cmd>lclose<CR><cmd><CR>
+nnoremap <Leader>ln <cmd>lnext<CR><cmd><CR>
+nnoremap <Leader>lp <cmd>lprev<CR><cmd><CR>
+
 "Plugins
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
@@ -88,6 +93,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tweekmonster/startuptime.vim', { 'on': 'StartupTime' }
     Plug 'jiangmiao/auto-pairs'
     Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
+    Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
     call plug#end()
 
     "ALE
@@ -105,17 +111,21 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>rn <Cmd>ALERename<CR>
     nnoremap <Leader>K <Cmd>ALEHover<CR>
     nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
-    nnoremap <Leader>gr <Cmd>ALEFindReferences<CR>
+    nnoremap <Leader>gt <Cmd>ALEGoToTypeDefinition<CR>
+    nnoremap <Leader>gi <Cmd>ALEGoToImplementation<CR>
+    nnoremap <Leader>gr <Cmd>ALEFindReferences -quickfix<CR><CMD>copen<CR>
+    nnoremap <Leader>ss :ALESymbolSearch 
     nnoremap <Leader>di <Cmd>ALEDetail<CR>
     nnoremap <Leader>ds <Cmd>call ToggleAle()<CR>
-    nnoremap <silent> <Leader>dp <Plug>(ale_previous_wrap)
-    nnoremap <silent> <Leader>dn <Plug>(ale_next_wrap)
+    nnoremap <Leader>dq <Cmd>ALEPopulateQuickfix<CR>
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
     let g:ale_sign_column_always = 1
-    let g:ale_set_loclist = 0
-    let g:ale_set_quickfix = 1
+    let g:ale_echo_msg_error_str = 'E'
+    let g:ale_echo_msg_warning_str = 'W'
+    let g:ale_echo_msg_format = '[%linter%][%severity%] %s '
+    set omnifunc=ale#completion#OmniFunc
 
     "Autopairs
     let g:AutoPairsCenterLine = 0
