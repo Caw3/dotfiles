@@ -18,10 +18,6 @@ set smartindent
 set cindent
 set nowrap
 
-set hidden
-set history=100
-set nobk nowb noswf noudf 
-
 set splitbelow
 set splitright
 
@@ -32,6 +28,20 @@ set incsearch
 set ignorecase
 set smartcase
 set nohlsearch
+
+set hidden
+set history=100
+set noswapfile
+set nobackup writebackup
+
+"Create Undo directory
+if has("unix")
+    if !isdirectory("/var/tmp/vim/undo")
+        call mkdir("/var/tmp/vim/undo", "p", 0700)
+    endif
+    set undodir=/var/tmp/vim/undo
+    set undofile
+endif
 
 "Cosmetic
 set ruf=
@@ -81,7 +91,6 @@ if empty(glob('~/.vim/autoload/plug.vim'))
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
 endif
-
 
 if filereadable(expand("~/.vim/autoload/plug.vim"))
     call plug#begin('~/.vim/vim-plug')
