@@ -35,7 +35,7 @@ set nohlsearch
 
 "Cosmetic
 set ruf=
-set ruf +=%45(%=%#LineNr#%.50F\%m\ [%{strlen(&ft)?&ft:'none'}]\ %l:%c\ %P%)
+set ruf +=%45(%=%#LineNr#%.50F\%m%r\ [%{strlen(&ft)?&ft:'none'}]\ %l:%c\ %P%)
 
 set laststatus=0
 set statusline=
