@@ -212,3 +212,4 @@ hi VertSplit ctermbg=NONE
 hi! link ModeMsg Normal
 hi! link StatusLineNC VertSplit
 hi! link StatusLine LineNr
+hi! link qfLineNr Title
