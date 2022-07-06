@@ -37,15 +37,20 @@ set nohlsearch
 set ruf=
 set ruf +=%45(%=%#LineNr#%.50F\%m\ [%{strlen(&ft)?&ft:'none'}]\ %l:%c\ %P%)
 
-set laststatus=1
+set laststatus=0
 set statusline=
 set statusline +=\ %4F
-set statusline +=\%m
+set statusline +=\%m\%r
 set statusline +=\ [%{strlen(&ft)?&ft:'none'}]
+set statusline +=
 set statusline +=\ %=%l:%c
 set statusline +=\ %-4P
 
-set fillchars=vert:\│
+augroup ft_qf
+    autocmd Filetype qf setlocal statusline=\ %q\ %l/%L
+augroup END
+
+set fillchars=vert:\│,stl:\―,stlnc:\―,eob:\ ,
 set background=dark
 syntax enable
 
@@ -159,6 +164,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
             \ 'height': 0.4,
             \ 'yoffset': 1.0,
             \ 'border': 'top' } }
+
     let g:fzf_action = {
         \ 'ctrl-q': function('s:build_quickfix_list'),
         \ 'ctrl-t': 'tab split',
@@ -166,11 +172,17 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
         \ 'ctrl-v': 'vsplit' }
 
     "Fugitive
+    augroup ft_fugitve
+        autocmd Filetype fugitive setlocal statusline=\ %F
+        autocmd Filetype fugitive setlocal scl=yes
+        autocmd Filetype fugitive setlocal nonu
+    augroup END
+
     nnoremap <silent> <Leader>gs :vert Git \|vertical resize 80 <CR>
     nnoremap <Leader>gb :G blame <CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
 
-    "Vim-plug
+    "Vim-plug""
     nnoremap <Leader>pi :PlugInstall<CR>
     nnoremap <Leader>pu :PlugUpdate<CR>
     nnoremap <Leader>pl :PlugStatus<CR>
@@ -186,4 +198,7 @@ hi Normal ctermbg=NONE guibg=NONE
 hi EndOfBuffer ctermbg=NONE guibg=NONE
 hi SignColumn ctermbg=NONE guibg=NONE
 hi LineNr ctermbg=NONE guibg=NONE
+hi VertSplit ctermbg=NONE 
 hi! link ModeMsg Normal
+hi! link StatusLineNC VertSplit
+hi! link StatusLine LineNr
