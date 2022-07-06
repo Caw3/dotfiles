@@ -191,11 +191,12 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>gb :G blame <CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
 
-    "Vim-plug""
+    "Vim-plug
     nnoremap <Leader>pi :PlugInstall<CR>
     nnoremap <Leader>pu :PlugUpdate<CR>
     nnoremap <Leader>pl :PlugStatus<CR>
     nnoremap <Leader>pc :PlugClean<CR>
+    nnoremap <Leader>pd :PlugDiff<CR>
 
 endif
 
