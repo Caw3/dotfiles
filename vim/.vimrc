@@ -56,10 +56,6 @@ set statusline +=
 set statusline +=\ %=%l:%c
 set statusline +=\ %-4P
 
-augroup ft_qf
-    autocmd Filetype qf setlocal statusline=\ %q\ %l/%L
-augroup END
-
 set fillchars=vert:\│,stl:\―,stlnc:\―,eob:\ ,
 set background=dark
 syntax enable
@@ -182,7 +178,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 
     "Fugitive
     augroup ft_fugitve
-        autocmd Filetype fugitive setlocal statusline=\ %F
         autocmd Filetype fugitive setlocal scl=yes
         autocmd Filetype fugitive setlocal nonu
     augroup END
