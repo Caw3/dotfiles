@@ -80,7 +80,7 @@ nnoremap <Leader>lc <cmd>lclose<CR><cmd><CR>
 nnoremap <Leader>ln <cmd>lnext<CR><cmd><CR>
 nnoremap <Leader>lp <cmd>lprev<CR><cmd><CR>
 
-nnoremap <silent> gA :argadd `git ls-files` \| argded<CR>
+nnoremap gA :argadd `git ls-files` \| argded<CR>
 nnoremap <silent> gr :vimgrep /\<<C-R><C-W>\>/gj ## \|\| copen<CR>
 nnoremap gR :vimgrep 
 
