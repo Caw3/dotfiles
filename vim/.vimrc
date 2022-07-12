@@ -65,12 +65,14 @@ map <Space> <Leader>
 
 nnoremap <C-p> <C-^>
 nnoremap <Leader>rs :%s/
-nnoremap <Leader>rr <cmd>source % <CR><cmd><CR>
+nnoremap <Leader>rr <cmd>w \| source % <CR><cmd><CR>
 
 nnoremap <Leader>co <cmd>copen<CR><cmd><CR>
 nnoremap <Leader>cc <cmd>cclose<CR><cmd><CR>
 nnoremap <Leader>cn <cmd>cnext<CR><cmd><CR>
 nnoremap <Leader>cp <cmd>cprev<CR><cmd><CR>
+nnoremap <Leader>cN <cmd>cnf<CR><cmd><CR>
+nnoremap <Leader>cP <cmd>cpf<CR><cmd><CR>
 
 
 nnoremap <Leader>lo <cmd>lopen<CR><cmd><CR>
@@ -78,8 +80,9 @@ nnoremap <Leader>lc <cmd>lclose<CR><cmd><CR>
 nnoremap <Leader>ln <cmd>lnext<CR><cmd><CR>
 nnoremap <Leader>lp <cmd>lprev<CR><cmd><CR>
 
-nnoremap <silent> gr :vimgrep /<C-R><C-W>/g `git ls-files` \| copen<CR><CR>
-nnoremap gR :vimgrep /<C-R><C-W>/g
+nnoremap <silent> gA :argadd `git ls-files` \| argded<CR>
+nnoremap <silent> gr :vimgrep /\<<C-R><C-W>\>/gj ## \|\| copen<CR>
+nnoremap gR :vimgrep 
 
 "Plugins
 if empty(glob('~/.vim/autoload/plug.vim'))
