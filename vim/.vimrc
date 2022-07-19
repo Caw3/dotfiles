@@ -76,6 +76,8 @@ nnoremap <Leader>lo <cmd>lopen<CR>
 nnoremap <Leader>lc <cmd>lclose<CR>
 nnoremap <Leader>ln <cmd>lnext<CR>
 nnoremap <Leader>lp <cmd>lprev<CR>
+nnoremap <Leader>lf <cmd>lfirst<CR>
+nnoremap <Leader>ll <cmd>llast<CR>
 
 nnoremap <Leader>tt :tag 
 nnoremap <Leader>t/ :tag /
