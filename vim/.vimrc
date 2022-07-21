@@ -8,6 +8,7 @@ set ttyfast
 set wildmenu
 set wildoptions="fuzzy,tagfile"
 set path=src/,test/,config/
+set path+=/usr/include
 set path+=~/.dotfiles
 
 set shiftwidth=4
@@ -113,7 +114,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
-    Plug 'tpope/vim-endwise', { 'for' : ['lua','ruby','bash','haskell'] }
     Plug 'tpope/vim-fugitive'
     Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
     Plug 'lervag/vimtex', { 'for': 'latex' }
