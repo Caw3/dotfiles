@@ -116,7 +116,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-fugitive'
     Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
-    Plug 'lervag/vimtex', { 'for': 'latex' }
+    Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
     Plug 'jiangmiao/auto-pairs'
     Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
