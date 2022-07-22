@@ -20,24 +20,22 @@ vimgrep() {
 export -f vimgrep
 
 cht() {
-    curl -s cht.sh/$1 | less -R
+    curl -s cht.sh/"$1" | less -R
 }
 export -f cht
 
 
 ## Prompt
 parse_git_dirty() {
-  [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo "*"
+  [[ $(git status 2> /dev/null | tail -n1) \
+      != "nothing to commit, working tree clean" ]] && echo "*"
 }
 parse_git_branch() {
-  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty)) /"
+  git branch --no-color 2> /dev/null | \
+      sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty)) /"
 }
 
-export PS1='\e[32m\u@\h\e[0m \e[34m\w\e[0m $(parse_git_branch)'
-
-## HIST
-HISTSIZE=1000000
-SAVEHIST=1000000
+export PS1='\[\e[32m\u@\h\e[0m\] \[\e[34m\w\e[0m\] $(parse_git_branch)'
 
 ## SHOPT
 shopt -s autocd
@@ -55,8 +53,6 @@ set -o vi
 ## Exports
 export EDITOR='vim'
 export MANPAGER="vim -M +MANPAGER -"
-export TERMINAL='alacritty'
-export BROWSER='firefox'
 
 ## Aliases
 alias py='python3'
@@ -78,34 +74,3 @@ alias battery='cat /sys/class/power_supply/BAT0/capacity'
 alias ta="tmux a"
 alias tm="tmux"
 alias emacs="emacsclient -c -a 'emacs'" 
-alias py='python3'
-
-## FZF
-OPTIONS="--reverse --preview='cat {}' --preview-window=hidden "
-
-BINDS="\
---bind '?:toggle-preview' \
---bind 'ctrl-d:preview-half-page-down' \
---bind 'ctrl-u:preview-half-page-up' \
---bind 'ctrl-a:select-all'"
-
-COLORS=" --color='\
-bg:-1,\
-bg+:-1,\
-fg:white,\
-fg+:white,\
-info:magenta,\
-marker:magenta,\
-pointer:blue,\
-header:magenta,\
-spinner:magenta,\
-hl:cyan,\
-hl+:cyan,\
-prompt:bright-black'"
-
-export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
-command -v rg > /dev/null && \
-export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git" -g "!node_modules"'
-
-# [[ -f /usr/share/fzf/completion.bash ]] && . /usr/share/fzf/completion.bash
-# [[ -f /usr/share/fzf/key-bindings.bash ]] && . /usr/share/fzf/key-bindings.bash
