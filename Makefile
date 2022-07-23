@@ -3,7 +3,7 @@ REMOTE_HOST := 178.62.227.207
 REMOTE_KEY := ${HOME}/.ssh/id_vps
 
 PKG_INSTALL := sudo dnf install -y
-LN := @ln -vsf {${PWD},${HOME}}
+LN := @ln -vsfn {${PWD},${HOME}}
 
 
 help:
