@@ -45,7 +45,7 @@ rsync:
 # Tools
 docker: ## Install docker
 	$(PKG_INSTALL) $@ $@-compose
-	sudo usermod -aG ${USER}
+	sudo usermod -aG $@ ${USER}
 	sudo systemctl enable docker.service
 
 golang: ## Install golang
