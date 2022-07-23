@@ -24,6 +24,7 @@ tmux: ## Init tmux
 	$(LN)/.tmux.conf
 
 vim: ## Init vim
+	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
 	$(LN)/.vimrc
 	$(LN)/.vim
 
@@ -33,6 +34,7 @@ git: ## Init git configs
 	$(LN)/.git_template
 
 ssh: rsync ## sync ssh configuration with a remote host
+	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) open$@
 	@test -f $(REMOTE_KEY) && \
 		(rsync -avz --mkpath -e "ssh -o StrictHostKeyChecking=no -i $(REMOTE_KEY)" \
 		--exclude "known_hosts*" \
