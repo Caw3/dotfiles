@@ -1,0 +1,7 @@
+[user]
+	email = carl@willman.nu
+	name = Carl Willman
+[init]
+	templatedir = ~/.git_template
+[alias]
+	ctags = !.git/hooks/ctags
