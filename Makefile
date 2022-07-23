@@ -50,7 +50,7 @@ docker: ## Install docker
 
 golang: ## Install golang
 	$(PKG_INSTALL) $@
-	export PATH=${PATH}:/usr/local/go/bin
+	echo "export PATH=${PATH}:/usr/local/go/bin" >> ${HOME}/.bash_profile
 
 # GUI 
 zathura: ## Init zathura (PDF reader)
