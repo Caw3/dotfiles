@@ -1,3 +1,4 @@
+SHELL=/bin/bash
 REMOTE_USER := carl
 REMOTE_HOST := 178.62.227.207
 REMOTE_KEY := ${HOME}/.ssh/id_vps
