@@ -2,10 +2,10 @@ SHELL=/bin/bash
 REMOTE_USER := carl
 REMOTE_HOST := 178.62.227.207
 REMOTE_KEY := ${HOME}/.ssh/id_vps
+FONT := jetbrains-mono-fonts
 
 PKG_INSTALL := sudo dnf install -y
 LN := @ln -vsfn {${PWD},${HOME}}
-
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -68,8 +68,8 @@ alacritty: ## Init alacritty (Terminal emulator)
 	@mkdir -p ${HOME}/.config/$@ 2> /dev/null
 	$(LN)/.config/$@/alacritty.yml
 
-font: jetbrains-mono-fonts # Install fonts
-jetbrains-mono-fonts:
+font: $(FONT) # Install fonts
+$(FONT):
 	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
 
 dconf-editor:
