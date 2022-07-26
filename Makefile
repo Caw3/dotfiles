@@ -1,11 +1,11 @@
 SHELL=/bin/bash
-REMOTE_USER := carl
-REMOTE_HOST := 178.62.227.207
-REMOTE_KEY := ${HOME}/.ssh/id_vps
-FONT := jetbrains-mono-fonts
-
-PKG_INSTALL := sudo dnf install -y
-LN := @ln -vsfn {${PWD},${HOME}}
+REMOTE_USER = carl
+REMOTE_HOST = 178.62.227.207
+REMOTE_KEY = ${HOME}/.ssh/id_vps
+LN = @ln -vsfn {${PWD},${HOME}}
+PKG_CHECK = @command -v $@ > /dev/null 2>&1
+PKG_INSTALL = sudo dnf install -y
+FONT_PACKAGE_NAME = jetbrains-mono-fonts
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -14,6 +14,8 @@ help:
 
 all: init ssh git tools gui gnome-settings
 init: bash tmux vim ## Lightweight configuration
+	@sudo -v
+
 tools: docker golang
 gui: font zathura alacritty ## Init GUI applications
 
@@ -21,21 +23,21 @@ bash: ## Init bash
 	$(LN)/.bashrc
 
 tmux: ## Init tmux
-	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	$(LN)/.tmux.conf
 
 vim: ## Init vim
-	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	$(LN)/.vimrc
 	$(LN)/.vim
 
 git: ## Init git configs
-	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	$(LN)/.gitconfig
 	$(LN)/.git_template
 
 ssh: rsync ## sync ssh configuration with a remote host
-	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) open$@
+	$(PKG_CHECK) || $(PKG_INSTALL) open$@
 	@test -f $(REMOTE_KEY) && \
 		(rsync -avz --mkpath -e "ssh -o StrictHostKeyChecking=no -i $(REMOTE_KEY)" \
 		--exclude "known_hosts*" \
@@ -43,13 +45,13 @@ ssh: rsync ## sync ssh configuration with a remote host
 		$(REMOTE_USER)@$(REMOTE_HOST):~/.ssh ${HOME} && \
 		chmod 600 ${HOME}/.ssh/*) || echo "No key found!"
 rsync:
-	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
 # Tools
 docker: ## Install docker
 	$(PKG_INSTALL) $@ $@-compose
-	sudo usermod -aG $@ ${USER}
-	sudo systemctl enable docker.service
+	@sudo usermod -aG $@ ${USER}
+	@sudo systemctl enable docker.service
 
 golang: ## Install golang
 	$(PKG_INSTALL) $@
@@ -58,22 +60,26 @@ golang: ## Install golang
 		${HOME}/.bash_profile
 
 # GUI 
-zathura: ## Init zathura (PDF reader)
-	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
+zathura: zathura-pdf-mupdf ## Init zathura (PDF reader)
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	@mkdir -p ${HOME}/.config/$@ 2> /dev/null
+	@xdg-mime default org.pwmt.zathura.desktop application/pdf
 	$(LN)/.config/$@/zathurarc
 
-alacritty: ## Init alacritty (Terminal emulator)
-	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
+zathura-pdf-mupdf:
+	$(PKG_INSTALL) $@
+
+alacritty: font ## Init alacritty (Terminal emulator)
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	@mkdir -p ${HOME}/.config/$@ 2> /dev/null
 	$(LN)/.config/$@/alacritty.yml
 
-font: $(FONT) # Install fonts
-$(FONT):
-	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
+font: $(FONT_PACKAGE_NAME) # Install fonts
+$(FONT_PACKAGE_NAME):
+	$(PKG_INSTALL) $@
 
 dconf-editor:
-	@command -v $@ > /dev/null 2>&1 || $(PKG_INSTALL) $@
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
 gnome-settings: dconf-editor font ## Init Gnome specific settings
 	dconf write /org/gnome/desktop/input-sources/xkb-options "['caps:swapescape']"
