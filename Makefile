@@ -7,6 +7,8 @@ PKG_CHECK = @command -v $@ > /dev/null 2>&1
 PKG_INSTALL = sudo dnf install -y
 FONT_PACKAGE_NAME = jetbrains-mono-fonts
 
+.PHONY: all init tools gui
+
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| sort \
@@ -14,9 +16,7 @@ help:
 
 all: init ssh git tools gui gnome-settings
 init: bash tmux vim ## Lightweight configuration
-	@sudo -v
-
-tools: docker golang
+tools: docker golang ## Extra tools
 gui: font zathura alacritty ## Init GUI applications
 
 bash: ## Init bash
