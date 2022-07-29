@@ -56,7 +56,7 @@ docker: ## Install docker
 golang: ## Install golang
 	$(PKG_INSTALL) $@
 	@echo ${PATH} | grep -q "usr/local/go/bin" || \
-		echo "export PATH=${PATH}:/usr/local/go/bin" >> \
+		echo "export PATH=$$PATH:/usr/local/go/bin" >> \
 		${HOME}/.bash_profile
 
 # GUI 
