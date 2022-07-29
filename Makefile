@@ -109,3 +109,4 @@ gnome-settings: dconf-editor font ## Init Gnome specific settings
 	dconf write /org/gnome/mutter/workspaces-only-on-primary true
 	dconf write /org/gnome/shell/keybindings/toggle-message-tray "['<Super>v']"
 	dconf write /org/gnome/shell/keybindings/focus-active-notification "['<Shift><Super>v']"
+	dconf write /org/gnome/mutter/keybindings/switch-monitor "['']"
