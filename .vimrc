@@ -8,7 +8,6 @@ set ttyfast
 set wildmenu
 set wildoptions="fuzzy,tagfile"
 set path=src/,test/,config/
-set path+=/usr/include
 set path+=~/.dotfiles
 
 set shiftwidth=4
@@ -49,7 +48,6 @@ set statusline=
 set statusline +=\ %4F
 set statusline +=\%m\%r
 set statusline +=\ [%{strlen(&ft)?&ft:'none'}]
-set statusline +=
 set statusline +=\ %=%l:%c
 set statusline +=\ %-4P
 
@@ -109,20 +107,20 @@ endif
 if filereadable(expand("~/.vim/autoload/plug.vim"))
     call plug#begin('~/.vim/vim-plug')
     Plug 'junegunn/vim-plug'
-    Plug 'airblade/vim-rooter'
-    Plug 'christoomey/vim-tmux-navigator'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-fugitive'
-    Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
-    Plug 'lervag/vimtex', { 'for': 'tex' }
-    Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
     Plug 'jiangmiao/auto-pairs'
+    Plug 'christoomey/vim-tmux-navigator'
+    Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
+    Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
+    Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
     call plug#end()
 
+    "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
     nnoremap <Leader>cr <Cmd>ALEFix<CR>
     nnoremap <Leader>rn <Cmd>ALERename<CR>
@@ -137,9 +135,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
-    let g:ale_echo_msg_error_str = 'E'
-    let g:ale_echo_msg_warning_str = 'W'
-    let g:ale_echo_msg_format = '[%linter%][%severity%] %s '
 
     "Autopairs
     let g:AutoPairsCenterLine = 0
