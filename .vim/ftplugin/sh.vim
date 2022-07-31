@@ -1,0 +1,2 @@
+compiler shellcheck
+set expandtab
