@@ -97,6 +97,13 @@ nnoremap <Leader>fF :edit **/
 "Abbreviations
 cabbr gls `git ls-files`
 
+"Functions
+function! FilterRestorePos(cmd)
+	let save_pos = getpos(".")
+	silent execute a:cmd
+	call setpos(".", save_pos)
+endfunction
+
 "Plugins
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs

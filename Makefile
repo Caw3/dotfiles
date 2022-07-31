@@ -16,7 +16,7 @@ help:
 
 all: init ssh git tools gui gnome-settings
 init: bash tmux vim ## Lightweight configuration
-tools: docker golang ## Extra tools
+tools: docker golang shell ## Extra tools
 gui: font zathura alacritty ## Init GUI applications
 
 bash: ## Init bash
@@ -58,6 +58,8 @@ golang: ## Install golang
 	@echo ${PATH} | grep -q "usr/local/go/bin" || \
 		echo "export PATH=$$PATH:/usr/local/go/bin" >> \
 		${HOME}/.bash_profile
+shell:
+	$(PKG_INSTALL) ShellCheck shfmt
 
 # GUI 
 zathura: zathura-pdf-mupdf ## Init zathura (PDF reader)
