@@ -87,6 +87,9 @@ nnoremap <Leader>tf <cmd>tfirst<CR>
 nnoremap <Leader>tp <cmd>tprevious<CR>
 nnoremap <Leader>tl <cmd>tlast<CR>
 
+nnoremap <Leader>m% <cmd>make %<CR>
+nnoremap <Leader>mm <cmd>make<CR>
+
 nnoremap gA :args 
 nnoremap <silent> gr :vimgrep /\<<C-R><C-W>\>/gj `git ls-files` \|\| copen<CR>
 nnoremap gR :vimgrep /\<<C-R><C-W>\>/g

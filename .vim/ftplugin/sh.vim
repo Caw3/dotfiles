@@ -7,5 +7,7 @@ if executable("shfmt")
     nnoremap <Leader>cr <Cmd>call FilterRestorePos("%!shfmt -i 2")<CR>
 endif
 
+nnoremap <Leader>mr <cmd>w !bash<CR>
+
 let b:ale_fixers = { 'sh' : ['shfmt'] }
 let b:ale_linters = { 'sh' : ['shellcheck'] }
