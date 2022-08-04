@@ -145,6 +145,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
+    let g:ale_echo_msg_error_str = 'E'
+    let g:ale_echo_msg_warning_str = 'W'
+    let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
     "Autopairs
     let g:AutoPairsCenterLine = 0
