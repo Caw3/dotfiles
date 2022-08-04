@@ -16,7 +16,7 @@ help:
 
 all: init ssh git tools gui gnome-settings
 init: bash tmux vim ## Lightweight configuration
-tools: docker golang shell ## Extra tools
+tools: docker golang shell perl ## Extra tools
 gui: font zathura alacritty ## Init GUI applications
 
 bash: ## Init bash
@@ -58,8 +58,12 @@ golang: ## Install golang
 	@echo ${PATH} | grep -q "usr/local/go/bin" || \
 		echo "export PATH=$$PATH:/usr/local/go/bin" >> \
 		${HOME}/.bash_profile
-shell:
+
+shell: ## Install shellscripting tools
 	$(PKG_INSTALL) ShellCheck shfmt
+
+perl: ## Install perl tools
+	$(PKG_INSTALL) perl perl-doc perltidy perl-Perl-Critic
 
 # GUI 
 zathura: zathura-pdf-mupdf ## Init zathura (PDF reader)
