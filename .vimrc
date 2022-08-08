@@ -28,11 +28,9 @@ set incsearch
 set nohlsearch
 
 set hidden
-set history=100
 set noswapfile
 set nobackup writebackup
 
-"Create Undo directory
 if !isdirectory("/var/tmp/vim/undo")
     call mkdir("/var/tmp/vim/undo", "p", 0700)
 endif
@@ -87,8 +85,8 @@ nnoremap <Leader>tf <cmd>tfirst<CR>
 nnoremap <Leader>tp <cmd>tprevious<CR>
 nnoremap <Leader>tl <cmd>tlast<CR>
 
-nnoremap <Leader>m% <cmd>make %<CR>
-nnoremap <Leader>mm <cmd>make<CR>
+nnoremap <Leader>m% <cmd>make! %<CR>
+nnoremap <Leader>mm <cmd>make!<CR>
 
 nnoremap gA :args 
 nnoremap <silent> gr :vimgrep /\<<C-R><C-W>\>/gj `git ls-files` \|\| copen<CR>
@@ -101,7 +99,7 @@ nnoremap <Leader>fF :edit **/
 cabbr gls `git ls-files`
 
 "Functions
-function! FilterRestorePos(cmd)
+function! ExecAndRestorePos(cmd)
 	let save_pos = getpos(".")
 	silent execute a:cmd
 	call setpos(".", save_pos)
@@ -116,7 +114,6 @@ endif
 
 if filereadable(expand("~/.vim/autoload/plug.vim"))
     call plug#begin('~/.vim/vim-plug')
-    Plug 'junegunn/vim-plug'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
@@ -130,24 +127,28 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
     call plug#end()
 
+    "Vim-plug
+    nnoremap <Leader>pi :PlugInstall<CR>
+    nnoremap <Leader>pu :PlugUpdate<CR>
+    nnoremap <Leader>pl :PlugStatus<CR>
+    nnoremap <Leader>pc :PlugClean<CR>
+    nnoremap <Leader>pd :PlugDiff<CR>
+
     "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
     nnoremap <Leader>cr <Cmd>ALEFix<CR>
     nnoremap <Leader>rn <Cmd>ALERename<CR>
     nnoremap <Leader>K <Cmd>ALEHover<CR>
     nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
-    nnoremap <Leader>gt <Cmd>ALEGoToTypeDefinition<CR>
     nnoremap <Leader>gi <Cmd>ALEGoToImplementation<CR>
     nnoremap <Leader>gr <Cmd>ALEFindReferences -quickfix<CR><CMD>copen<CR>
     nnoremap <Leader>di <Cmd>ALEDetail<CR>
-    nnoremap <Leader>ds <Cmd>ALEToggle<CR><Cmd>echo g:ale_enabled<CR>
+    nnoremap <Leader>ds <Cmd>call ExecAndRestorePos("ALEToggle")<CR><Cmd>echo g:ale_enabled<CR>
     nnoremap <Leader>dq <Cmd>ALEPopulateQuickfix<CR>
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
-    let g:ale_echo_msg_error_str = 'E'
-    let g:ale_echo_msg_warning_str = 'W'
-    let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+    let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
 
     "Autopairs
     let g:AutoPairsCenterLine = 0
@@ -161,13 +162,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <silent> <Leader>gs :vert Git \|vertical resize 80 <CR>
     nnoremap <Leader>gb :G blame <CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
-
-    "Vim-plug
-    nnoremap <Leader>pi :PlugInstall<CR>
-    nnoremap <Leader>pu :PlugUpdate<CR>
-    nnoremap <Leader>pl :PlugStatus<CR>
-    nnoremap <Leader>pc :PlugClean<CR>
-    nnoremap <Leader>pd :PlugDiff<CR>
 
 endif
 
@@ -183,4 +177,3 @@ hi VertSplit ctermbg=NONE
 hi! link ModeMsg Normal
 hi! link StatusLineNC VertSplit
 hi! link StatusLine LineNr
-hi! link qfLineNr Title

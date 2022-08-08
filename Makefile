@@ -54,7 +54,7 @@ docker: ## Install docker
 	@sudo systemctl enable docker.service
 
 golang: ## Install golang
-	$(PKG_INSTALL) $@
+	$(PKG_INSTALL) $@ golang-x-tools-gopls
 	@echo ${PATH} | grep -q "usr/local/go/bin" || \
 		echo "export PATH=$$PATH:/usr/local/go/bin" >> \
 		${HOME}/.bash_profile

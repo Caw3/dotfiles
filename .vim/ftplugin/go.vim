@@ -6,10 +6,11 @@ compiler go
 
 if executable("gofmt")
     augroup format_save
-        autocmd BufWritePre *.go call FilterRestorePos("%!gofmt")
+        autocmd BufWritePre *.go call ExecAndRestorePos("%!gofmt")
     augroup END
-    nnoremap <Leader>cr <Cmd>call FilterRestorePos("%!gofmt")<CR>
+    nnoremap <Leader>cr <Cmd>call ExecAndRestorePos("%!gofmt")<CR>
 endif
+    nnoremap <Leader>mr <Cmd>!go run %<CR>
+    nnoremap <Leader>mt <Cmd>!go test<CR>
 
 let b:ale_linters = { 'go' : ['gopls'] }
-let b:ale_fixers = { 'go' : ['gofmt'] }
