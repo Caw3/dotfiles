@@ -54,7 +54,9 @@ docker: ## Install docker
 	@sudo systemctl enable docker.service
 
 golang: ## Install golang
-	$(PKG_INSTALL) $@ golang-x-tools-gopls
+	$(PKG_INSTALL) $@
+	go install golang.org/x/tools/gopls@latest
+	go install github.com/go-delve/delve/cmd/dlv@latest
 	@echo ${PATH} | grep -q "usr/local/go/bin" || \
 		echo "export PATH=$$PATH:/usr/local/go/bin" >> \
 		${HOME}/.bash_profile
