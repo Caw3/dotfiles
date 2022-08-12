@@ -96,7 +96,7 @@ zathura-pdf-poppler:
 	$(PKG_INSTALL) $@
 
 alacritty: $(FONT_PACKAGE_NAME) ## Init alacritty (Terminal emulator)
-	@[ $(command -v apt) = "" ] || \
+	@[ "$$(command -v apt)" = "" ] || \
 		sudo add-apt-repository -y ppa:aslatter/ppa
 	$(PKG_CHECK) || $(PKG_INSTALL) alacritty
 	mkdir -p ${HOME}/.config/alacritty 2> /dev/null
