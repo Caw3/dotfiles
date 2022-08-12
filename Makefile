@@ -1,5 +1,5 @@
-SHELL=/bin/bash
-REMOTE_USER = carl
+SHELL=/bin/bash 
+REMOTE_USER = ${USER}
 REMOTE_HOST = 178.62.227.207
 REMOTE_KEY = ${HOME}/.ssh/id_vps
 LN = @ln -vsfn {${PWD},${HOME}}
@@ -9,12 +9,14 @@ ifneq ($(shell command -v dnf),)
 	PKG_INSTALL = sudo dnf install -y
 	FONT_PACKAGE_NAME = jetbrains-mono-fonts
 	SHELLCHECK = ShellCheck
+	SSH = openssh
 endif
 
 ifneq ($(shell command -v apt),)
 	PKG_INSTALL = sudo apt install -y
 	FONT_PACKAGE_NAME = fonts-jetbrains-mono
 	SHELLCHECK = shellcheck
+	SSH = ssh
 endif
 
 .PHONY: all init tools gui
@@ -47,7 +49,7 @@ git: ## Init git configs
 	$(LN)/.git_template
 
 ssh: rsync ## sync ssh configuration with a remote host
-	$(PKG_CHECK) || $(PKG_INSTALL) openssh
+	$(PKG_CHECK) || $(PKG_INSTALL) $(SSH)
 	@test -f $(REMOTE_KEY) && \
 		(rsync -avz --mkpath -e "ssh -o StrictHostKeyChecking=no -i $(REMOTE_KEY)" \
 		--exclude "known_hosts*" \
@@ -64,8 +66,9 @@ docker: ## Install docker
 	sudo systemctl enable docker.service
 
 golang: ## Install golang
-	$(PKG_INSTALL) $@
+	$(PKG_INSTALL) golang
 	sudo mkdir -p /usr/local/go
+	sudo chmod ga+rwx /usr/local/go
 	grep GOPATH ${HOME}/.bash_profile || \
 		echo "export GOPATH=/usr/local/go" >> \
 		${HOME}/.bash_profile
@@ -93,8 +96,8 @@ zathura-pdf-poppler:
 	$(PKG_INSTALL) $@
 
 alacritty: $(FONT_PACKAGE_NAME) ## Init alacritty (Terminal emulator)
-	@command -v apt 2> /dev/null && \
-		sudo add-apt-repository ppa:aslatter/ppa || \
+	@[ $(command -v apt) = "" ] || \
+		sudo add-apt-repository -y ppa:aslatter/ppa
 	$(PKG_CHECK) || $(PKG_INSTALL) alacritty
 	mkdir -p ${HOME}/.config/alacritty 2> /dev/null
 	$(LN)/.config/alacritty/alacritty.yml
