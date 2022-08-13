@@ -12,8 +12,8 @@ ifneq ($(shell command -v dnf),)
 	SSH = openssh
 endif
 
-ifneq ($(shell command -v apt),)
-	PKG_INSTALL = sudo apt install -y
+ifneq ($(shell command -v apt-get),)
+	PKG_INSTALL = sudo apt-get install -y
 	FONT_PACKAGE_NAME = fonts-jetbrains-mono
 	SHELLCHECK = shellcheck
 	SSH = ssh
@@ -31,15 +31,17 @@ init: bash tmux vim ## Lightweight configuration
 tools: docker golang shell perl ## Extra tools
 gui: $(FONT_PACKAGE_NAME) zathura alacritty ## Init GUI applications
 
-test: docker ## test the makefile
-	sudo docker build ${PWD} --rm -t test.fedora \
-		--build-arg TARGET=all \
-		--build-arg PLATTFORM=fedora \
-		--build-arg PKG_INSTALL="dnf install -y"
+test_ubuntu: docker
 	sudo docker build ${PWD} --rm -t test.ubuntu \
-		--build-arg TARGET=all \
+		--build-arg TARGET='init tools gui' \
 		--build-arg PLATTFORM=ubuntu \
-		--build-arg PKG_INSTALL="apt install -y"
+		--build-arg PKG_INSTALL='apt-get update && apt-get install -y'
+
+test_fedora: docker
+	sudo docker build ${PWD} --rm -t test.fedora \
+		--build-arg TARGET='init tools gui' \
+		--build-arg PLATTFORM=fedora \
+		--build-arg PKG_INSTALL='dnf install -y'
 
 bash: ## Init bash
 	$(LN)/.bashrc
@@ -54,7 +56,7 @@ vim: ## Init vim
 	$(LN)/.vim
 
 git: ## Init git configs
-	$(PKG_CHECK) || $(PKG_INSTALL) $@
+	$(PKG_CHECK) || $(PKG_INSTALL) $@ gh
 	$(LN)/.gitconfig
 	$(LN)/.git_template
 
@@ -86,9 +88,11 @@ golang: ## Install golang
 	echo ${PATH} | grep -q "$$GOPATH/bin" || \
 		echo "export PATH=$$PATH:$$GOPATH/bin" >> \
 		${HOME}/.bash_profile
-	source ${HOME}/.bash_profile && \
-		go install golang.org/x/tools/gopls@latest && \
-		go install github.com/go-delve/delve/cmd/dlv@latest
+		if [ "$$GO111MODULE" = "on" ]; then \
+			source ${HOME}/.bash_profile && \
+			go install golang.org/x/tools/gopls@latest && \
+			go install github.com/go-delve/delve/cmd/dlv@latest; \
+		fi
 
 shell: ## Install shellscripting tools
 	$(PKG_INSTALL) $(SHELLCHECK) shfmt
@@ -107,8 +111,10 @@ zathura-pdf-poppler:
 	$(PKG_INSTALL) $@
 
 alacritty: $(FONT_PACKAGE_NAME) ## Init alacritty (Terminal emulator)
-	@[ "$$(command -v apt)" = "" ] || \
-		sudo add-apt-repository -y ppa:aslatter/ppa
+	if [ ! $$(command -v apt-get) = ""  ]; then \
+		sudo apt-get install -y software-properties-common; \
+		sudo add-apt-repository -y ppa:aslatter/ppa; \
+	fi
 	$(PKG_CHECK) || $(PKG_INSTALL) alacritty
 	mkdir -p ${HOME}/.config/alacritty 2> /dev/null
 	$(LN)/.config/alacritty/alacritty.yml
