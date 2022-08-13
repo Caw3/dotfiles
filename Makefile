@@ -31,6 +31,16 @@ init: bash tmux vim ## Lightweight configuration
 tools: docker golang shell perl ## Extra tools
 gui: $(FONT_PACKAGE_NAME) zathura alacritty ## Init GUI applications
 
+test: docker ## test the makefile
+	sudo docker build ${PWD} --rm -t test.fedora \
+		--build-arg TARGET=all \
+		--build-arg PLATTFORM=fedora \
+		--build-arg PKG_INSTALL="dnf install -y"
+	sudo docker build ${PWD} --rm -t test.ubuntu \
+		--build-arg TARGET=all \
+		--build-arg PLATTFORM=ubuntu \
+		--build-arg PKG_INSTALL="apt install -y"
+
 bash: ## Init bash
 	$(LN)/.bashrc
 
@@ -62,7 +72,6 @@ rsync:
 # Tools
 docker: ## Install docker
 	$(PKG_INSTALL) docker docker-compose
-	sudo usermod -aG docker ${USER}
 	sudo systemctl enable docker.service
 
 golang: ## Install golang
