@@ -19,7 +19,7 @@ ifneq ($(shell command -v apt-get),)
 	SSH = ssh
 endif
 
-.PHONY: all init tools gui
+.PHONY: all init tools gui ssh git
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -56,9 +56,10 @@ vim: ## Init vim
 	$(LN)/.vim
 
 git: ## Init git configs
-	$(PKG_CHECK) || $(PKG_INSTALL) $@ gh
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	$(LN)/.gitconfig
 	$(LN)/.git_template
+	$(PKG_CHECK) || $(PKG_INSTALL) gh
 
 ssh: rsync ## sync ssh configuration with a remote host
 	$(PKG_CHECK) || $(PKG_INSTALL) $(SSH)
@@ -112,6 +113,7 @@ zathura-pdf-poppler:
 
 alacritty: $(FONT_PACKAGE_NAME) ## Init alacritty (Terminal emulator)
 	if [ ! $$(command -v apt-get) = ""  ]; then \
+		sudo apt-get update; \
 		sudo apt-get install -y software-properties-common; \
 		sudo add-apt-repository -y ppa:aslatter/ppa; \
 	fi
