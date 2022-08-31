@@ -1,7 +1,7 @@
 SHELL=/bin/bash 
-REMOTE_USER = ${USER}
-REMOTE_HOST = 178.62.227.207
-REMOTE_KEY = ${HOME}/.ssh/id_vps
+REMOTE_USER = 
+REMOTE_HOST = 
+REMOTE_KEY = 
 LN = @ln -vsfn {${PWD},${HOME}}
 PKG_CHECK = @command -v $@ > /dev/null 2>&1
 
@@ -66,7 +66,6 @@ ssh: rsync ## sync ssh configuration with a remote host
 	@test -f $(REMOTE_KEY) && \
 		(rsync -avz --mkpath -e "ssh -o StrictHostKeyChecking=no -i $(REMOTE_KEY)" \
 		--exclude "known_hosts*" \
-		--exclude "authorized_keys" \
 		$(REMOTE_USER)@$(REMOTE_HOST):~/.ssh ${HOME} && \
 		chmod 600 ${HOME}/.ssh/*) || echo "No key found!"
 rsync:
