@@ -28,7 +28,7 @@ help:
 
 all: init ssh git tools gui gnome-settings
 init: bash tmux vim ## Lightweight configuration
-tools: docker golang shell perl ## Extra tools
+tools: docker golang shell latex perl ## Extra tools
 gui: $(FONT_PACKAGE_NAME) zathura alacritty ## Init GUI applications
 
 test_ubuntu: docker
@@ -99,6 +99,13 @@ shell: ## Install shellscripting tools
 
 perl: ## Install perl tools
 	$(PKG_INSTALL) perl perl-doc perltidy
+
+latex: wget ## Install latex tools
+	$(PKG_INSTALL) texlive
+	$(PKG_INSTALL) pandoc
+
+wget:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
 # GUI 
 zathura: zathura-pdf-poppler ## Init zathura (PDF reader)
