@@ -1,3 +1,4 @@
 .vim/vim-plug
 .vim/autoload
 .vim/.netrwhist
+.vim/spell

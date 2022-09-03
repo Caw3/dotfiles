@@ -9,5 +9,4 @@ endif
 
 nnoremap <Leader>mr <cmd>w !bash<CR>
 
-let b:ale_fixers = { 'sh' : ['shfmt'] }
 let b:ale_linters = { 'sh' : ['shellcheck'] }
