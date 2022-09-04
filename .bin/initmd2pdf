@@ -1,0 +1,56 @@
+#!/bin/bash
+
+TARGETNAME=$1
+USAGE="usage: initmd2pdf [NAME]"
+
+[[ $# -ne 1 ]] && echo "$USAGE" && exit 1
+
+if ! (command -v pandoc && command -v pdflatex) &> /dev/null
+then 
+  echo "Dependecies are missing!" && exit 1
+fi
+
+[[ -f "$TARGETNAME.md" ]] && \
+  echo "File already exits!" && exit 1
+
+touch "$TARGETNAME.md"
+touch Makefile
+touch ref.bib
+[[ -f "ieee.csl" ]] || wget https://pandoc.org/demo/ieee.csl
+
+echo "TARGETNAME=$TARGETNAME" > Makefile
+
+cat >> Makefile << "END"
+
+run: $(TARGETNAME).md
+	pandoc $^ -f markdown -t pdf -o $(TARGETNAME).pdf \
+		--citeproc \
+		--csl ./ieee.csl
+
+open: run
+	(xdg-open $(TARGETNAME).pdf & disown) &> /dev/null
+END
+
+cat > "$TARGETNAME.md" << END
+---
+title: $TARGETNAME
+author: $USER
+date: $(date +"%B %Y")
+bibliography: ref.bib
+---
+
+# Heading
+
+# Bibliography
+END
+
+cat > ref.bib << "END"
+@Book{title,
+  author =   {Author},
+  title =    {Title},
+  publisher =    {Publisher},
+  year =     2000
+}
+END
+
+exit 0

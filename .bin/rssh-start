@@ -1,0 +1,6 @@
+#!/bin/bash
+PORT=$1
+
+ssh -N -f -R "$PORT":localhost:"$PORT" cloud && \
+  echo "Succesfully started ssh forwarding on port $PORT" || \
+  echo "Something went wrong"
