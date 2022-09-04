@@ -24,7 +24,7 @@ PANDOC_PATH="$HOME/.local/share/pandoc"
 if ! [[ -f "$PANDOC_PATH/csl/ieee.csl" ]]; then
   mkdir -p "$PANDOC_PATH/csl"
   echo "Dowloading IEEE citation styles..." 1>&2
-  wget -q --show-progress https://pandoc.org/demo/ieee.csl &&
+  wget -q --show-progress https://pandoc.org/demo/ieee.csl && \
     mv ieee.csl "$PANDOC_PATH/csl/."
 fi
 
@@ -32,21 +32,30 @@ if ! [[ -f "$PANDOC_PATH/filters/diagram-generator.lua" ]]; then
   mkdir -p "$PANDOC_PATH/filters"
   echo "Downloading diagram generator filters..." 1>&2
   wget -q --show-progress \
-    https://raw.githubusercontent.com/pandoc/lua-filters/master/diagram-generator/diagram-generator.lua &&
-    mv diagram-generator.lua "$PANDOC_PATH/filters/."
+    https://raw.githubusercontent.com/pandoc/lua-filters/master/diagram-generator/diagram-generator.lua && \
+      mv diagram-generator.lua "$PANDOC_PATH/filters/."
 fi
 
 echo "TARGETNAME=$TARGETNAME" >Makefile
 
 cat >> Makefile <<"END"
 
-run: $(TARGETNAME).md
+pdf: $(TARGETNAME).md
 	pandoc $^ -f markdown -t pdf -o $(TARGETNAME).pdf \
 		--citeproc \
 		--csl=ieee.csl \
 		--lua-filter=diagram-generator.lua
 
-open: run
+html: $(TARGETNAME).md
+	pandoc $^ -o $(TARGETNAME).html \
+		--mathml \
+		--standalone \
+		--self-contained \
+		--citeproc \
+		--csl=ieee.csl \
+		--lua-filter=diagram-generator.lua
+
+open: pdf
 	(xdg-open $(TARGETNAME).pdf & disown) &> /dev/null
 END
 
