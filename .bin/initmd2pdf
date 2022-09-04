@@ -3,40 +3,59 @@
 TARGETNAME=$1
 USAGE="usage: initmd2pdf [NAME]"
 
-[[ $# -ne 1 ]] && echo "$USAGE" && exit 1
+[[ $# -ne 1 ]] && echo "$USAGE" 1>&2 && exit 1
 
-if ! (command -v pandoc && command -v pdflatex) &> /dev/null
-then 
-  echo "Dependecies are missing!" && exit 1
+if ! (command -v pandoc && command -v pdflatex && command -v rsvg-convert) &>/dev/null; then
+  echo "Dependencies are missing!" 1>&2 && exit 1
 fi
 
-[[ -f "$TARGETNAME.md" ]] && \
-  echo "File already exits!" && exit 1
+[[ -f "$TARGETNAME.md" ]] &&
+  echo "File already exits!" 1>&2 && exit 1
+
+echo "Creating template for $TARGETNAME..." 1>&2
 
 touch "$TARGETNAME.md"
+touch "$TARGETNAME.bib"
 touch Makefile
-touch ref.bib
-[[ -f "ieee.csl" ]] || wget https://pandoc.org/demo/ieee.csl
 
-echo "TARGETNAME=$TARGETNAME" > Makefile
+# Dowload Resources
+PANDOC_PATH="$HOME/.local/share/pandoc"
 
-cat >> Makefile << "END"
+if ! [[ -f "$PANDOC_PATH/csl/ieee.csl" ]]; then
+  mkdir -p "$PANDOC_PATH/csl"
+  echo "Dowloading IEEE citation styles..." 1>&2
+  wget -q --show-progress https://pandoc.org/demo/ieee.csl &&
+    mv ieee.csl "$PANDOC_PATH/csl/."
+fi
+
+if ! [[ -f "$PANDOC_PATH/filters/diagram-generator.lua" ]]; then
+  mkdir -p "$PANDOC_PATH/filters"
+  echo "Downloading diagram generator filters..." 1>&2
+  wget -q --show-progress \
+    https://raw.githubusercontent.com/pandoc/lua-filters/master/diagram-generator/diagram-generator.lua &&
+    mv diagram-generator.lua "$PANDOC_PATH/filters/."
+fi
+
+echo "TARGETNAME=$TARGETNAME" >Makefile
+
+cat >> Makefile <<"END"
 
 run: $(TARGETNAME).md
 	pandoc $^ -f markdown -t pdf -o $(TARGETNAME).pdf \
 		--citeproc \
-		--csl ./ieee.csl
+		--csl=ieee.csl \
+		--lua-filter=diagram-generator.lua
 
 open: run
 	(xdg-open $(TARGETNAME).pdf & disown) &> /dev/null
 END
 
-cat > "$TARGETNAME.md" << END
+cat > "$TARGETNAME.md" <<END
 ---
 title: $TARGETNAME
 author: $USER
 date: $(date +"%B %Y")
-bibliography: ref.bib
+bibliography: $TARGETNAME.bib
 ---
 
 # Heading
@@ -44,7 +63,7 @@ bibliography: ref.bib
 # Bibliography
 END
 
-cat > ref.bib << "END"
+cat >"$TARGETNAME.bib" <<"END"
 @Book{title,
   author =   {Author},
   title =    {Title},
@@ -53,4 +72,5 @@ cat > ref.bib << "END"
 }
 END
 
+echo "Template created!" 1>&2
 exit 0

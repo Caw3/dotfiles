@@ -28,7 +28,7 @@ help:
 
 all: init ssh git tools gui gnome-settings
 init: bash tmux vim ## Lightweight configuration
-tools: docker golang shell latex perl scripts ## Extra tools
+tools: docker golang shell latex pandoc perl scripts ## Extra tools
 gui: $(FONT_PACKAGE_NAME) zathura alacritty ## Init GUI applications
 
 test_ubuntu: docker
@@ -91,7 +91,7 @@ golang: ## Install golang
 	grep GOPATH ${HOME}/.bash_profile || \
 		echo "export GOPATH=/usr/local/go" >> \
 		${HOME}/.bash_profile
-	grep "$$GOPATH/bin" $(HOME)/.bash_profile || \
+	grep '$$GOPATH/bin' $(HOME)/.bash_profile || \
 		echo 'export PATH=$$PATH:$$GOPATH/bin' >> \
 		${HOME}/.bash_profile
 	if [ "$$GO111MODULE" = "on" ]; then \
@@ -106,11 +106,16 @@ shell: ## Install shellscripting tools
 perl: ## Install perl tools
 	$(PKG_INSTALL) perl perl-doc perltidy
 
-latex: wget ## Install latex tools
+pandoc: latex curl wget ## Install pandoc tools
+	$(PKG_INSTALL) pandoc librsvg2-tools
+
+latex: ## Install latex tools
 	$(PKG_INSTALL) texlive
-	$(PKG_INSTALL) pandoc
 
 wget:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+
+curl:
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
 # GUI 
