@@ -1,3 +1,3 @@
-set textwidth=80
-set noexpandtab
-set spell
+setl textwidth=80
+setl noexpandtab
+setl spell
