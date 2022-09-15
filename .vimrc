@@ -1,6 +1,4 @@
-"General
 filetype plugin indent on
-set nocompatible
 set autoread
 set mouse=a
 set ttyfast
@@ -12,7 +10,7 @@ set path+=~/.dotfiles
 
 set shiftwidth=4
 set tabstop=4
-set expandtab
+set smarttab
 set autoindent
 set cindent
 set nowrap
@@ -22,7 +20,7 @@ set splitright
 
 set scrolloff=8
 set signcolumn=number
-set nu
+set number
 
 set incsearch
 set nohlsearch
@@ -49,7 +47,7 @@ set statusline +=\ [%{strlen(&ft)?&ft:'none'}]
 set statusline +=\ %=%l:%c
 set statusline +=\ %-4P
 
-set fillchars=vert:\│,stl:\―,stlnc:\―,eob:\ ,
+set fillchars=vert:\│,stl:\―,stlnc:\―
 set background=dark
 syntax enable
 
@@ -88,6 +86,8 @@ nnoremap <Leader>tl <cmd>tlast<CR>
 nnoremap <Leader>m% <cmd>make! %<CR>
 nnoremap <Leader>mm <cmd>make!<CR>
 
+nnoremap <Leader>nn <cmd>set nu!<CR>
+
 nnoremap gA :args 
 nnoremap <silent> gr :vimgrep /\<<C-R><C-W>\>/gj `git ls-files` \|\| copen<CR>
 nnoremap gR :vimgrep /\<<C-R><C-W>\>/g
@@ -106,7 +106,7 @@ function! ExecAndRestorePos(cmd)
 endfunction
 
 "Plugins
-if empty(glob('~/.vim/autoload/plug.vim'))
+if empty(glob('~/.vim/autoload/plug.vim')) && v:version >= 810
     silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
@@ -118,21 +118,13 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-fugitive'
-    Plug 'jiangmiao/auto-pairs'
     Plug 'christoomey/vim-tmux-navigator'
-    Plug 'tomasiser/vim-code-dark', { 'do': ':colorscheme codedark' }
+    Plug 'articicestudio/nord-vim', { 'do' : 'colorscheme nord' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
     call plug#end()
-
-    "Vim-plug
-    nnoremap <Leader>pi :PlugInstall<CR>
-    nnoremap <Leader>pu :PlugUpdate<CR>
-    nnoremap <Leader>pl :PlugStatus<CR>
-    nnoremap <Leader>pc :PlugClean<CR>
-    nnoremap <Leader>pd :PlugDiff<CR>
 
     "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
@@ -150,9 +142,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     let g:ale_set_highlights = 0
     let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
 
-    "Autopairs
-    let g:AutoPairsCenterLine = 0
-
     "Fugitive
     augroup ft_fugitve
         autocmd Filetype fugitive setlocal scl=yes
@@ -165,15 +154,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 
 endif
 
-"Set colorsheme if installed
-silent! colorscheme codedark
-
-"Highlights
-hi Normal ctermbg=NONE guibg=NONE
-hi EndOfBuffer ctermbg=NONE guibg=NONE
-hi SignColumn ctermbg=NONE guibg=NONE
-hi LineNr ctermbg=NONE guibg=NONE
+"Colors
+silent! colorscheme nord
 hi VertSplit ctermbg=NONE 
-hi! link ModeMsg Normal
 hi! link StatusLineNC VertSplit
 hi! link StatusLine LineNr
