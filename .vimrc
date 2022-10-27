@@ -92,8 +92,8 @@ nnoremap gA :args
 nnoremap <silent> gr :vimgrep /\<<C-R><C-W>\>/gj `git ls-files` \|\| copen<CR>
 nnoremap gR :vimgrep /\<<C-R><C-W>\>/g
 
-nnoremap <Leader>ff :find **/
-nnoremap <Leader>fF :edit **/
+nnoremap <Leader>fF :find **/
+nnoremap <Leader>ff :edit **/
 
 "Abbreviations
 cabbr gls `git ls-files`

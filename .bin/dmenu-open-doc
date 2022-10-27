@@ -1,0 +1,22 @@
+#!/bin/bash
+
+search_path=$HOME/Documents
+
+total="$(find "$search_path" -maxdepth 1 | wc -l)"
+
+if [[ $total -eq 0 ]]; then
+  prompt="No files here!"
+else
+  prompt="File:"
+fi
+
+file_name="$(find "$search_path" -maxdepth 5 -type f | \
+  awk -F'/' '{print $NF}' | \
+  sort | \
+  dmenu -i -p "$prompt")"
+
+if [[ -n $file_name ]]; then
+  xdg-open "$(find "$search_path" -name "$file_name" -maxdepth 5)"
+fi
+
+exit 0
