@@ -1,0 +1,25 @@
+#!/bin/bash
+
+usage() { echo "Usage: $0 [NOTES]... || [-s pattern] [-f pattern]" 1>&2; exit 1; }
+
+DIR="$HOME/notes"
+
+while getopts ":s:f:" o; do
+  case "${o}" in
+    s)
+      grep -R --color=auto "${OPTARG}" "$DIR"
+      ;;
+    f)
+      grep -R --line-number --color=auto "${OPTARG}" "$DIR" | \
+        fzf --delimiter=':' -n 2.. \
+        --preview-window '+{2}-/2' \
+        --preview "egrep --line-number --color=always '(^|${OPTARG})' {1}" \
+        --bind 'enter:execute(vim +{2} {1} < /dev/tty)'
+      ;;
+  esac
+done
+#
+#TODO: Bash Expansion
+[[ $# -lt 1  ]] && usage
+[[ $# -eq 1  ]] && $EDITOR "$DIR/$1.md" || usage
+
