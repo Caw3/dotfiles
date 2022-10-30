@@ -35,7 +35,7 @@ parse_git_branch() {
       sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty)) /"
 }
 
-export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\w\[\e[0m\] $(parse_git_branch)'
+export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] $(parse_git_branch)'
 
 ## SHOPT
 shopt -s autocd
