@@ -1,0 +1,44 @@
+source ~/.vimrc
+
+Plug 'tpope/vim-commentary'
+
+set visualbell
+set ideajoin
+
+map <Leader>rr :source ~/.ideavimrc<CR>
+map <Leader>cr <Action>(ReformatCode)
+map <Leader>cR <Action>(RefactoringMenu)
+map <Leader>cd <Action>(ShowReformatFileDialog)
+map <Leader>ca <Action>(ShowIntentionActions)
+
+map gr <Action>(FindUsages)
+map gi <Action>(QuickImplementations)
+map gh <Action>(ShowErrorDescription)
+
+map <Leader>dr <Action>(Debug)
+map <Leader>db <Action>(ToggleLineBreakpoint)
+
+map <Leader>ff <Action>(GotoFile)
+map <Leader>fc <Action>(GotoClass)
+map <Leader>fg <Action>(FindInPath)
+map <Leader>fr <Action>(RecentFiles)
+map <Leader>fs <Action>(GotoSymbol)
+map <Leader>fa <Action>(SearchEverywhere)
+
+map <Leader>tp <Action>(ActivateProblemsViewToolWindow)
+map <Leader>tr <Action>(ActivateRunToolWindow)
+map <Leader>tf <Action>(ActivateFindToolWindow)
+map <Leader>tt <Action>(ActivateProjectToolWindow)
+map <Leader>tT <Action>(ActivateTerminalToolWindow)
+map <Leader>ts <Action>(ActivateStructureToolWindow)
+map <Leader>tb <Action>(ActivateBookmarksToolWindow)
+
+map <Leader>gl <Action>(ActivateVersionControlToolWindow)
+map <Leader>gs <Action>(ActivateCommitToolWindow)
+map <Leader>gp <Action>(ActivatePullRequestsToolWindow)
+map <Leader>gb <Action>(Annotate)
+map <Leader>gB <Action>(Git.Branches)
+
+map <C-w><C-o> <Action>(HideAllWindows)
+
+map <Leader>rn <Action>(RenameElement)
