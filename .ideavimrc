@@ -1,6 +1,7 @@
 source ~/.vimrc
 
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
 
 set visualbell
 set ideajoin
@@ -10,6 +11,7 @@ map <Leader>cr <Action>(ReformatCode)
 map <Leader>cR <Action>(RefactoringMenu)
 map <Leader>cd <Action>(ShowReformatFileDialog)
 map <Leader>ca <Action>(ShowIntentionActions)
+map <Leader>rn <Action>(RenameElement)
 
 map gr <Action>(FindUsages)
 map gi <Action>(QuickImplementations)
@@ -25,13 +27,13 @@ map <Leader>fr <Action>(RecentFiles)
 map <Leader>fs <Action>(GotoSymbol)
 map <Leader>fa <Action>(SearchEverywhere)
 
-map <Leader>tp <Action>(ActivateProblemsViewToolWindow)
-map <Leader>tr <Action>(ActivateRunToolWindow)
-map <Leader>tf <Action>(ActivateFindToolWindow)
-map <Leader>tt <Action>(ActivateProjectToolWindow)
-map <Leader>tT <Action>(ActivateTerminalToolWindow)
-map <Leader>ts <Action>(ActivateStructureToolWindow)
-map <Leader>tb <Action>(ActivateBookmarksToolWindow)
+map <Leader>op <Action>(ActivateProblemsViewToolWindow)
+map <Leader>or <Action>(ActivateRunToolWindow)
+map <Leader>of <Action>(ActivateFindToolWindow)
+map <Leader>ot <Action>(ActivateProjectToolWindow)
+map <Leader>oT <Action>(ActivateTerminalToolWindow)
+map <Leader>os <Action>(ActivateStructureToolWindow)
+map <Leader>ob <Action>(ActivateBookmarksToolWindow)
 
 map <Leader>gl <Action>(ActivateVersionControlToolWindow)
 map <Leader>gs <Action>(ActivateCommitToolWindow)
@@ -40,5 +42,3 @@ map <Leader>gb <Action>(Annotate)
 map <Leader>gB <Action>(Git.Branches)
 
 map <C-w><C-o> <Action>(HideAllWindows)
-
-map <Leader>rn <Action>(RenameElement)

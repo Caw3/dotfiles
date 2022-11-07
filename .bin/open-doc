@@ -1,6 +1,6 @@
 #!/bin/bash
 
-search_path=$HOME/Documents
+search_path=$HOME/books
 
 total="$(find "$search_path" -maxdepth 1 | wc -l)"
 
