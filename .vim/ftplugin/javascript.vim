@@ -5,4 +5,5 @@ setlocal include=from
 compiler standard
 
 setlocal omnifunc=ale#completion#OmniFunc
-let b:ale_linters = ['tsserver', 'eslint']
+let b:ale_linters = ['tsserver']
+let b:ale_fixers = ['standard']
