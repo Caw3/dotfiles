@@ -1,7 +1,7 @@
 SHELL=/bin/bash 
-REMOTE_USER = 
-REMOTE_HOST = 
-REMOTE_KEY = 
+REMOTE_USER = carl
+REMOTE_HOST = 178.62.227.207
+REMOTE_KEY = ~/.ssh/id_vps
 LN = @ln -vsfn {${PWD},${HOME}}
 PKG_CHECK = @command -v $@ > /dev/null 2>&1
 
@@ -45,6 +45,7 @@ test_fedora: docker
 
 bash: ## Init bash
 	$(LN)/.bashrc
+	$(LN)/.inputrc
 
 tmux: ## Init tmux
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
@@ -77,6 +78,7 @@ scripts:
 	grep '$$HOME/.bin' $(HOME)/.bash_profile || \
 		echo 'export PATH=$$PATH:$$HOME/.bin' >> \
 		$(HOME)/.bash_profile
+	$(PKG_CHECK) || $(PKG_INSTALL) fzf
 
 docker: ## Install docker
 	$(PKG_INSTALL) docker docker-compose
