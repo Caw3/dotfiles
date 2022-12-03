@@ -95,6 +95,13 @@ nnoremap gR :vimgrep /\<<C-R><C-W>\>/g
 nnoremap <Leader>fF :find **/
 nnoremap <Leader>ff :edit **/
 
+nnoremap \z <CMD>call SearchFold()<CR>
+
+tnoremap <C-j> <c-w>j
+tnoremap <C-k> <c-w>k
+tnoremap <C-h> <c-w>h
+tnoremap <C-l> <c-w>l
+
 "Abbreviations
 cabbr gls `git ls-files`
 
@@ -103,6 +110,13 @@ function! ExecAndRestorePos(cmd)
 	let save_pos = getpos(".")
 	silent execute a:cmd
 	call setpos(".", save_pos)
+endfunction
+
+function! SearchFold()
+	setl foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\\|\\|(getline(v:lnum+1)=~@/)?1:2
+	setl foldmethod=expr
+	setl foldlevel=0
+	setl foldcolumn=2
 endfunction
 
 "Plugins
@@ -126,6 +140,15 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
     call plug#end()
 
+	"Termdebug
+	packadd termdebug
+	let g:termdebug_wide=1
+	nnoremap <Leader>db <Cmd>Termdebug<CR>
+	tnoremap <C-j> <Cmd>TmuxNavigateDown<CR>
+	tnoremap <C-k> <Cmd>TmuxNavigateUp<CR>
+	tnoremap <C-h> <Cmd>TmuxNavigateLeft<CR>
+	tnoremap <C-l> <Cmd>TmuxNavigateRight<CR>
+
     "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
     nnoremap <Leader>cr <Cmd>ALEFix<CR>
@@ -137,6 +160,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>di <Cmd>ALEDetail<CR>
     nnoremap <Leader>ds <Cmd>call ExecAndRestorePos("ALEToggle")<CR><Cmd>echo g:ale_enabled<CR>
     nnoremap <Leader>dq <Cmd>ALEPopulateQuickfix<CR>
+    nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
+
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
@@ -159,3 +184,7 @@ silent! colorscheme nord
 hi VertSplit ctermbg=NONE 
 hi! link StatusLineNC VertSplit
 hi! link StatusLine LineNr
+hi! link StatusLineTermNC VertSplit
+hi! link StatusLineTerm LineNr
+hi! link debugPC Visual
+hi! link debugBreakpoint TODO
