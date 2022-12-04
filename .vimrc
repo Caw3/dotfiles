@@ -56,7 +56,7 @@ map <Space> <Leader>
 
 nnoremap <C-p> <C-^>
 nnoremap <Leader>rs :%s/
-nnoremap <Leader>rr <cmd>w \| source % <CR>
+nnoremap <Leader>vr <cmd>w \| source % <CR>
 
 nnoremap <Leader>co <cmd>copen<CR>
 nnoremap <Leader>cc <cmd>cclose<CR>
@@ -138,6 +138,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
+	Plug 'rust-lang/rust.vim'
     call plug#end()
 
 	"Termdebug
@@ -188,3 +189,6 @@ hi! link StatusLineTermNC VertSplit
 hi! link StatusLineTerm LineNr
 hi! link debugPC Visual
 hi! link debugBreakpoint TODO
+hi! link QuickFixLine Visual
+hi! link qfError Number 
+hi! link qfFilename Conditional
