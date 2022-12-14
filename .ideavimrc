@@ -41,4 +41,11 @@ map <Leader>gp <Action>(ActivatePullRequestsToolWindow)
 map <Leader>gb <Action>(Annotate)
 map <Leader>gB <Action>(Git.Branches)
 
+map <leader>ln <Action>(GotoNextError)
+map <leader>lp <Action>(GotoPreviousError)
+
+map <leader>hn <Action>(VcsShowNextChangeMarker)
+map <leader>hp <Action>(VcsShowPrevChangeMarker)
+
 map <C-w><C-o> <Action>(HideAllWindows)
+map <C-w>q <Action>(CloseContent)
