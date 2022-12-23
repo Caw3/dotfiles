@@ -7,35 +7,24 @@
 
 ## Functions
 vimgrep() {
-    HELP="Usage: vimgrep {pattern} {files}..." 
-    PATTERN=$1
-    [[ $# -lt 1  ]] && echo "$HELP" && return 1
-    
-    git status &> /dev/null && [[ $# -eq 1 ]] \
-        && vim -c "silent vimgrep /$PATTERN/g \`git ls-files\`" && return 0
+  HELP="Usage: vimgrep {pattern} {files}..."
+  PATTERN=$1
+  [[ $# -lt 1 ]] && echo "$HELP" && return 1
 
-    [[ $# -eq 1  ]] && vim -c "silent vimgrep /$PATTERN/g  \`find .\`" && return 0
-    [[ $# -gt 1  ]] && shift && vim -c "silent vimgrep /$PATTERN/g $*" && return 0
+  git status &>/dev/null && [[ $# -eq 1 ]] &&
+    vim -c "silent vimgrep /$PATTERN/g \`git ls-files\`" && return 0
+
+  [[ $# -eq 1 ]] && vim -c "silent vimgrep /$PATTERN/g  \`find .\`" && return 0
+  [[ $# -gt 1 ]] && shift && vim -c "silent vimgrep /$PATTERN/g $*" && return 0
 }
 export -f vimgrep
 
 cht() {
-    curl -s cht.sh/"$1" | less -R
+  curl -s cht.sh/"$1" | less -R
 }
 export -f cht
 
-
-## Prompt
-parse_git_dirty() {
-  [[ $(git status 2> /dev/null | tail -n1) \
-      != "nothing to commit, working tree clean" ]] && echo "*"
-}
-parse_git_branch() {
-  git branch --no-color 2> /dev/null | \
-      sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty)) /"
-}
-
-export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] $(parse_git_branch)'
+export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] '
 
 ## SHOPT
 shopt -s autocd
@@ -73,4 +62,4 @@ alias gl='git log --oneline --graph --abbrev-commit'
 alias battery='cat /sys/class/power_supply/BAT0/capacity'
 alias ta="tmux a"
 alias tm="tmux"
-alias emacs="emacsclient -c -a 'emacs'" 
+alias emacs="emacsclient -c -a 'emacs'"
