@@ -140,6 +140,12 @@ alacritty: $(FONT_PACKAGE_NAME) ## Init alacritty (Terminal emulator)
 	mkdir -p ${HOME}/.config/alacritty 2> /dev/null
 	$(LN)/.config/alacritty/alacritty.yml
 
+emacs:
+	$(PKG_INSTALL) $@
+	git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
+	~/.emacs.d/bin/doom install
+	$(LN)/.doom.d
+
 $(FONT_PACKAGE_NAME):
 	$(PKG_INSTALL) $@
 
