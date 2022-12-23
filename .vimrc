@@ -163,6 +163,15 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>dq <Cmd>ALEPopulateQuickfix<CR>
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
 
+	function! SymbolSearch()
+		call inputsave()
+		let symbol = input('Find Symbol: ')
+		execute 'ALESymbolSearch' symbol
+		call inputrestore()
+	endfunction
+
+    nnoremap <Leader>ss <Cmd>call SymbolSearch()<CR>
+
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
