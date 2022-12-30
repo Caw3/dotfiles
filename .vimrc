@@ -20,7 +20,6 @@ set splitright
 
 set scrolloff=8
 set signcolumn=number
-set number
 
 set incsearch
 set nohlsearch
@@ -95,8 +94,6 @@ nnoremap gR :vimgrep /\<<C-R><C-W>\>/g
 nnoremap <Leader>fF :find **/
 nnoremap <Leader>ff :edit **/
 
-nnoremap \z <CMD>call SearchFold()<CR>
-
 tnoremap <C-j> <c-w>j
 tnoremap <C-k> <c-w>k
 tnoremap <C-h> <c-w>h
@@ -110,13 +107,6 @@ function! ExecAndRestorePos(cmd)
 	let save_pos = getpos(".")
 	silent execute a:cmd
 	call setpos(".", save_pos)
-endfunction
-
-function! SearchFold()
-	setl foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\\|\\|(getline(v:lnum+1)=~@/)?1:2
-	setl foldmethod=expr
-	setl foldlevel=0
-	setl foldcolumn=2
 endfunction
 
 "Plugins
@@ -167,15 +157,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>ds <Cmd>call ExecAndRestorePos("ALEToggle")<CR><Cmd>echo g:ale_enabled<CR>
     nnoremap <Leader>dq <Cmd>ALEPopulateQuickfix<CR>
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
-
-	function! SymbolSearch()
-		call inputsave()
-		let symbol = input('Find Symbol: ')
-		execute 'ALESymbolSearch' symbol
-		call inputrestore()
-	endfunction
-
-    nnoremap <Leader>ss <Cmd>call SymbolSearch()<CR>
+    nnoremap <Leader>ss :ALESymbolSearch 
 
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
