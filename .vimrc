@@ -133,6 +133,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-fugitive'
 	Plug 'romainl/vim-devdocs'
+	Plug 'romainl/vim-cool'
     Plug 'christoomey/vim-tmux-navigator'
     Plug 'arcticicestudio/nord-vim', { 'do' : 'colorscheme nord' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
@@ -149,6 +150,10 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	tnoremap <C-k> <Cmd>TmuxNavigateUp<CR>
 	tnoremap <C-h> <Cmd>TmuxNavigateLeft<CR>
 	tnoremap <C-l> <Cmd>TmuxNavigateRight<CR>
+
+	"vim-cool
+	set hlsearch
+	let g:cool_total_matches = 1
 
     "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
