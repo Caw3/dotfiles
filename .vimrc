@@ -185,6 +185,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 
     nnoremap <silent> <Leader>gs :vert Git \|vertical resize 80 <CR>
     nnoremap <Leader>gb :G blame <CR>
+    nnoremap <Leader>gl :Gclog<CR>
+    nnoremap <Leader>gqc <Cmd> silent G difftool \| copen<CR>
+    nnoremap <Leader>gqm <Cmd> silent G mergetool \| copen<CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
 
 endif
