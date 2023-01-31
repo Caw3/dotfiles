@@ -20,6 +20,7 @@ set splitright
 
 set scrolloff=8
 set signcolumn=number
+set nu
 
 set incsearch
 set nohlsearch

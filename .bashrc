@@ -54,6 +54,7 @@ alias rm='rm -i'
 alias gd='git diff'
 alias gc='git checkout'
 alias gb='git branch'
+alias gbl='git branch -vva --sort=-committerdate'
 alias gP='git push'
 alias gp='git pull'
 alias gs='git status -s'
@@ -63,3 +64,4 @@ alias battery='cat /sys/class/power_supply/BAT0/capacity'
 alias ta="tmux a"
 alias tm="tmux"
 alias emacs="emacsclient -c -a 'emacs'" 
+. "$HOME/.cargo/env"
