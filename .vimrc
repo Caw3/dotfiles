@@ -128,6 +128,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'christoomey/vim-tmux-navigator'
     Plug 'arcticicestudio/nord-vim', { 'do' : 'colorscheme nord' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
+	Plug 'preservim/tagbar'
+	Plug 'ludovicchabant/vim-gutentags'
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
@@ -145,6 +147,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	"vim-cool
 	set hlsearch
 	let g:cool_total_matches = 1
+
+	"Tagbar
+	nnoremap <leader>tT :TagbarToggle<CR>
 
     "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
