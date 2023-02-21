@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+search_path=$HOME/repos
+
+total="$(find "$search_path" -maxdepth 1 -type d | wc -l)"
+
+if [[ $total -eq 0 ]]; then
+  prompt="No repos found! (~/repos)"
+else
+  prompt="Select project: "
+fi
+
+repo_name="$(find "$search_path" -maxdepth 1 -type d | \
+  awk -F'/' '{print $NF}' | \
+  sort | \
+  fzf-tmux -p --prompt "$prompt")"
+
+if [[ -n $repo_name ]]; then
+  dir="$(find "$search_path" -maxdepth 1 -name "$repo_name" )"
+  tmux new-session -c $dir -s $repo_name -d
+  tmux switch-client -t $repo_name
+fi
+
+exit 0

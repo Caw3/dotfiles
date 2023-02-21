@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 search_path=$HOME/books
 
-total="$(find "$search_path" -maxdepth 1 | wc -l)"
+total="$(find "$search_path" -maxdepth 5 | wc -l)"
 
 if [[ $total -eq 0 ]]; then
   prompt="No files here!"
@@ -13,7 +13,7 @@ fi
 file_name="$(find "$search_path" -maxdepth 5 -type f | \
   awk -F'/' '{print $NF}' | \
   sort | \
-  fzf --reverse --prompt "$prompt")"
+  fzf-tmux -p --prompt "$prompt")"
 
 if [[ -n $file_name ]]; then
   xdg-open "$(find "$search_path" -maxdepth 5 -name "$file_name" )"

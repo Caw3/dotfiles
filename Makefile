@@ -121,13 +121,11 @@ curl:
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
 # GUI 
-zathura: zathura-pdf-poppler ## Init zathura (PDF reader)
+zathura: zathura-pdf-mupdf ## Init zathura (PDF reader)
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
-	mkdir -p ${HOME}/.config/zathura 2> /dev/null
 	xdg-mime default org.pwmt.zathura.desktop application/pdf
-	$(LN)/.config/zathura/zathurarc
 
-zathura-pdf-poppler:
+zathura-pdf-mupdf:
 	$(PKG_INSTALL) $@
 
 alacritty: $(FONT_PACKAGE_NAME) ## Init alacritty (Terminal emulator)
