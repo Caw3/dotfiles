@@ -132,6 +132,14 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
+
+	if v:version >= 900 && executable("gh")
+		Plug 'github/copilot.vim'
+		exec "Copilot disable"
+		nnoremap <Leader>ae <Cmd>Copilot enable<CR><Cmd>Copilot status<CR>
+		nnoremap <Leader>ad <Cmd>Copilot disable<CR><Cmd>Copilot status<CR>
+		nnoremap <Leader>ap <Cmd>vert Copilot panel<CR>
+	endif
     call plug#end()
 
 	"Termdebug
