@@ -134,12 +134,12 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
 
 	if v:version >= 900 && executable("gh")
-		Plug 'github/copilot.vim'
-		exec "Copilot disable"
-		nnoremap <Leader>ae <Cmd>Copilot enable<CR><Cmd>Copilot status<CR>
-		nnoremap <Leader>ad <Cmd>Copilot disable<CR><Cmd>Copilot status<CR>
-		nnoremap <Leader>ap <Cmd>vert Copilot panel<CR>
+		Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
+		nnoremap <Leader>aie <Cmd>Copilot enable<CR><Cmd>Copilot status<CR>
+		nnoremap <Leader>aid <Cmd>Copilot disable<CR><Cmd>Copilot status<CR>
+		nnoremap <Leader>aip <Cmd>vert Copilot panel<CR>
 	endif
+
     call plug#end()
 
 	"Termdebug
