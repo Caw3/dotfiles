@@ -123,17 +123,17 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-fugitive'
-	Plug 'romainl/vim-devdocs'
-	Plug 'romainl/vim-cool'
+    Plug 'tpope/vim-vinegar'
+    Plug 'romainl/vim-devdocs'
+    Plug 'romainl/vim-cool'
     Plug 'christoomey/vim-tmux-navigator'
     Plug 'arcticicestudio/nord-vim', { 'do' : 'colorscheme nord' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
-	Plug 'ludovicchabant/vim-gutentags'
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
 
-	if v:version >= 900 && executable("gh")
+	if v:version >= 900
 		Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
 		nnoremap <Leader>aie <Cmd>Copilot enable<CR><Cmd>Copilot status<CR>
 		nnoremap <Leader>aid <Cmd>Copilot disable<CR><Cmd>Copilot status<CR>
