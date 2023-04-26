@@ -163,3 +163,5 @@ gnome-settings: dconf-editor $(FONT_PACKAGE_NAME) ## Init Gnome specific setting
 	dconf write /org/gnome/desktop/interface/show-battery-percentage true
 	dconf write /org/gnome/desktop/interface/enable-hot-corners false
 	dconf write /org/gnome/mutter/workspaces-only-on-primary true
+	dconf write /org/gnome/desktop/peripherals/mouse/accel-profile "'flat'"
+	dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
