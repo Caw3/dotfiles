@@ -5,7 +5,7 @@
 
 set -e
 
-REMOTE_KEY="$HOME/.ssh/temp_key"
+REMOTE_KEY="$HOME/temp_key"
 
 pkg_check() {
   command -v "$@" > /dev/null 2>&1
