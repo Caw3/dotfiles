@@ -1,0 +1,27 @@
+version: "3"
+services:
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: ${HOSTNAME}.syncthing
+    hostname: ${HOSTNAME}
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/${USER}/.config/syncthing:/var/syncthing/config:Z
+      - /home/${USER}/books:/var/syncthing/books:Z
+      - /home/${USER}/courses:/var/syncthing/courses:Z
+      - /home/${USER}/notes:/var/syncthing/notes:Z
+    ports:
+      - 8384:8384 # Web UI
+      - 22000:22000/tcp # TCP file transfers
+      - 22000:22000/udp # QUIC file transfers
+      - 21027:21027/udp # Receive local discovery broadcasts
+    restart: unless-stopped
+  snort:
+    image: patrickneise/snort
+    container_name: ${HOSTNAME}.snort
+    volumes:
+      - /home/${USER}/.local/var/log/snort:/var/log/snort:Z
+    network_mode: "host"
+    command: ["-i", "enp2s0"]
