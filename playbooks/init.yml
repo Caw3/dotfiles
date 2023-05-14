@@ -26,7 +26,6 @@
         state: present
       loop:
         - git
-        - openssh
         - wget
         - curl
         - tmux
