@@ -11,7 +11,5 @@
         - podman
         - podman-compose
         - shfmt
-        - github-cli
+        - gh
         - pandoc
-        - latex
-
