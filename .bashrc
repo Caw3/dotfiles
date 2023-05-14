@@ -43,6 +43,10 @@ set -o vi
 export EDITOR='vi'
 export MANPAGER="vim -M +MANPAGER -"
 
+export HISTSIZE= 
+export HISTFILESIZE=
+export HISTCONTROL=erasedups
+
 ## Aliases
 alias py='python3'
 alias la='ls -a'
