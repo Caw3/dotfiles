@@ -1,7 +1,5 @@
 SHELL=/bin/bash 
-REMOTE_USER = carl
-REMOTE_HOST = 178.62.227.207
-REMOTE_KEY = ~/.ssh/id_vps
+REMOTE_KEY = ./key
 LN = @ln -vsfn {${PWD},${HOME}}
 PKG_CHECK = @command -v $@ > /dev/null 2>&1
 
@@ -62,13 +60,22 @@ git: ## Init git configs
 	$(LN)/.git_template
 	$(PKG_CHECK) || $(PKG_INSTALL) gh
 
-ssh: rsync ## sync ssh configuration with a remote host
+ssh: ansible rsync key ## sync ssh configuration with a remote host
+	@[ "${REMOTE_HOST}" ] || ( echo "Please specify remote host with REMOTE_HOST=<user>@<host ip>"; exit 1)
 	$(PKG_CHECK) || $(PKG_INSTALL) $(SSH)
 	@test -f $(REMOTE_KEY) && \
 		(rsync -avz --mkpath -e "ssh -o StrictHostKeyChecking=no -i $(REMOTE_KEY)" \
 		--exclude "known_hosts*" \
-		$(REMOTE_USER)@$(REMOTE_HOST):~/.ssh ${HOME} && \
+		$(REMOTE_HOST):~/.ssh ${HOME} && \
 		chmod 600 ${HOME}/.ssh/*) || echo "No key found!"
+	@rm $(REMOTE_KEY) -f
+
+key: 
+	@ansible-vault decrypt --output $(REMOTE_KEY) encrypted_key
+
+ansible:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+
 rsync:
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
