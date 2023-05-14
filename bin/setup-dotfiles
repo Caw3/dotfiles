@@ -52,9 +52,15 @@ fi
 
 # Run playbooks locally
 cd $DOTFILES_DIR
-# ansible-galaxy install -r requirements.yml
 ansible-playbook --connection=local \
   -i "localhost," \
   --diff \
   --ask-become-pass \
   "$DOTFILES_DIR/playbooks/main.yml"
+
+# Change remote URL if key exists
+if [[ -f "${USER}/.ssh/id_*" ]];
+then
+  "Setting remote to use SSH"
+  git remote set-url origin git@github.com:caw3/dotfiles
+fi
