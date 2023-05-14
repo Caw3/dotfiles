@@ -31,4 +31,5 @@
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
         state: link
+        force: yes
       loop: "{{ dotfiles_symlinks }}"

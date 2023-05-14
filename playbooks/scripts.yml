@@ -2,8 +2,8 @@
 - hosts: all
 
   vars:
-    source_dir: "~/.dotfiles/bin"
-    target_dir: "~/.local/bin"
+    source_dir: "$HOME/.dotfiles/bin"
+    target_dir: "$HOME/.local/bin"
 
   tasks:
     - name: Find files in source directory
@@ -12,10 +12,24 @@
         file_type: file
       register: files_to_link
 
+    - name: Create directory
+      ansible.builtin.file:
+        path: "{{ target_dir }}"
+        state: directory
+        recurse: yes
+
+    - name: Add directory to PATH
+      ansible.builtin.lineinfile:
+        path: ~/.bash_profile
+        line: 'export PATH="$PATH:{{ target_dir }}"'
+        state: present
+        insertafter: EOF
+
     - name: Create symbolic links in target directory
       file:
         src: "{{ item.path }}"
         dest: "{{ target_dir }}/{{ item.path | basename }}"
         state: link
+        force: yes
       loop: "{{ files_to_link.files }}"
 
