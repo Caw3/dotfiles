@@ -125,7 +125,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-vinegar'
     Plug 'christoomey/vim-tmux-navigator'
-    Plug 'arcticicestudio/nord-vim', { 'do' : 'colorscheme nord' }
+    Plug 'arcticicestudio/nord-vim'
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
