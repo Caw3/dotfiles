@@ -1,0 +1,34 @@
+---
+- hosts: all
+
+  vars:
+    dotfiles_repo: "https://github.com/Caw3/dotfiles.git"
+    dotfiles_local_location: "~/.dotfiles"
+    dotfiles_symlinks:
+      - src: "{{ dotfiles_local_location }}/.config/alacritty/alacritty.yml"
+        dest: "~/.config/alacritty/alacritty.yml"
+
+  tasks:
+    - name: Install GUI packages
+      become: yes
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - alacritty
+        - jetbrains-mono-fonts
+        - zathura
+        - zathura-pdf-mupdf
+
+    - name: Update dotfiles repository
+      git:
+        repo: "{{ dotfiles_repo }}"
+        dest: "{{ dotfiles_local_location }}"
+        update: yes
+
+    - name: Create symbolic links for dotfiles
+      file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+      loop: "{{ dotfiles_symlinks }}"

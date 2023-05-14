@@ -1,0 +1,21 @@
+---
+- hosts: all
+
+  vars:
+    source_dir: "~/.dotfiles/bin"
+    target_dir: "~/.local/bin"
+
+  tasks:
+    - name: Find files in source directory
+      find:
+        paths: "{{ source_dir }}"
+        file_type: file
+      register: files_to_link
+
+    - name: Create symbolic links in target directory
+      file:
+        src: "{{ item.path }}"
+        dest: "{{ target_dir }}/{{ item.path | basename }}"
+        state: link
+      loop: "{{ files_to_link.files }}"
+

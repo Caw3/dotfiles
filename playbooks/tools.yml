@@ -1,0 +1,17 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Install extra packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - podman
+        - podman-compose
+        - shfmt
+        - github-cli
+        - pandoc
+        - latex
+

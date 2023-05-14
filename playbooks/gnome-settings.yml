@@ -1,0 +1,152 @@
+---
+- hosts: all
+  tasks:
+    - name: Set xkb-options
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/input-sources/xkb-options"
+        value: "['caps:escape']"
+        state: present
+
+    - name: Set close keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/close"
+        value: "['<Super>q', '<Alt>F4']"
+        state: present
+
+    - name: Set toggle-message-tray keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/shell/keybindings/toggle-message-tray"
+        value: "['<Super>v']"
+        state: present
+
+    - name: Set focus-active-notification keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/shell/keybindings/focus-active-notification"
+        value: "['<Shift><Super>v']"
+        state: present
+
+    - name: Set gtk-theme
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/interface/gtk-theme"
+        value: "'Adwaita-dark'"
+        state: present
+
+    - name: Show date on the clock
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/interface/clock-show-date"
+        value: 'true'
+        state: present
+
+    - name: Show weekday on the clock
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/interface/clock-show-weekday"
+        value: 'true'
+        state: present
+
+    - name: Show battery percentage
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/interface/show-battery-percentage"
+        value: 'true'
+        state: present
+
+    - name: Disable hot corners
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/interface/enable-hot-corners"
+        value: 'false'
+        state: present
+
+    - name: Enable workspaces only on primary
+      ansible.builtin.dconf:
+        key: "/org/gnome/mutter/workspaces-only-on-primary"
+        value: 'true'
+        state: present
+
+    - name: Set mouse acceleration profile
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/peripherals/mouse/accel-profile"
+        value: "'flat'"
+        state: present
+
+    - name: Set color scheme
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/interface/color-scheme"
+        value: "'prefer-dark'"
+        state: present
+
+    - name: Set maximize keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/maximize"
+        value: "['<Super>Up']"
+        state: present
+
+    - name: Set unmaximize keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/unmaximize"
+        value: "['<Super>Down']"
+        state: present
+
+    - name: Set move-to-monitor-down keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/move-to-monitor-down"
+        value: "['<Shift><Super>Down']"
+        state: present
+
+    - name: Set move-to-monitor-left keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/move-to-monitor-left"
+        value: "['<Shift><Super>Left']"
+        state: present
+
+    - name: Set move-to-monitor-right keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/move-to-monitor-right"
+        value: "['<Shift><Super>Right']"
+        state: present
+
+    - name: Set move-to-monitor-up keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/move-to-monitor-up"
+        value: "['<Shift><Super>Up']"
+        state: present
+
+    - name: Set move-to-workspace-right keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/move-to-workspace-right"
+        value: "['<Shift><Super><Alt>Right']"
+        state: present
+
+    - name: Set move-to-workspace-left keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/move-to-workspace-left"
+        value: "['<Shift><Super><Alt>Left']"
+        state: present
+
+    - name: Set switch-to-workspace-left keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/switch-to-workspace-left"
+        value: "['<Super><Alt>Left']"
+        state: present
+
+    - name: Set switch-to-workspace-right keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/desktop/wm/keybindings/switch-to-workspace-right"
+        value: "['<Super><Alt>Right']"
+        state: present
+
+    - name: Set toggle-tiled-left keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/mutter/keybindings/toggle-tiled-left"
+        value: "['<Super>Left']"
+        state: present
+
+    - name: Set toggle-tiled-right keybindings
+      ansible.builtin.dconf:
+        key: "/org/gnome/mutter/keybindings/toggle-tiled-right"
+        value: "['<Super>Right']"
+        state: present
+
+    - name: Set favorite apps
+      ansible.builtin.dconf:
+        key: "/org/gnome/shell/favorite-apps"
+        value: '["firefox.desktop", "Alacritty.desktop"]'
+        state: present

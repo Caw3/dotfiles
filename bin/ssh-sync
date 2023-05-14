@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# Sync SSH keys with a remote host
+#
+
+set -e
+
+REMOTE_KEY="$HOME/.ssh/temp_key"
+
+pkg_check() {
+  command -v "$@" > /dev/null 2>&1
+}
+
+usage () {
+  echo "ssh-sync <user>@<host ip> <encryped_key>"
+}
+
+REMOTE_HOST="$1"
+REMOTE_ENCRYPTED_KEY="$2"
+
+
+pkg_check ssh rsync || ( echo "Please install ssh and rsync to use"; exit 1)
+[ "$REMOTE_HOST" ] || (usage; exit 1)
+
+ansible-vault decrypt --output "$REMOTE_KEY" "$REMOTE_ENCRYPTED_KEY"
+if [ -f "$REMOTE_KEY" ]
+then
+  (rsync -avz --mkpath -e "ssh -o StrictHostKeyChecking=no -i $REMOTE_KEY" \
+  --exclude "known_hosts*" \
+  "$REMOTE_HOST:~/.ssh" "$HOME" && \
+  chmod 600 "$HOME"/.ssh/*)
+  rm "$REMOTE_KEY" -f
+fi
+

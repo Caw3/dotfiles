@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+# Script for automating setup of dotfiles using ansible
+#
+
+set -e
+
+
+DOTFILES_URL="https://github.com/caw3/dotfiles.git"
+DOTFILES_DIR="$HOME/.dotfiles"
+
+# Install Ansible
+
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS=$NAME
+else
+    echo "Not able to determine the OS."
+    exit 1
+fi
+
+if ! [ -x "$(command -v ansible)" ];
+then
+  case $OS in
+    "Ubuntu"*)
+      echo "Detected Ubuntu OS..."
+      sudo apt update
+      sudo apt install -y software-properties-common
+      sudo apt-add-repository --yes --update ppa:ansible/ansible
+      sudo apt install -y ansible
+      ;;
+
+    "Fedora"*)
+      echo "Detected Fedora OS..."
+      sudo dnf -y install ansible
+      ;;
+
+    *)
+      echo "Sorry, this script does not support this OS."
+      exit 1
+      ;;
+  esac
+fi
+
+# Clone/Update the repository
+if ! [[ -d "$DOTFILES_DIR" ]]; then
+  git clone "$DOTFILES_URL" "$DOTFILES_DIR"
+else
+  echo "Dotfiles present, checking for update..."
+  git -C "$DOTFILES_DIR" pull
+fi
+
+# Run playbooks locally
+cd $DOTFILES_DIR
+# ansible-galaxy install -r requirements.yml
+ansible-playbook --connection=local \
+  -i "localhost," \
+  --diff \
+  --ask-become-pass \
+  "$DOTFILES_DIR/playbooks/main.yml"

@@ -29,18 +29,6 @@ init: bash tmux vim ## Lightweight configuration
 tools: docker golang shell latex pandoc ## Extra tools
 gui: $(FONT_PACKAGE_NAME) zathura alacritty gnome-settings ## Init GUI applications
 
-test_ubuntu: docker
-	docker build ${PWD} --rm -t test.ubuntu \
-		--build-arg TARGET='init tools gui' \
-		--build-arg PLATTFORM=ubuntu \
-		--build-arg PKG_INSTALL='apt-get update && apt-get install -y'
-
-test_fedora: docker
-	docker build ${PWD} --rm -t test.fedora \
-		--build-arg TARGET='init tools gui' \
-		--build-arg PLATTFORM=fedora \
-		--build-arg PKG_INSTALL='dnf install -y'
-
 bash: ## Init bash
 	$(LN)/.bashrc
 	$(LN)/.inputrc
