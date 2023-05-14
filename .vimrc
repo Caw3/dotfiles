@@ -23,7 +23,7 @@ set signcolumn=number
 set nu
 
 set incsearch
-set nohlsearch
+set hlsearch
 
 set hidden
 set noswapfile
@@ -148,10 +148,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	tnoremap <C-k> <Cmd>TmuxNavigateUp<CR>
 	tnoremap <C-h> <Cmd>TmuxNavigateLeft<CR>
 	tnoremap <C-l> <Cmd>TmuxNavigateRight<CR>
-
-	"vim-cool
-	set hlsearch
-	let g:cool_total_matches = 1
 
     "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
