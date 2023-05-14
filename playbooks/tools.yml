@@ -10,6 +10,7 @@
       loop:
         - podman
         - podman-compose
+        - pip
         - shfmt
         - gh
         - pandoc

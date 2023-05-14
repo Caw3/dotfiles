@@ -1,6 +1,12 @@
 ---
 - hosts: all
   tasks:
+
+    - name: Install psutil package
+      ansible.builtin.pip:
+        name: psutil
+        state: present
+
     - name: Set xkb-options
       ansible.builtin.dconf:
         key: "/org/gnome/desktop/input-sources/xkb-options"
