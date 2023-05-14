@@ -44,4 +44,3 @@ endfunction
 nnoremap <Leader>dt <Cmd>call RustDebugTest()<Cr>
 nnoremap <Leader>dr <Cmd>call RustDebugRun()<Cr>
 nnoremap <Leader>db <Cmd>call RustDebug()<Cr>
-nnoremap K <CMD>DD<CR>

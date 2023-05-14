@@ -124,8 +124,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-vinegar'
-    Plug 'romainl/vim-devdocs'
-    Plug 'romainl/vim-cool'
     Plug 'christoomey/vim-tmux-navigator'
     Plug 'arcticicestudio/nord-vim', { 'do' : 'colorscheme nord' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
