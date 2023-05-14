@@ -3,10 +3,10 @@
 
   vars:
     dotfiles_repo: "https://github.com/Caw3/dotfiles.git"
-    dotfiles_local_location: "~/.dotfiles"
+    dotfiles_local_location: "$HOME/.dotfiles"
     dotfiles_symlinks:
       - src: "{{ dotfiles_local_location }}/.config/alacritty/alacritty.yml"
-        dest: "~/.config/alacritty/alacritty.yml"
+        dest: "$HOME/.config/alacritty/alacritty.yml"
 
   tasks:
     - name: Install GUI packages
@@ -25,6 +25,12 @@
         repo: "{{ dotfiles_repo }}"
         dest: "{{ dotfiles_local_location }}"
         update: yes
+
+    - name: Create directory
+      ansible.builtin.file:
+        path: "$HOME/.config/alacritty"
+        state: directory
+        recurse: yes
 
     - name: Create symbolic links for dotfiles
       file:
