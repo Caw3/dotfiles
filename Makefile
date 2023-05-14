@@ -24,7 +24,7 @@ help:
 		| sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install: init git gui scripts ## install
+install: init git ansible wget curl rsync gui scripts ## Basic install
 init: bash tmux vim ## Lightweight configuration
 tools: docker golang shell latex pandoc ## Extra tools
 gui: $(FONT_PACKAGE_NAME) zathura alacritty gnome-settings ## Init GUI applications
