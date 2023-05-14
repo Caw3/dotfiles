@@ -165,3 +165,23 @@ gnome-settings: dconf-editor $(FONT_PACKAGE_NAME) ## Init Gnome specific setting
 	dconf write /org/gnome/mutter/workspaces-only-on-primary true
 	dconf write /org/gnome/desktop/peripherals/mouse/accel-profile "'flat'"
 	dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
+	dconf write /org/gnome/desktop/wm/keybindings/maximize "['<Super>k', '<Super>Up']"
+	dconf write /org/gnome/desktop/wm/keybindings/unmaximize "['<Super>j', '<Super>Down']"
+	dconf write /org/gnome/desktop/wm/keybindings/move-to-monitor-down \
+		"['<Shift><Super>Down']"
+	dconf write /org/gnome/desktop/wm/keybindings/move-to-monitor-left \
+		"['<Shift><Super>Left']"
+	dconf write /org/gnome/desktop/wm/keybindings/move-to-monitor-right \
+		"['<Shift><Super>Right']"
+	dconf write /org/gnome/desktop/wm/keybindings/move-to-monitor-up \
+		"['<Shift><Super>Up']"
+	dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-right \
+		"['<Shift><Super><Alt>Right']"
+	dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-left \
+		"['<Shift><Super><Alt>Left']"
+	dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-left \
+		"['<Super><Alt>Left']"
+	dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-right \
+		"['<Super><Alt>Right']"
+	dconf write /org/gnome/mutter/keybindings/toggle-tiled-left "['<Super>Left']"
+	dconf write /org/gnome/mutter/keybindings/toggle-tiled-right "['<Super>Right']"
