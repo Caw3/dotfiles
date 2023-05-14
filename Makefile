@@ -24,19 +24,19 @@ help:
 		| sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-all: init ssh git tools gui gnome-settings
+install: init git gui scripts ## install
 init: bash tmux vim ## Lightweight configuration
-tools: docker golang shell latex pandoc perl scripts ## Extra tools
-gui: $(FONT_PACKAGE_NAME) zathura alacritty ## Init GUI applications
+tools: docker golang shell latex pandoc ## Extra tools
+gui: $(FONT_PACKAGE_NAME) zathura alacritty gnome-settings ## Init GUI applications
 
 test_ubuntu: docker
-	sudo docker build ${PWD} --rm -t test.ubuntu \
+	docker build ${PWD} --rm -t test.ubuntu \
 		--build-arg TARGET='init tools gui' \
 		--build-arg PLATTFORM=ubuntu \
 		--build-arg PKG_INSTALL='apt-get update && apt-get install -y'
 
 test_fedora: docker
-	sudo docker build ${PWD} --rm -t test.fedora \
+	docker build ${PWD} --rm -t test.fedora \
 		--build-arg TARGET='init tools gui' \
 		--build-arg PLATTFORM=fedora \
 		--build-arg PKG_INSTALL='dnf install -y'
@@ -112,9 +112,6 @@ golang: ## Install golang
 shell: ## Install shellscripting tools
 	$(PKG_INSTALL) $(SHELLCHECK) shfmt
 
-perl: ## Install perl tools
-	$(PKG_INSTALL) perl perl-doc perltidy
-
 pandoc: latex curl wget ## Install pandoc tools
 	$(PKG_INSTALL) pandoc librsvg2-tools
 
@@ -157,7 +154,6 @@ gnome-settings: dconf-editor $(FONT_PACKAGE_NAME) ## Init Gnome specific setting
 	dconf write /org/gnome/shell/keybindings/toggle-message-tray "['<Super>v']"
 	dconf write /org/gnome/shell/keybindings/focus-active-notification "['<Shift><Super>v']"
 	dconf write /org/gnome/desktop/interface/gtk-theme "'Adwaita-dark'"
-	dconf write /org/gnome/desktop/interface/monospace-font-name "'JetBrains Mono 10'"
 	dconf write /org/gnome/desktop/interface/clock-show-date true
 	dconf write /org/gnome/desktop/interface/clock-show-weekday true
 	dconf write /org/gnome/desktop/interface/show-battery-percentage true
@@ -185,3 +181,4 @@ gnome-settings: dconf-editor $(FONT_PACKAGE_NAME) ## Init Gnome specific setting
 		"['<Super><Alt>Right']"
 	dconf write /org/gnome/mutter/keybindings/toggle-tiled-left "['<Super>Left']"
 	dconf write /org/gnome/mutter/keybindings/toggle-tiled-right "['<Super>Right']"
+	dconf write /org/gnome/shell/favorite-apps '["firefox.desktop", "Alacritty.desktop"]'
