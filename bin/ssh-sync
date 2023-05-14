@@ -12,7 +12,7 @@ pkg_check() {
 }
 
 usage () {
-  echo "ssh-sync <user>@<host ip> <encryped_key>"
+  echo "ssh-sync <user>@<host ip> <encrypted_key>"
 }
 
 REMOTE_HOST="$1"

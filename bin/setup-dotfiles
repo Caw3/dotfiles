@@ -82,7 +82,7 @@ ansible-playbook --connection=local \
 if [ "$ssh_value" ];
 then
   echo "Fetching SSH keys..."
-  "$DOTFILES_DIR/bin/ssh-sync" "$ssh_value" "$DOTFILES_DIR/encryped_key"
+  "$DOTFILES_DIR/bin/ssh-sync" "$ssh_value" "$DOTFILES_DIR/encrypted_key"
   echo "Setting remote to use SSH"
   git remote set-url origin "$DOTFILES_SSH_URL"
 fi
