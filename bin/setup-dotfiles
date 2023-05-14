@@ -5,14 +5,15 @@
 
 set -e
 
-OPTIONS=$(getopt -o '' -l ssh: -- "$@")
-ssh_value=""
+OPTIONS="$(getopt -o '' -l ssh: -- "$@")"
+eval set -- "$OPTIONS"
+
 while true; do
   case "$1" in
     --ssh )
       shift
       ssh_value=$1
-      break
+      shift
       ;;
     -- )
       shift
