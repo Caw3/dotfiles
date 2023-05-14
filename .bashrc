@@ -68,3 +68,4 @@ alias battery='cat /sys/class/power_supply/BAT0/capacity'
 alias ta="tmux a"
 alias tm="tmux"
 alias emacs="emacsclient -c -a 'emacs'" 
+alias docker="podman"
