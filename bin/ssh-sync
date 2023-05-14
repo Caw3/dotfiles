@@ -31,4 +31,3 @@ then
   chmod 600 "$HOME"/.ssh/*)
   rm "$REMOTE_KEY" -f
 fi
-

@@ -5,8 +5,28 @@
 
 set -e
 
+OPTIONS=$(getopt -o '' -l ssh: -- "$@")
+ssh_value=""
+while true; do
+  case "$1" in
+    --ssh )
+      shift
+      ssh_value=$1
+      break
+      ;;
+    -- )
+      shift
+      break
+      ;;
+    * )
+      echo "Invalid option: $1" 1>&2
+      exit 1
+      ;;
+  esac
+done
 
 DOTFILES_URL="https://github.com/caw3/dotfiles.git"
+DOTFILES_SSH_URL="git@github.com:caw3/dotfiles"
 DOTFILES_DIR="$HOME/.dotfiles"
 
 # Install Ansible
@@ -58,9 +78,11 @@ ansible-playbook --connection=local \
   --ask-become-pass \
   "$DOTFILES_DIR/playbooks/main.yml"
 
-# Change remote URL if key exists
-if [[ -f "${USER}/.ssh/id_*" ]];
+# Fetch SSH keys
+if [ "$ssh_value" ];
 then
-  "Setting remote to use SSH"
-  git remote set-url origin git@github.com:caw3/dotfiles
+  echo "Fetching SSH keys..."
+  "$DOTFILES_DIR/bin/ssh-sync" "$ssh_value" "$DOTFILES_DIR/encryped_key"
+  echo "Setting remote to use SSH"
+  git remote set-url origin "$DOTFILES_SSH_URL"
 fi
