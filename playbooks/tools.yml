@@ -15,6 +15,7 @@
     - gh
     - pandoc
     - awscli
+    - htop
     when: ansible_distribution == 'Ubuntu'
 
   - name: Add the user to the docker group
@@ -36,4 +37,5 @@
     - gh
     - pandoc
     - awscli
+    - htop
     when: ansible_distribution == 'Fedora'
