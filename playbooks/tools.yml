@@ -16,6 +16,7 @@
     - pandoc
     - awscli
     - htop
+    - ddgr
     when: ansible_distribution == 'Ubuntu'
 
   - name: Add the user to the docker group
@@ -38,4 +39,5 @@
     - pandoc
     - awscli
     - htop
+    - ddgr
     when: ansible_distribution == 'Fedora'
