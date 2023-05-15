@@ -3,14 +3,28 @@
   become: yes
 
   tasks:
-    - name: Install extra packages
-      package:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - podman
-        - podman-compose
-        - pip
-        - shfmt
-        - gh
-        - pandoc
+  - name: Install extra packages on Ubuntu
+    apt:
+      name: "{{ item }}"
+      state: present
+    loop:
+    - docker.io
+    - docker-compose
+    - python3-pip
+    - shellcheck
+    - gh
+    - pandoc
+    when: ansible_distribution == 'Ubuntu'
+
+  - name: Install extra packages on Fedora
+    dnf:
+      name: "{{ item }}"
+      state: present
+    loop:
+    - podman
+    - podman-compose
+    - python3-pip
+    - ShellCheck
+    - gh
+    - pandoc
+    when: ansible_distribution == 'Fedora'
