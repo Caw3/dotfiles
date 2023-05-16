@@ -17,6 +17,7 @@
     - awscli
     - htop
     - ddgr
+    - autossh
     when: ansible_distribution == 'Ubuntu'
 
   - name: Add the user to the docker group
@@ -40,4 +41,5 @@
     - awscli
     - htop
     - ddgr
+    - autossh
     when: ansible_distribution == 'Fedora'
