@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Script for automating syncthing with podman
+#
+set -x
+
+mkdir -p "$HOME/.config/syncthing"
+mkdir -p "$HOME/books"
+mkdir -p "$HOME/sync"
+
+podman unshare chown 1000:1000 \
+  "$HOME/.config/syncthing" \ 
+  "$HOME/books" "$HOME/sync"
+
+cd $HOME/.dotfiles
+podman-compose up --no-start
+podman generate systemd --new --name "$HOSTNAME.syncthing" \
+  > "$HOME/.config/systemd/user/syncthing.service"
+
+systemctl --user daemon-reload
+systemctl --user enable syncthing.service
+systemctl --user start syncthing.service
+
+xdg-open 'http://localhost:8384'
