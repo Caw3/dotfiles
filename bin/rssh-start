@@ -1,4 +1,4 @@
 #!/bin/bash
-autossh -f -X -N -M 10023 -R 10022:localhost:10022 cloud && \
+autossh -f -X -N -M 10023 -R 10022:localhost:22 cloud && \
   echo "Succesfully started ssh forwarding on port $PORT" || \
   echo "Something went wrong"
