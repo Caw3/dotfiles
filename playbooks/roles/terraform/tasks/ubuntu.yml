@@ -1,0 +1,24 @@
+---
+- name: Install required packages for terraform on apt
+  apt:
+    pkg:
+      - software-properties-common
+      - gnupg
+      - wget
+    state: present
+    update_cache: yes
+
+- name: Add HashiCorp GPG key on apt
+  apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+
+- name: Get Ubuntu codename
+  shell: lsb_release -cs
+  register: ubuntu_codename
+
+- name: Add HashiCorp repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ubuntu_codename.stdout }} main"
+    state: present
+    update_cache: yes

@@ -1,40 +1,8 @@
 ---
-- name: Install required packages for terraform on apt
-  apt:
-    pkg:
-      - software-properties-common
-      - gnupg
-      - wget
-    state: present
-    update_cache: yes
+- include_tasks: ubuntu.yml
   when: ansible_distribution == 'Ubuntu'
 
-- name: Add HashiCorp GPG key on apt
-  apt_key:
-    url: https://apt.releases.hashicorp.com/gpg
-    state: present
-  when: ansible_distribution == 'Ubuntu'
-
-- name: Get Ubuntu codename
-  shell: lsb_release -cs
-  register: ubuntu_codename
-  when: ansible_distribution == 'Ubuntu'
-
-- name: Add HashiCorp repository
-  apt_repository:
-    repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ubuntu_codename.stdout }} main"
-    state: present
-    update_cache: yes
-  when: ansible_distribution == 'Ubuntu'
-
-- name: Add terraform repository on dnf
-  yum_repository:
-    name: Terraform
-    description: Infrastructure as code
-    baseurl: https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
-    enabled: yes
-    gpgcheck: yes
-    state: present
+- include_tasks: fedora.yml
   when: ansible_distribution == 'Fedora'
 
 - name: Install Terraform
