@@ -50,6 +50,7 @@
     - fzf
     - nodejs
     - npm
+    - cronie
     when: ansible_distribution == 'Fedora'
 
   roles:
