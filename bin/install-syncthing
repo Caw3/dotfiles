@@ -13,8 +13,8 @@ podman unshare chown 1000:1000 -R\
   "$HOME/.config/syncthing" \ 
   "$HOME/books" "$HOME/sync"
 
-sudo chmod g+rwx "$HOME/books" "$HOME/sync"
-sudo chgrp $USER "$HOME/books" "$HOME/sync"
+sudo chmod g+rwx -R "$HOME/books" "$HOME/sync"
+sudo chgrp $USER -R "$HOME/books" "$HOME/sync"
 
 cd $HOME/.dotfiles
 podman-compose up --no-start
