@@ -7,10 +7,14 @@ set -x
 mkdir -p "$HOME/.config/syncthing"
 mkdir -p "$HOME/books"
 mkdir -p "$HOME/sync"
+mkdir -p "$HOME/.config/systemd/user"
 
-podman unshare chown 1000:1000 \
+podman unshare chown 1000:1000 -R\
   "$HOME/.config/syncthing" \ 
   "$HOME/books" "$HOME/sync"
+
+sudo chmod g+rwx "$HOME/books" "$HOME/sync"
+sudo chgrp $USER "$HOME/books" "$HOME/sync"
 
 cd $HOME/.dotfiles
 podman-compose up --no-start
