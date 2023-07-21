@@ -37,6 +37,7 @@
         repo: "{{ dotfiles_repo }}"
         dest: "{{ dotfiles_local_location }}"
         update: yes
+      ignore_errors: yes
 
     - name: Create symbolic links for dotfiles
       file:

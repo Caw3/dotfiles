@@ -1,7 +1,6 @@
 ---
 - hosts: all
   tasks:
-
     - name: Install psutil package
       ansible.builtin.pip:
         name: psutil
