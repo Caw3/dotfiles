@@ -4,7 +4,7 @@
   yum_repository:
     name: Terraform
     description: Hashicorp rpm registry
-    baseurl: https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+    baseurl: https://rpm.releases.hashicorp.com/fedora/$releasever/$basearch/stable
     enabled: yes
     gpgcheck: yes
     state: present
