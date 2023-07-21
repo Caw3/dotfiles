@@ -7,4 +7,5 @@
     baseurl: https://rpm.releases.hashicorp.com/fedora/$releasever/$basearch/stable
     enabled: yes
     gpgcheck: yes
+    gpgkey: https://rpm.releases.hashicorp.com/gpg
     state: present
