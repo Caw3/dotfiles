@@ -63,6 +63,7 @@ alias gbl='git branch -vva --sort=-committerdate'
 alias gP='git push'
 alias gp='git pull'
 alias gs='git status -s'
+alias gw='git worktree'
 alias gl='git log --oneline --graph --abbrev-commit'
 
 alias battery='cat /sys/class/power_supply/BAT0/capacity'
