@@ -23,7 +23,7 @@ set signcolumn=number
 set nu
 
 set incsearch
-set hlsearch
+set nohlsearch
 
 set hidden
 set noswapfile
@@ -119,26 +119,25 @@ endif
 
 if filereadable(expand("~/.vim/autoload/plug.vim"))
     call plug#begin('~/.vim/vim-plug')
+	Plug 'junegunn/fzf.vim'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
-    Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-vinegar'
+    Plug 'tpope/vim-fugitive'
     Plug 'christoomey/vim-tmux-navigator'
     Plug 'arcticicestudio/nord-vim'
-    Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
-    Plug 'lervag/vimtex', { 'for': 'tex' }
-    Plug 'mattn/emmet-vim', { 'for' : ['javascript','html','javascriptreact'] }
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
-
-	if v:version >= 900
-		Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
-		nnoremap <Leader>aie <Cmd>Copilot enable<CR><Cmd>Copilot status<CR>
-		nnoremap <Leader>aid <Cmd>Copilot disable<CR><Cmd>Copilot status<CR>
-		nnoremap <Leader>aip <Cmd>vert Copilot panel<CR>
-	endif
-
+    Plug 'lervag/vimtex', { 'for': 'tex' }
+    Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
+	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
     call plug#end()
+
+	"Copilot
+	nnoremap <Leader>aie <Cmd>Copilot enable<CR><Cmd>Copilot status<CR>
+	nnoremap <Leader>aid <Cmd>Copilot disable<CR><Cmd>Copilot status<CR>
+	nnoremap <Leader>aip <Cmd>vert Copilot panel<CR>
+
 
 	"Termdebug
 	packadd termdebug
@@ -162,7 +161,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>dq <Cmd>ALEPopulateQuickfix<CR>
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
     nnoremap <Leader>ss :ALESymbolSearch 
-
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
@@ -173,7 +171,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
         autocmd Filetype fugitive setlocal scl=yes
         autocmd Filetype fugitive setlocal nonu
     augroup END
-
     nnoremap <silent> <Leader>gs :vert Git \|vertical resize 80 <CR>
     nnoremap <Leader>gb :G blame <CR>
     nnoremap <Leader>gl :Gclog<CR>
@@ -181,6 +178,19 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>gqc <Cmd> silent G difftool \| copen<CR>
     nnoremap <Leader>gqm <Cmd> silent G mergetool \| copen<CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
+
+	"FZF
+	function! s:build_quickfix_list(lines)
+		call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+		copen
+		cc
+	endfunction
+	let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
+	let g:fzf_buffers_jump = 1
+	let g:fzf_layout = { 'tmux': '-p'}
+	nnoremap <Leader>ff <Cmd>Files<Cr>
+	nnoremap <Leader>fs <Cmd>Rg<Cr>
+
 
 endif
 

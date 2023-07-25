@@ -24,6 +24,7 @@ cht() {
 }
 export -f cht
 
+## Prompt
 export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] '
 
 ## SHOPT
@@ -68,3 +69,29 @@ alias battery='cat /sys/class/power_supply/BAT0/capacity'
 alias ta="tmux a"
 alias tm="tmux"
 alias emacs="emacsclient -c -a 'emacs'" 
+
+## FZF
+OPTIONS="--preview='cat {}' --preview-window=hidden "
+BINDS="\
+--bind '?:toggle-preview' \
+--bind 'ctrl-d:preview-half-page-down' \
+--bind 'ctrl-u:preview-half-page-up'"
+
+COLORS=" --color='\
+bg:-1,\
+bg+:-1,\
+fg:white,\
+fg+:white,\
+info:magenta,\
+marker:magenta,\
+pointer:blue,\
+header:blue,\
+spinner:magenta,\
+hl:cyan,\
+hl+:cyan,\
+prompt:bright-black'"
+ 
+export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
+export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git" -g "!node_modules" || find .'
+export FZF_TMUX_OPTS="-p"
+export BAT_THEME='Nord'
