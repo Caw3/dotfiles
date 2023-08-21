@@ -3,3 +3,4 @@ key
 .vim/autoload
 .vim/.netrwhist
 .vim/spell
+/hosts

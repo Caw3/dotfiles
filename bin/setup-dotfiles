@@ -53,7 +53,7 @@ then
 
     "Fedora"*)
       echo "Detected Fedora OS..."
-      sudo dnf -y install ansible
+      sudo dnf -y install ansible git
       ;;
 
     *)

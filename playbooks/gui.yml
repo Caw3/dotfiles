@@ -1,0 +1,8 @@
+---
+
+- import_playbook: gnome-settings.yml
+
+- hosts: all
+  become: yes
+  roles:
+    - alacritty

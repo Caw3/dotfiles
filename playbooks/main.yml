@@ -6,10 +6,7 @@
 
 - import_playbook: scripts.yml
 
-- import_playbook: gnome-settings.yml
-
 - hosts: all
   become: yes
   roles:
     - terraform
-    - alacritty
