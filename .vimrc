@@ -188,7 +188,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
 	let g:fzf_buffers_jump = 1
 	let g:fzf_layout = { 'tmux': '-p'}
-	nnoremap <Leader>fg <Cmd>Files<Cr>
+	nnoremap <Leader>fg <Cmd>GFiles<Cr>
 	nnoremap <Leader>ff <Cmd>Files<Cr>
 	nnoremap <Leader>fs <Cmd>Rg<Cr>
 
