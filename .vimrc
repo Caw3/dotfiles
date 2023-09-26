@@ -88,9 +88,8 @@ nnoremap <Leader>mm <cmd>make!<CR>
 
 nnoremap <Leader>nn <cmd>set nu!<CR>
 
-nnoremap gA :args 
-nnoremap <silent> gr :vimgrep /\<<C-R><C-W>\>/gj `git ls-files` \|\| copen<CR>
-nnoremap gR :vimgrep /\<<C-R><C-W>\>/g
+nnoremap <silent> <Leader>* :Grep <C-R><C-W><CR>
+nnoremap <Leader>/ :Grep 
 
 nnoremap <Leader>fF :find **/
 nnoremap <Leader>ff :edit **/
@@ -109,6 +108,25 @@ function! ExecAndRestorePos(cmd)
 	silent execute a:cmd
 	call setpos(".", save_pos)
 endfunction
+
+set grepprg=rg\ --vimgrep
+function! Grep(...)
+	return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
+endfunction
+
+command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
+command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
+
+cnoreabbrev <expr> grep  (getcmdtype() ==# ':' && getcmdline() ==# 'grep')  ? 'Grep'  : 'grep'
+cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'LGrep' : 'lgrep'
+
+augroup quickfix
+	autocmd!
+	autocmd QuickFixCmdPost cgetexpr cwindow
+	autocmd QuickFixCmdPost lgetexpr lwindow
+augroup END
+
+packadd cfilter
 
 "Plugins
 if empty(glob('~/.vim/autoload/plug.vim')) && v:version >= 810
