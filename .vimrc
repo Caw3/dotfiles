@@ -12,7 +12,7 @@ set shiftwidth=4
 set tabstop=4
 set smarttab
 set autoindent
-set cindent
+set smartindent
 set nowrap
 
 set splitbelow
@@ -53,6 +53,8 @@ syntax enable
 
 "Keymaps
 map <Space> <Leader>
+
+inoremap {<cr> {<cr>}<c-o><s-o>
 
 nnoremap <C-p> <C-^>
 nnoremap <Leader>rs :%s/
