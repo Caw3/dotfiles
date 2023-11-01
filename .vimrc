@@ -2,29 +2,23 @@ filetype plugin indent on
 set autoread
 set mouse=a
 set ttyfast
-
 set wildmenu
 set wildoptions="fuzzy,tagfile"
 set path=src/,test/,config/
 set path+=~/.dotfiles
-
 set shiftwidth=4
 set tabstop=4
 set smarttab
 set autoindent
 set smartindent
 set nowrap
-
 set splitbelow
 set splitright
-
 set scrolloff=8
 set signcolumn=number
 set nu
-
 set incsearch
 set nohlsearch
-
 set hidden
 set noswapfile
 set nobackup writebackup
@@ -36,29 +30,12 @@ set undodir=/var/tmp/vim/undo
 set undofile
 
 "Cosmetic
-set ruf=
-set ruf +=%45(%=%#LineNr#%.50F\%m%r\ [%{strlen(&ft)?&ft:'none'}]\ %l:%c\ %P%)
-
-set laststatus=0
-set statusline=
-set statusline +=\ %4F
-set statusline +=\%m\%r
-set statusline +=\ [%{strlen(&ft)?&ft:'none'}]
-set statusline +=\ %=%l:%c
-set statusline +=\ %-4P
-
 set fillchars=vert:\│,stl:\―,stlnc:\―
-set background=dark
-syntax enable
+set laststatus=0
 
 "Keymaps
 map <Space> <Leader>
-
 inoremap {<cr> {<cr>}<c-o><s-o>
-
-nnoremap <C-p> <C-^>
-nnoremap <Leader>rs :%s/
-nnoremap <Leader>vr <cmd>w \| source % <CR>
 
 nnoremap <Leader>co <cmd>copen<CR>
 nnoremap <Leader>cc <cmd>cclose<CR>
@@ -76,18 +53,8 @@ nnoremap <Leader>lp <cmd>lprev<CR>
 nnoremap <Leader>lf <cmd>lfirst<CR>
 nnoremap <Leader>ll <cmd>llast<CR>
 
-nnoremap <Leader>tt :tag 
-nnoremap <Leader>t/ :tag /
-nnoremap <Leader>tP :ptag 
-nnoremap <Leader>ts <cmd>tags<CR>
-nnoremap <Leader>tn <cmd>tnext<CR>
-nnoremap <Leader>tf <cmd>tfirst<CR>
-nnoremap <Leader>tp <cmd>tprevious<CR>
-nnoremap <Leader>tl <cmd>tlast<CR>
-
 nnoremap <Leader>m% <cmd>make! %<CR>
 nnoremap <Leader>mm <cmd>make!<CR>
-
 nnoremap <Leader>nn <cmd>set nu!<CR>
 
 nnoremap <silent> <Leader>* :Grep <C-R><C-W><CR>
@@ -95,11 +62,6 @@ nnoremap <Leader>/ :Grep
 
 nnoremap <Leader>fF :find **/
 nnoremap <Leader>ff :edit **/
-
-tnoremap <C-j> <c-w>j
-tnoremap <C-k> <c-w>k
-tnoremap <C-h> <c-w>h
-tnoremap <C-l> <c-w>l
 
 "Abbreviations
 cabbr gls `git ls-files`
@@ -118,11 +80,6 @@ endfunction
 
 command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
 command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
-
-command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
-function! s:RunShellCommand(cmdline) abort
-    exe 'vert terminal '. a:cmdline
-endfunction
 
 cnoreabbrev <expr> grep  (getcmdtype() ==# ':' && getcmdline() ==# 'grep')  ? 'Grep'  : 'grep'
 cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'LGrep' : 'lgrep'
@@ -144,13 +101,11 @@ endif
 
 if filereadable(expand("~/.vim/autoload/plug.vim"))
     call plug#begin('~/.vim/vim-plug')
-	Plug 'junegunn/fzf.vim'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-vinegar'
     Plug 'tpope/vim-fugitive'
-    Plug 'christoomey/vim-tmux-navigator'
     Plug 'arcticicestudio/nord-vim'
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
     Plug 'lervag/vimtex', { 'for': 'tex' }
@@ -159,20 +114,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
     call plug#end()
 
-	"Copilot
-	nnoremap <Leader>aie <Cmd>Copilot enable<CR><Cmd>Copilot status<CR>
-	nnoremap <Leader>aid <Cmd>Copilot disable<CR><Cmd>Copilot status<CR>
-	nnoremap <Leader>aip <Cmd>vert Copilot panel<CR>
-
-
 	"Termdebug
 	packadd termdebug
 	let g:termdebug_wide=1
-	nnoremap <Leader>db <Cmd>Termdebug<CR>
-	tnoremap <C-j> <Cmd>TmuxNavigateDown<CR>
-	tnoremap <C-k> <Cmd>TmuxNavigateUp<CR>
-	tnoremap <C-h> <Cmd>TmuxNavigateLeft<CR>
-	tnoremap <C-l> <Cmd>TmuxNavigateRight<CR>
 
     "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
@@ -180,11 +124,11 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>rn <Cmd>ALERename<CR>
     nnoremap <Leader>K <Cmd>ALEHover<CR>
     nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
+    nnoremap <Leader>gt <Cmd>ALEGoToTypeDefinition<CR>
     nnoremap <Leader>gi <Cmd>ALEGoToImplementation<CR>
     nnoremap <Leader>gr <Cmd>ALEFindReferences -quickfix<CR><CMD>copen<CR>
     nnoremap <Leader>di <Cmd>ALEDetail<CR>
     nnoremap <Leader>ds <Cmd>call ExecAndRestorePos("ALEToggle")<CR><Cmd>echo g:ale_enabled<CR>
-    nnoremap <Leader>dq <Cmd>ALEPopulateQuickfix<CR>
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
     nnoremap <Leader>ss :ALESymbolSearch 
     let g:ale_enabled = 0
@@ -201,23 +145,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>gb :G blame <CR>
     nnoremap <Leader>gl :Gclog<CR>
 	vnoremap <leader>gl <ESC>:execute 'vert G log -L' . line("'<") . ',' . line("'>") . ':' . expand('%') <CR>
-    nnoremap <Leader>gqc <Cmd> silent G difftool \| copen<CR>
-    nnoremap <Leader>gqm <Cmd> silent G mergetool \| copen<CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
-
-	"FZF
-	function! s:build_quickfix_list(lines)
-		call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-		copen
-		cc
-	endfunction
-	let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
-	let g:fzf_buffers_jump = 1
-	let g:fzf_layout = { 'tmux': '-p'}
-	nnoremap <Leader>fg <Cmd>GFiles<Cr>
-	nnoremap <Leader>ff <Cmd>Files<Cr>
-	nnoremap <Leader>fs <Cmd>Rg<Cr>
-
 
 endif
 
