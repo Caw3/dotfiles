@@ -29,10 +29,6 @@ endif
 set undodir=/var/tmp/vim/undo
 set undofile
 
-"Cosmetic
-set fillchars=vert:\│,stl:\―,stlnc:\―
-set laststatus=0
-
 "Keymaps
 map <Space> <Leader>
 inoremap {<cr> {<cr>}<c-o><s-o>
@@ -149,7 +145,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 
 endif
 
-"Colors
+"Cosmetic
+set fillchars=vert:\│,stl:\―,stlnc:\―
+set laststatus=0
 silent! colorscheme nord
 hi VertSplit ctermbg=NONE 
 hi! link StatusLineNC VertSplit
