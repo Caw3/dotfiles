@@ -64,14 +64,14 @@ alias gp='git pull'
 alias gs='git status -s'
 alias gw='git worktree'
 alias gl='git log --oneline --graph --abbrev-commit'
+alias gcp='git commit -p'
 
 alias battery='cat /sys/class/power_supply/BAT0/capacity'
 alias ta="tmux a"
 alias tm="tmux"
-alias emacs="emacsclient -c -a 'emacs'" 
 
 ## FZF
-OPTIONS="--preview='cat {}' --preview-window=hidden "
+OPTIONS=" --preview='bat --color=always --style=numbers --line-range=:500 {} || cat {}' --preview-window=hidden "
 BINDS="\
 --bind '?:toggle-preview' \
 --bind 'ctrl-d:preview-half-page-down' \
