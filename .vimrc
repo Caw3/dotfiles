@@ -119,6 +119,11 @@ endfunction
 command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
 command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
 
+command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
+function! s:RunShellCommand(cmdline) abort
+    exe 'vert terminal '. a:cmdline
+endfunction
+
 cnoreabbrev <expr> grep  (getcmdtype() ==# ':' && getcmdline() ==# 'grep')  ? 'Grep'  : 'grep'
 cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'LGrep' : 'lgrep'
 
