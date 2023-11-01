@@ -149,6 +149,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'arcticicestudio/nord-vim'
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
     Plug 'lervag/vimtex', { 'for': 'tex' }
+	Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
 	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
     call plug#end()
