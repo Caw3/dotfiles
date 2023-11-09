@@ -1,8 +1,32 @@
 #!/bin/bash
+DIR="$HOME/sync"
 
 usage() { echo "Usage: $0 [NOTES]... || [-s pattern] [-f pattern]" 1>&2; exit 1; }
 
-DIR="$HOME/sync"
+timestamp-file () {
+  sed -i "s/title:.*/title: $(basename "$1" | cut -d'.' -f1)/" "$1"
+  sed -i "s/date:.*/date: $(date +'%F %H:%M')/" "$1"
+  sed -i "s/author:.*/author: $(whoami)/" "$1"
+}
+
+open-note() {
+  if ! [ -e "$1" ]; then
+    touch "$1"
+echo "---
+title: $(basename $1 | cut -d"." -f1)
+date:
+author:
+---
+
+" > $1
+  fi
+
+  timestamp-file "$1"
+  $EDITOR +$2 $1 < /dev/tty
+}
+
+# TODO: Build Note, live compilatoin?
+# TODO: Pipe into note
 
 while getopts ":s:f:" o; do
   case "${o}" in
@@ -14,12 +38,12 @@ while getopts ":s:f:" o; do
         fzf --delimiter=':' -n 2.. \
         --preview-window '+{2}-/2' \
         --preview "egrep --line-number --color=always '(^|${OPTARG})' {1}" \
-        --bind 'enter:execute(vim +{2} {1} < /dev/tty)'
+        --bind 'enter:execute(open-note {1} {2})'
       ;;
   esac
 done
 #
 #TODO: Bash Expansion
 [[ $# -lt 1  ]] && usage
-[[ $# -eq 1  ]] && $EDITOR "$DIR/$1.md" || usage
+[[ $# -eq 1  ]] && open-note "$DIR/$1.md" || usage
 
