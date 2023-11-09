@@ -1,6 +1,5 @@
 #!/bin/bash
 DIR="$HOME/sync"
-
 usage() { echo "Usage: $0 [NOTES]... || [-s pattern] [-f pattern]" 1>&2; exit 1; }
 
 timestamp-file () {
@@ -13,23 +12,33 @@ open-note() {
   if ! [ -e "$1" ]; then
     touch "$1"
 echo "---
-title: $(basename $1 | cut -d"." -f1)
+title: $(basename "$1" | cut -d"." -f1)
 date:
 author:
 ---
 
-" > $1
+" > "$1"
   fi
-
   timestamp-file "$1"
-  $EDITOR +$2 $1 < /dev/tty
+ 
+  if ! [ -t 0 ]; then # Checks STDIN
+    while read -r line; do
+      echo "$line" >> "$1"
+    done < /dev/stdin
+
+    echo "[$(basename "$1" | cut -d'.' -f1)]($1)"
+  else
+    $EDITOR +"$2" "$1" < /dev/tty
+  fi
 }
 
-# TODO: Build Note, live compilatoin?
-# TODO: Pipe into note
-
-while getopts ":s:f:" o; do
+set -x
+while getopts ":s:f:o:" o; do
   case "${o}" in
+    o)
+      pandoc -f markdown -t pdf -i "$DIR/$2.md" -o "/tmp/$2.pdf"
+      xdg-open "/tmp/$2.pdf"
+      ;;
     s)
       grep -R --color=auto "${OPTARG}" "$DIR"
       ;;
@@ -40,10 +49,11 @@ while getopts ":s:f:" o; do
         --preview "egrep --line-number --color=always '(^|${OPTARG})' {1}" \
         --bind 'enter:execute(open-note {1} {2})'
       ;;
+    *) 
+      ;;
   esac
 done
-#
-#TODO: Bash Expansion
-[[ $# -lt 1  ]] && usage
-[[ $# -eq 1  ]] && open-note "$DIR/$1.md" || usage
 
+#TODO: Bash Expansion
+[[ $# -eq 0  ]] && usage
+[[ $# -eq 1  ]] && (open-note "$DIR/$1.md" || usage)
