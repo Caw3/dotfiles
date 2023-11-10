@@ -7,6 +7,7 @@ timestamp-file () {
   sed -i "s/date:.*/date: $(date +'%F %H:%M')/" "$1"
   sed -i "s/author:.*/author: $(whoami)/" "$1"
 }
+export -f timestamp-file
 
 open-note() {
   if ! [ -e "$1" ]; then
@@ -31,29 +32,32 @@ author:
     $EDITOR +"$2" "$1" < /dev/tty
   fi
 }
+export -f open-note
 
-set -x
-while getopts ":s:f:o:" o; do
+while getopts "ls:f:o:" o; do
   case "${o}" in
+    l)
+      ls "$DIR"/*md | fzf --bind 'enter:execute(open-note {1})'
+      exit 0
+      ;;
     o)
       pandoc -f markdown -t pdf -i "$DIR/$2.md" -o "/tmp/$2.pdf"
       xdg-open "/tmp/$2.pdf"
       ;;
     s)
-      grep -R --color=auto "${OPTARG}" "$DIR"
+      grep --color=auto "${OPTARG}" "$DIR"/*md
       ;;
     f)
-      grep -R --line-number --color=auto "${OPTARG}" "$DIR" | \
+      grep --line-number --color=auto "${OPTARG}" "$DIR"/*md | \
         fzf --delimiter=':' -n 2.. \
         --preview-window '+{2}-/2' \
         --preview "egrep --line-number --color=always '(^|${OPTARG})' {1}" \
         --bind 'enter:execute(open-note {1} {2})'
       ;;
-    *) 
+    *)
+      [[ $# -eq 1  ]] && (open-note "$DIR/$1.md" || usage)
       ;;
   esac
 done
 
 #TODO: Bash Expansion
-[[ $# -eq 0  ]] && usage
-[[ $# -eq 1  ]] && (open-note "$DIR/$1.md" || usage)
