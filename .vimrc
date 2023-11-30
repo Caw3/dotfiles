@@ -128,6 +128,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
     nnoremap <Leader>ss :ALESymbolSearch 
     let g:ale_enabled = 0
+	let g:ale_set_balloons = 1
+	let g:ale_popup_menu_enabled = 1
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
     let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
