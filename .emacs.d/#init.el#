@@ -21,8 +21,8 @@
 (setq ring-bell-function 'ignore)
 
 ;; Navigate through buffers
-(global-set-key (kbd "M-[") 'previous-buffer)
 (global-set-key (kbd "M-]") 'next-buffer)
+(global-set-key (kbd "M-[") 'previous-buffer)
 
 ;; Fix unicode errors
 (setenv "LANG" "en_US.UTF-8")

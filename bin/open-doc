@@ -16,7 +16,7 @@ file_name="$(find "$search_path" -maxdepth 5 -type f | \
   fzf-tmux -p -w 110 -h 60% --prompt "$prompt")"
 
 if [[ -n $file_name ]]; then
-  xdg-open "$(find "$search_path" -maxdepth 5 -name "$file_name" )"
+  xdg-open "$(find "$search_path" -maxdepth 5 -name "$file_name" )" | disown &
 fi
 
 exit 0

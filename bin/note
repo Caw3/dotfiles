@@ -52,12 +52,10 @@ while getopts "ls:f:o:" o; do
         fzf --delimiter=':' -n 2.. \
         --preview-window '+{2}-/2' \
         --preview "egrep --line-number --color=always '(^|${OPTARG})' {1}" \
-        --bind 'enter:execute(open-note {1} {2})'
-      ;;
-    *)
-      [[ $# -eq 1  ]] && (open-note "$DIR/$1.md" || usage)
+        --bind 'enter:execute(open-note {1} {2})' || exit 1 && exit 0
       ;;
   esac
 done
 
+(open-note "$DIR/$1.md" || usage)
 #TODO: Bash Expansion
