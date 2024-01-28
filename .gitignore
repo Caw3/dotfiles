@@ -5,3 +5,11 @@ key
 .vim/.netrwhist
 .vim/spell
 /hosts
+/.emacs.d/undohist/
+/.emacs.d/transient/
+/.emacs.d/session*
+/.emacs.d/elpa/
+/.emacs.d/eln-cache/
+/.emacs.d/backups/
+/.emacs.d/backups/
+/.emacs.d/auto-save-list/

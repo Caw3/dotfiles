@@ -48,6 +48,13 @@ git: ## Init git configs
 	$(LN)/.git_template
 	$(PKG_CHECK) || $(PKG_INSTALL) gh
 
+emacs: git
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+	$(PKG_INSTALL) cmake
+	$(LN)/.config/doom
+	@git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+	@~/.config/emacs/bin/doom install
+
 ssh: ansible rsync key ## sync ssh configuration with a remote host
 	@[ "${REMOTE_HOST}" ] || ( echo "Please specify remote host with REMOTE_HOST=<user>@<host ip>"; exit 1)
 	$(PKG_CHECK) || $(PKG_INSTALL) $(SSH)
@@ -128,7 +135,7 @@ alacritty: $(FONT_PACKAGE_NAME) ## Init alacritty (Terminal emulator)
 	fi
 	$(PKG_CHECK) || $(PKG_INSTALL) alacritty
 	mkdir -p ${HOME}/.config/alacritty 2> /dev/null
-	$(LN)/.config/alacritty/alacritty.yml
+	$(LN)/.config/alacritty.toml
 
 $(FONT_PACKAGE_NAME):
 	$(PKG_INSTALL) $@

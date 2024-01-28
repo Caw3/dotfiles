@@ -55,8 +55,10 @@
 (setq use-package-always-ensure t)
 (require 'use-package)
 
-(require 'undo-tree)
-(global-undo-tree-mode)
+(use-package undo-tree
+			 :ensure t
+			 :init
+			 (global-undo-tree-mode))
 
 ;; Use vim keybindings globally
 (use-package evil
