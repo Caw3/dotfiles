@@ -162,3 +162,4 @@ hi! link debugBreakpoint TODO
 hi! link QuickFixLine Visual
 hi! link qfError Number 
 hi! link qfFilename Conditional
+highlight Visual ctermfg=NONE guifg=NONE
