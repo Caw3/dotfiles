@@ -109,6 +109,11 @@
  :map org-mode-map
  :n "mm" 'org-compile-latex-and-update-other-buffer)
 
+(after! latex
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master "main"))
+
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
 ;;

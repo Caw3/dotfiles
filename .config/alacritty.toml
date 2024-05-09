@@ -67,8 +67,8 @@ style = "Regular"
 action = "ToggleFullscreen"
 key = "F11"
 
-[window]
-decorations = "None"
+# [window]
+# decorations = "None"
 
 [window.padding]
 x = 6
