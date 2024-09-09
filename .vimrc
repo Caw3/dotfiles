@@ -69,7 +69,9 @@ function! ExecAndRestorePos(cmd)
 	call setpos(".", save_pos)
 endfunction
 
-set grepprg=rg\ --vimgrep
+if has('rg')
+	set grepprg=rg\ --vimgrep
+endif
 function! Grep(...)
 	return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
 endfunction
@@ -112,7 +114,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     call plug#end()
 
 	"Termdebug
-	packadd termdebug
 	let g:termdebug_wide=1
 
     "ALE
