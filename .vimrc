@@ -119,7 +119,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
 	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
-	Plug 'airblade/vim-gitgutter'
+	Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
     call plug#end()
 
 	"Termdebug
@@ -155,6 +155,13 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>gl :Gclog<CR>
 	vnoremap <leader>gl <ESC>:execute 'vert G log -L' . line("'<") . ',' . line("'>") . ':' . expand('%') <CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
+
+	"Signify
+    let g:signify_sign_change = "~"
+    omap ic <plug>(signify-motion-inner-pending)
+    xmap ic <plug>(signify-motion-inner-visual)
+    omap ac <plug>(signify-motion-outer-pending)
+    xmap ac <plug>(signify-motion-outer-visual)
 
 endif
 
