@@ -117,6 +117,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
 	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
+	Plug 'airblade/vim-gitgutter'
     call plug#end()
 
 	"Termdebug
