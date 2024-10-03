@@ -1,24 +1,28 @@
 #!/usr/bin/env bash
+set -x
+search_path="$HOME/repos"
+dotfiles="$HOME/.dotfiles"
 
-search_path=$HOME/repos
+prompt="Select project: "
 
-total="$(find "$search_path" -maxdepth 1 -type d | wc -l)"
-
-if [[ $total -eq 0 ]]; then
-  prompt="No repos found! (~/repos)"
-else
-  prompt="Select project: "
-fi
-
-repo_name="$(find "$search_path" -maxdepth 1 -type d | \
+repo_name="$( (find "$search_path" -maxdepth 1 -type d; echo "$dotfiles") | \
   awk -F'/' '{print $NF}' | \
   sort | \
   fzf-tmux -p -w 110 -h 60% --prompt "$prompt")"
 
+if [[ -z $repo_name ]]; then 
+  exit 0
+fi
+
 if [[ -n $repo_name ]]; then
-  dir="$(find "$search_path" -maxdepth 1 -name "$repo_name" )"
-  tmux new-session -c $dir -s $repo_name -d
-  tmux switch-client -t $repo_name
+  if [[ "$repo_name" == "$(basename "$dotfiles")" ]]; then
+    dir="$dotfiles"
+    repo_name=$(echo $dotfiles | tr . _)
+  else
+    dir="$(find "$search_path" -maxdepth 1 -name "$repo_name")"
+  fi
+  tmux new-session -c "$dir" -s "$repo_name" -d
+  tmux switch-client -t "$repo_name"
 fi
 
 exit 0
