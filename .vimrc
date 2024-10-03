@@ -59,6 +59,8 @@ nnoremap <Leader>/ :Grep
 nnoremap <Leader>fF :find **/
 nnoremap <Leader>ff :edit **/
 
+vnoremap <C-c> :silent w !xsel -ib<CR>
+
 "Abbreviations
 cabbr gls `git ls-files`
 
