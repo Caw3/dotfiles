@@ -69,11 +69,17 @@ function! ExecAndRestorePos(cmd)
 	call setpos(".", save_pos)
 endfunction
 
-if has('rg')
+if executable('rg')
 	set grepprg=rg\ --vimgrep
 endif
-function! Grep(...)
-	return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
+
+function! Grep(pattern, ...)
+	let l:files = a:000
+	if a:0 == 0 && system('git rev-parse --is-inside-work-tree') ==# "true\n" 
+		let l:files = systemlist('git ls-files')
+	endif
+	let l:command = join([&grepprg] + [a:pattern] + [expandcmd(join(l:files, ' '))], ' ')
+	return system(l:command)
 endfunction
 
 command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)

@@ -7,3 +7,5 @@
 	ctags = !.git/hooks/ctags
 [merge]
 	rebase = true
+[pull]
+	rebase = true
