@@ -160,6 +160,10 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 
 	"Signify
     let g:signify_sign_change = "~"
+	nnoremap <Leader>ghp <cmd>SignifyHunkPreview<CR>
+	nnoremap <Leader>ghu <cmd>SignifyHunkUndo<CR>
+	nnoremap <Leader>ghr <cmd>SignifyRefresh<CR>
+	nnoremap <Leader>ght <cmd>SignifyToggle<CR>
     omap ic <plug>(signify-motion-inner-pending)
     xmap ic <plug>(signify-motion-inner-visual)
     omap ac <plug>(signify-motion-outer-pending)
