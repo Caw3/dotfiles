@@ -73,6 +73,8 @@ endfunction
 
 if executable('rg')
 	set grepprg=rg\ --vimgrep
+else
+	set grepprg=grep\ -n\ $*
 endif
 
 function! Grep(pattern, ...)
