@@ -10,11 +10,8 @@ vimgrep() {
   HELP="Usage: vimgrep {pattern} {files}..."
   PATTERN=$1
   [[ $# -lt 1 ]] && echo "$HELP" && return 1
-
-  git status &>/dev/null && [[ $# -eq 1 ]] &&
-    vim -c "silent Grep $PATTERN" && return 0
-
-  [[ $# -gt 1 ]] && shift && vim -c "silent vimgrep /$PATTERN/g $*" && return 0
+  [[ $# -gt 1 ]] && shift && vim -c "silent Grep $PATTERN $*" && return 0
+  vim -c "silent Grep $PATTERN" && return 0
 }
 export -f vimgrep
 
