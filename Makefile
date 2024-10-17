@@ -24,10 +24,9 @@ help:
 		| sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install: init git ansible wget curl rsync gui scripts ## Basic install
+install: init ansible git rg htop fzf wget curl rsync scripts ## Basic install
 init: bash tmux vim ## Lightweight configuration
-tools: docker golang shell latex pandoc ## Extra tools
-gui: $(FONT_PACKAGE_NAME) zathura alacritty gnome-settings ## Init GUI applications
+gui: $(FONT_PACKAGE_NAME) alacritty gnome-settings ## Install alacritty
 
 bash: ## Init bash
 	$(LN)/.bashrc
@@ -47,6 +46,27 @@ git: ## Init git configs
 	$(LN)/.gitconfig
 	$(LN)/.git_template
 	$(PKG_CHECK) || $(PKG_INSTALL) gh
+
+ansible:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+
+rsync:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+
+fzf:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+
+rg:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+
+htop:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+
+wget:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+
+curl:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
 emacs: git
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
@@ -68,12 +88,6 @@ ssh: ansible rsync key ## sync ssh configuration with a remote host
 key: 
 	@ansible-vault decrypt --output $(REMOTE_KEY) encrypted_key
 
-ansible:
-	$(PKG_CHECK) || $(PKG_INSTALL) $@
-
-rsync:
-	$(PKG_CHECK) || $(PKG_INSTALL) $@
-
 # Tools
 scripts:
 	$(LN)/.bin
@@ -81,51 +95,6 @@ scripts:
 		echo 'export PATH=$$PATH:$$HOME/.bin' >> \
 		$(HOME)/.bash_profile
 	$(PKG_CHECK) || $(PKG_INSTALL) fzf
-
-docker: ## Install docker
-	$(PKG_INSTALL) docker docker-compose
-	sudo systemctl enable docker.service
-	[ "${USER}" = "" ] || \
-		sudo usermod -aG docker ${USER}
-
-golang: ## Install golang
-	$(PKG_INSTALL) golang
-	sudo mkdir -p /usr/local/go
-	sudo chmod ga+rwx /usr/local/go
-	grep GOPATH ${HOME}/.bash_profile || \
-		echo "export GOPATH=/usr/local/go" >> \
-		${HOME}/.bash_profile
-	grep '$$GOPATH/bin' $(HOME)/.bash_profile || \
-		echo 'export PATH=$$PATH:$$GOPATH/bin' >> \
-		${HOME}/.bash_profile
-	if [ "$$GO111MODULE" = "on" ]; then \
-		source ${HOME}/.bash_profile && \
-		go install golang.org/x/tools/gopls@latest && \
-		go install github.com/go-delve/delve/cmd/dlv@latest; \
-	fi
-
-shell: ## Install shellscripting tools
-	$(PKG_INSTALL) $(SHELLCHECK) shfmt
-
-pandoc: latex curl wget ## Install pandoc tools
-	$(PKG_INSTALL) pandoc librsvg2-tools
-
-latex: ## Install latex tools
-	$(PKG_INSTALL) texlive
-
-wget:
-	$(PKG_CHECK) || $(PKG_INSTALL) $@
-
-curl:
-	$(PKG_CHECK) || $(PKG_INSTALL) $@
-
-# GUI 
-zathura: zathura-pdf-mupdf ## Init zathura (PDF reader)
-	$(PKG_CHECK) || $(PKG_INSTALL) $@
-	xdg-mime default org.pwmt.zathura.desktop application/pdf
-
-zathura-pdf-mupdf:
-	$(PKG_INSTALL) $@
 
 alacritty: $(FONT_PACKAGE_NAME) ## Init alacritty (Terminal emulator)
 	if [ ! $$(command -v apt-get) = ""  ]; then \
@@ -135,7 +104,7 @@ alacritty: $(FONT_PACKAGE_NAME) ## Init alacritty (Terminal emulator)
 	fi
 	$(PKG_CHECK) || $(PKG_INSTALL) alacritty
 	mkdir -p ${HOME}/.config/alacritty 2> /dev/null
-	$(LN)/.config/alacritty.toml
+	$(LN)/.config/alacritty/alacritty.toml
 
 $(FONT_PACKAGE_NAME):
 	$(PKG_INSTALL) $@
