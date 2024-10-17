@@ -11,7 +11,7 @@
 
 - name: Create directory
   ansible.builtin.file:
-    path: "$HOME/.config"
+    path: "$HOME/.config/alacritty"
     state: directory
     recurse: yes
 

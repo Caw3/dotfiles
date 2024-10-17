@@ -3,4 +3,4 @@ dotfiles_repo: "https://github.com/Caw3/dotfiles.git"
 dotfiles_local_location: "$HOME/.dotfiles"
 dotfiles_symlinks:
   - src: "{{ dotfiles_local_location }}/.config/alacritty.toml"
-    dest: "$HOME/.config/alacritty.toml"
+    dest: "$HOME/.config/alacritty/alacritty.toml"
