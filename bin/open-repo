@@ -7,7 +7,7 @@ prompt="Select project: "
 repo_name="$( find -L "$search_path" -maxdepth 1 -type d | \
   awk -F'/' '{print $NF}' | \
   sort | \
-  fzf-tmux -p -w 110 -h 60% --prompt "$prompt")"
+  fzf-tmux -p --prompt "$prompt")"
 
 if [[ -z $repo_name ]]; then 
   exit 0
