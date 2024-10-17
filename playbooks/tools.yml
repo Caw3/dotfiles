@@ -16,13 +16,9 @@
     - gh
     - pandoc
     - awscli
-    - htop
     - ddgr
     - autossh
     - fzf
-    - nodejs
-    - npm
-    - doctl
     when: ansible_distribution == 'Ubuntu'
 
   - name: Add the user to the docker group
@@ -49,7 +45,5 @@
     - ddgr
     - autossh
     - fzf
-    - nodejs
-    - npm
     - cronie
     when: ansible_distribution == 'Fedora'

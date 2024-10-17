@@ -31,6 +31,9 @@
         - tmux
         - vim
         - rsync
+        - rg
+        - htop
+        - fzf
 
     - name: Update/Clone dotfiles repository
       git:
