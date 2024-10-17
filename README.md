@@ -12,6 +12,7 @@ ansible-playbook playbooks/main.yml --inventory hosts
 
 # Install GUI packages
 ```
-ansible-playbook playbooks/gui.yml --connection=local -i localhost
+echo localhost > hosts
+ansible-playbook playbooks/gui.yml --connection=local -i localhost --inventory hosts
 ```
 
