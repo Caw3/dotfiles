@@ -24,7 +24,7 @@ help:
 		| sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install: init ansible git rg htop fzf wget curl rsync scripts ## Basic install
+install: init ansible git ripgrep htop fzf wget curl rsync scripts ## Basic install
 init: bash tmux vim ## Lightweight configuration
 gui: $(FONT_PACKAGE_NAME) alacritty gnome-settings ## Install alacritty
 
@@ -56,7 +56,7 @@ rsync:
 fzf:
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
-rg:
+ripgrep:
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
 htop:
