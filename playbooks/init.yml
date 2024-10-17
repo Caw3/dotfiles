@@ -33,6 +33,7 @@
         - rsync
         - ripgrep
         - htop
+        - make
         - fzf
 
     - name: Update/Clone dotfiles repository
