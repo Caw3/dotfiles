@@ -1,7 +1,7 @@
 # Install locally
 
 ```
-bash <(curl -s httsp://raw.githubusercontent.com/caw3/dotfiles/main/bin/setup-dotfiles)
+bash <(curl -s https://raw.githubusercontent.com/caw3/dotfiles/main/bin/setup-dotfiles)
 ```
 
 # Install on remote
