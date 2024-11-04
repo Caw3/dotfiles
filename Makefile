@@ -10,6 +10,13 @@ ifneq ($(shell command -v dnf),)
 	SSH = openssh
 endif
 
+ifneq ($(shell command -v brew),)
+	PKG_INSTALL = brew install
+	FONT_PACKAGE_NAME = fonts-jetbrains-mono
+	SHELLCHECK = ShellChec
+	SSH = openssh
+endif
+
 ifneq ($(shell command -v apt-get),)
 	PKG_INSTALL = sudo apt-get install -y
 	FONT_PACKAGE_NAME = fonts-jetbrains-mono

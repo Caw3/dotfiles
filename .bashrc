@@ -93,7 +93,6 @@ export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
 export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git" -g "!node_modules" || find .'
 export FZF_TMUX_OPTS="-p -w 80% -h 80%"
 export BAT_THEME='Nord'
-. "$HOME/.cargo/env"
 
 vterm_printf() {
     if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ]); then
