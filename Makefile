@@ -12,7 +12,7 @@ endif
 
 ifneq ($(shell command -v brew),)
 	PKG_INSTALL = brew install
-	FONT_PACKAGE_NAME = fonts-jetbrains-mono
+	FONT_PACKAGE_NAME = font-jetbrains-mono
 	SHELLCHECK = ShellChec
 	SSH = openssh
 endif
