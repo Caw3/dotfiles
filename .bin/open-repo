@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -x
-search_path="$HOME/repos"
+
+if [ -z "$REPO_SEARCH_PATH" ]; then
+  search_path="$HOME/repos/"
+else
+  search_path="$REPO_SEARCH_PATH"
+fi
 
 prompt="Select project: "
 
