@@ -123,6 +123,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
 	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
 	Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
+	Plug 'romainl/vim-devdocs'
     call plug#end()
 
 	"Termdebug
