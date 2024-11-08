@@ -2,16 +2,16 @@
 set -x
 
 if [ -z "$REPO_SEARCH_PATH" ]; then
-  search_path="$HOME/repos/"
+  search_path=("$HOME/repos/")
 else
-  search_path="$REPO_SEARCH_PATH"
+  IFS=' ' read -r -a search_path <<< "$REPO_SEARCH_PATH"
 fi
 
 prompt="Select project: "
-
-repo_name="$( find -L "$search_path" -maxdepth 1 -type d | \
+repo_name="$( find "${search_path[@]}" -not -path '*/[@.]*' -maxdepth 1 -type d | \
   awk -F'/' '{print $NF}' | \
   sort | \
+  uniq | \
   fzf-tmux -p --prompt "$prompt")"
 
 if [[ -z $repo_name ]]; then 
@@ -19,7 +19,7 @@ if [[ -z $repo_name ]]; then
 fi
 
 if [[ -n $repo_name ]]; then
-  dir="$(find -L "$search_path" -maxdepth 1 -name "$repo_name")"
+  dir="$(find -L "${search_path[@]}" -maxdepth 1 -name "$repo_name")"
   tmux new-session -c "$dir" -s "$repo_name" -d
   tmux switch-client -t "$repo_name"
 fi
