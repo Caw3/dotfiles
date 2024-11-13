@@ -47,7 +47,7 @@ export HISTCONTROL=erasedups
 ## Aliases
 alias py='python3'
 alias la='ls -a'
-alias ll='ls -l'
+alias ll='ls -lah'
 alias cp="cp -i"
 alias mv='mv -i'
 alias rm='rm -i'
@@ -66,7 +66,6 @@ alias gcp='git commit -p'
 alias battery='cat /sys/class/power_supply/BAT0/capacity'
 alias ta="tmux a"
 alias tm="tmux"
-alias emacs="emacsclient"
 
 ## FZF
 OPTIONS=" --preview='bat --color=always --style=numbers --line-range=:500 {} || cat {}' --preview-window=hidden "
@@ -105,3 +104,4 @@ vterm_printf() {
         printf "\e]%s\e\\" "$1"
     fi
 }
+. "/Users/cararo/.deno/env"
