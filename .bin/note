@@ -1,11 +1,11 @@
 #!/bin/bash
-DIR="$HOME/sync"
+DIR="$HOME/Documents"
 usage() { echo "Usage: $0 [NOTES]... || [-s pattern] [-f pattern]" 1>&2; exit 1; }
 
 timestamp-file () {
-  sed -i "s/title:.*/title: $(basename "$1" | cut -d'.' -f1)/" "$1"
-  sed -i "s/date:.*/date: $(date +'%F %H:%M')/" "$1"
-  sed -i "s/author:.*/author: $(whoami)/" "$1"
+  sed -i '' "s/title:.*/title: $(basename "$1" | cut -d'.' -f1)/" "$1"
+  sed -i '' "s/date:.*/date: $(date +'%F %H:%M')/" "$1"
+  sed -i '' "s/author:.*/author: $(whoami)/" "$1"
 }
 export -f timestamp-file
 
