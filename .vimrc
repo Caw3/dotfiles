@@ -22,6 +22,8 @@ set nohlsearch
 set hidden
 set noswapfile
 set nobackup writebackup
+set nocompatible
+set backspace=indent,eol,start
 
 if !isdirectory("/var/tmp/vim/undo")
     call mkdir("/var/tmp/vim/undo", "p", 0700)
@@ -122,8 +124,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
 	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
-	Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
-	Plug 'romainl/vim-devdocs'
+	Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['SignifyToggle'] }
+	Plug 'ludovicchabant/vim-gutentags'
     call plug#end()
 
 	"Termdebug
