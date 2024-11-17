@@ -125,7 +125,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
 	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
 	Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['SignifyToggle'] }
-	Plug 'ludovicchabant/vim-gutentags'
     call plug#end()
 
 	"Termdebug
@@ -133,6 +132,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 
     "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
+    vnoremap <Leader>ca <Cmd>ALECodeAction<CR>
     nnoremap <Leader>cr <Cmd>ALEFix<CR>
     nnoremap <Leader>rn <Cmd>ALERename<CR>
     nnoremap <Leader>K <Cmd>ALEHover<CR>
@@ -143,10 +143,11 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>di <Cmd>ALEDetail<CR>
     nnoremap <Leader>ds <Cmd>call ExecAndRestorePos("ALEToggle")<CR><Cmd>echo g:ale_enabled<CR>
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
+    nnoremap <Leader>ci <Cmd>ALEImport<CR>
     nnoremap <Leader>ss :ALESymbolSearch 
+	inoremap <C-I> <Cmd>ALEHover<CR>
+	nnoremap <C-I> <Cmd>ALEHover<CR>
     let g:ale_enabled = 0
-	let g:ale_set_balloons = 1
-	let g:ale_popup_menu_enabled = 1
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
     let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
