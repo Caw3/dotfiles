@@ -63,8 +63,9 @@ style = "Regular"
 action = "ToggleFullscreen"
 key = "F11"
 
-# [window]
-# decorations = "None"
+[window]
+decorations = "Buttonless"
+startup_mode = "Maximized"
 
 [window.padding]
 x = 6
