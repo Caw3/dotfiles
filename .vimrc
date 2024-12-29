@@ -145,8 +145,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
     nnoremap <Leader>ci <Cmd>ALEImport<CR>
     nnoremap <Leader>ss :ALESymbolSearch 
-	inoremap <C-I> <Cmd>ALEHover<CR>
-	nnoremap <C-I> <Cmd>ALEHover<CR>
+	inoremap <C-K> <Cmd>ALEHover<CR>
+	nnoremap <C-K> <Cmd>ALEHover<CR>
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
