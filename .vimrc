@@ -60,6 +60,7 @@ nnoremap <Leader>/ :Grep
 
 nnoremap <Leader>fF :find **/
 nnoremap <Leader>ff :edit **/
+nnoremap <Leader>tt :tag 
 
 vnoremap <C-c> :silent w !xsel -ib<CR>
 
