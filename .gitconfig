@@ -1,11 +1,5 @@
 [user]
-	email = carl@willman.nu
+	email = carl.willman@sinch.com
 	name = Carl Willman
-[init]
-	templatedir = ~/.git_template
-[alias]
-	ctags = !.git/hooks/ctags
-[merge]
-	rebase = true
 [pull]
 	rebase = true

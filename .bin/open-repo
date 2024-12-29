@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
-set -x
 
-if [ -z "$REPO_SEARCH_PATH" ]; then
-  search_path=("$HOME/repos/")
-else
-  IFS=' ' read -r -a search_path <<< "$REPO_SEARCH_PATH"
-fi
+IFS=' ' read -r -a search_path <<< "$REPO_SEARCH_PATH"
 
 prompt="Select project: "
 repo_name="$( find "${search_path[@]}" -not -path '*/[@.]*' -maxdepth 1 -type d | \

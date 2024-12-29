@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -z "$DOC_SEARCH_PATH" ]; then
-  search_path="$HOME/books/"
-else
-  search_path="$DOC_SEARCH_PATH"
-fi
-
+search_path="$DOC_SEARCH_PATH"
 total="$(find "$search_path" -maxdepth 5 | wc -l)"
 
 if [[ $total -eq 0 ]]; then

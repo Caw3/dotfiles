@@ -13,3 +13,4 @@ key
 /.emacs.d/backups/
 /.emacs.d/backups/
 /.emacs.d/auto-save-list/
+/.vim/.netrwbook
