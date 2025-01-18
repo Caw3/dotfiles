@@ -51,8 +51,6 @@ nnoremap <Leader>lp <cmd>lprev<CR>
 nnoremap <Leader>lf <cmd>lfirst<CR>
 nnoremap <Leader>ll <cmd>llast<CR>
 
-nnoremap <Leader>m% <cmd>make! %<CR>
-nnoremap <Leader>mm <cmd>make!<CR>
 nnoremap <Leader>nn <cmd>set nu!<CR>
 
 nnoremap <silent> <Leader>* :Grep <C-R><C-W><CR>
@@ -148,6 +146,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>ss :ALESymbolSearch 
 	inoremap <C-K> <Cmd>ALEHover<CR>
 	nnoremap <C-K> <Cmd>ALEHover<CR>
+	nnoremap [e <Cmd>ALEPrevious<CR>
+	nnoremap ]e <Cmd>ALENext<CR>
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
