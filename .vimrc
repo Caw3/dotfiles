@@ -95,6 +95,7 @@ cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'L
 
 augroup quickfix
 	autocmd!
+ 	autocmd FileType qf setlocal wrap
 	autocmd QuickFixCmdPost cgetexpr cwindow
 	autocmd QuickFixCmdPost lgetexpr lwindow
 augroup END
