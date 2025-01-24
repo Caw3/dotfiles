@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Opens vim quickfixlist with all unresolved discussions on the current
+# checkedout MR
+
+MR=$(glab mr view --output json | jq .iid);
+[[ -z "$MR" ]] && return 1
+
+JSON=$(glab api "projects/:fullpath/merge_requests/$MR/discussions")
+jq_filter='
+  [.[].notes] |
+    flatten |
+    map(select(.type)) |
+    map(select(.resolved == false)) |
+    map(select(.position)) |
+    .[] |
+    .position.new_path + ":" + (.position.new_line | tostring) + ":0:" + .author.name + ": "+ .body
+' 
+
+cd $(git rev-parse --show-toplevel)
+vim -q <(echo "$JSON" | jq "$jq_filter" | tr -d \")
