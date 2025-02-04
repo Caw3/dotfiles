@@ -6,6 +6,14 @@
 [[ $- != *i* ]] && return
 
 ## Functions
+vimtag() {
+  TAGS="./tags"
+  [[ -f "$TAGS" ]] || return 1
+  TAG=$(grep -v ^\! $TAGS | cut -f 1,2,3 | column -t -s $'\t' | fzf | awk '{print $1}')
+  vim -t $TAG
+}
+export -f vimtag
+
 vimgrep() {
   HELP="Usage: vimgrep {pattern} {files}..."
   PATTERN=$1
@@ -37,7 +45,7 @@ shopt -s checkwinsize
 set -o vi
 
 ## Exports
-export EDITOR='vi'
+export EDITOR='vim'
 export MANPAGER="vim -M +MANPAGER -"
 
 export HISTSIZE= 
@@ -71,6 +79,8 @@ alias tm="tmux"
 OPTIONS=" --preview='bat --color=always --style=numbers --line-range=:500 {} || cat {}' --preview-window=hidden "
 BINDS="\
 --bind '?:toggle-preview' \
+--bind 'tab:toggle+up' \
+--bind 'shift-tab:toggle+down' \
 --bind 'ctrl-d:preview-half-page-down' \
 --bind 'ctrl-u:preview-half-page-up'"
 

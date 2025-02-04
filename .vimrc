@@ -18,12 +18,15 @@ set scrolloff=8
 set signcolumn=number
 set nu
 set incsearch
-set nohlsearch
+set hlsearch
 set hidden
 set noswapfile
 set nobackup writebackup
 set nocompatible
 set backspace=indent,eol,start
+set foldlevelstart=99
+set foldmethod=syntax
+set foldnestmax=1
 
 if !isdirectory("/var/tmp/vim/undo")
     call mkdir("/var/tmp/vim/undo", "p", 0700)
@@ -56,8 +59,8 @@ nnoremap <Leader>nn <cmd>set nu!<CR>
 nnoremap <silent> <Leader>* :Grep <C-R><C-W><CR>
 nnoremap <Leader>/ :Grep 
 
-nnoremap <Leader>fF :find **/
-nnoremap <Leader>ff :edit **/
+nnoremap <Leader>fF :find **/*
+nnoremap <Leader>ff :edit **/*
 nnoremap <Leader>tt :tag 
 
 vnoremap <C-c> :silent w !xsel -ib<CR>
@@ -124,7 +127,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
 	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
-	Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['SignifyToggle'] }
+	Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['SignifyToggle'], 'do': ':set signcolumn yes' }
+	Plug 'romainl/vim-cool'
     call plug#end()
 
 	"Termdebug

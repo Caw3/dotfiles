@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Opens a file and line number in a running vim session within tmux, or creates
+# a new one. If multiple selections are made, opens them in a Vim quickfix list.
+# input: tmux capture-pane -J -p
+
+INPUT=$(</dev/stdin)
+
+cd "$(tmux display -p -F "#{pane_current_path}")" || exit
+
+# Add more patterns here if needed
+FILE_AND_LINE=$(echo "$INPUT" | perl -nE 'use Cwd "realpath"; while (m/([~.\/]?[-a-zA-Z0-9_+.,\/@()\[\]]+)(?:(?::|", line )(\d+))?/g) { say realpath($1) . (defined($2) ? " +$2" : "") if -e realpath($1) }')
+
+SELECTIONS=$(echo "$FILE_AND_LINE" | sort | uniq | fzf-tmux --multi -d20 --bind 'ctrl-q:select-all+accept')
+
+# If no selection, exit
+[[ -z "$SELECTIONS" ]] && exit
+
+SESSION=$(tmux display -p '#{session_name}')
+WINDOW=$(tmux display -p '#{window_index}')
+
+VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_current_command}' | grep -i vim | awk '{print $1}')
+
+if [ -z "$VIM_PANE_ID" ]; then
+    tmux send-keys -t "$SESSION:$WINDOW" "vim" C-m
+    VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_current_command}' | grep -i vim | awk '{print $1}')
+fi
+
+# Send to quickfix list if mulitple selections are made
+if [[ "$SELECTIONS" =~ $'\n' ]]; then
+    QF_LIST=$(echo "$SELECTIONS" | perl -ne 'chomp; s/^(.*?)\s*(?:\+(\d+))?$/ $2 ? qq({"filename": "$1", "lnum": $2}) : qq({"filename": "$1"}) /e; print;' | sed 's/}{/},{/g')
+
+    tmux send-keys -t "$SESSION:$WINDOW.$VIM_PANE_ID" ":call setqflist([$QF_LIST])" C-m
+    tmux send-keys -t "$SESSION:$WINDOW.$VIM_PANE_ID" ":copen" C-m
+else
+    tmux send-keys -t "$SESSION:$WINDOW.$VIM_PANE_ID" ":e $SELECTIONS" C-m
+fi
+
+tmux select-pane -t "$VIM_PANE_ID"
