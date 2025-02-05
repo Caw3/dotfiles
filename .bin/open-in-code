@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+INPUT=$1
+PATH="/opt/homebrew/bin":$PATH # needed for alcritty launcher
+
+SESSION=$(tmux display -p '#{session_name}' || tmux list-sessions | grep "(attached)" |  awk -F: '{print $1}')
+WINDOW=$(tmux display -p '#{window_index}'|| tmux list-windows -t $SESSION | grep "(active)" |  awk -F: '{print $1}')
+cd "$(tmux display -t "$SESSION:$WINDOW" -p -F "#{pane_current_path}")" || exit
+
+TOP_LEVEL_DIR=$(git rev-parse --show-toplevel 2>/dev/null)
+if [[ $TOP_LEVEL_DIR ]]; then
+  if [[ $INPUT =~ ^[ab]/ ]]; then
+    INPUT="${TOP_LEVEL_DIR}${INPUT:1}"
+  fi
+fi
+
+REAL_PATH=$(realpath "$INPUT")
+
+[[ -f "$REAL_PATH" ]] && code --goto "$REAL_PATH"
