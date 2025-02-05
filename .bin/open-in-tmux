@@ -8,7 +8,7 @@ INPUT=$(</dev/stdin)
 cd "$(tmux display -p -F "#{pane_current_path}")" || exit
 
 # Add more patterns here if needed
-FILE_AND_LINE=$(echo "$INPUT" | perl -nE 'use Cwd "realpath"; while (m/([~.\/]?[-a-zA-Z0-9_+.,\/@()\[\]]+)(?:(?::|", line )(\d+))?/g) { say realpath($1) . (defined($2) ? " +$2" : "") if -e realpath($1) }')
+FILE_AND_LINE=$(echo "$INPUT" | tr -d '()'| perl -nE 'use Cwd "realpath"; while (m/([~.\/]?[-a-zA-Z0-9_+.,\/@()\[\]]+)(?:(?::|", line )(\d+))?/g) { say realpath($1) . (defined($2) ? " +$2" : "") if -e realpath($1) }')
 DIFFS=$(echo "$INPUT" | perl -nE 'use Cwd "realpath"; while (m/\+\+\+ b\/?(([~.\/]?[-a-zA-Z0-9_+-,.\/]+)(?::(\d+))?)/g) { say realpath($1) }')
 
 SELECTIONS=$(printf "$FILE_AND_LINE\n$DIFFS" | sort | uniq | grep -v "^/$" | fzf-tmux --multi -d20 --bind 'ctrl-q:select-all+accept')
