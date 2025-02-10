@@ -168,6 +168,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     nnoremap <Leader>gl :Gclog<CR>
 	vnoremap <leader>gl <ESC>:execute 'vert G log -L' . line("'<") . ',' . line("'>") . ':' . expand('%') <CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
+    nnoremap <Leader>gV :Gvdiffsplit! <CR>
+    nnoremap <Leader>gm :G mergetool <CR>
 	nnoremap dgh :diffget //2<CR>
 	nnoremap dgl :diffget //3<CR>
 
