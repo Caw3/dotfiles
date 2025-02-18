@@ -28,11 +28,13 @@ set foldlevelstart=99
 set foldmethod=syntax
 set foldnestmax=1
 
-if !isdirectory("/var/tmp/vim/undo")
-    call mkdir("/var/tmp/vim/undo", "p", 0700)
+if !has('nvim')
+    if !isdirectory("/var/tmp/vim/undo")
+	call mkdir("/var/tmp/vim/undo", "p", 0700)
+    endif
+    set undodir=/var/tmp/vim/undo
+    set undofile
 endif
-set undodir=/var/tmp/vim/undo
-set undofile
 
 "Keymaps
 map <Space> <Leader>
@@ -106,13 +108,13 @@ augroup END
 packadd cfilter
 
 "Plugins
-if empty(glob('~/.vim/autoload/plug.vim')) && v:version >= 810
+if empty(glob('~/.vim/autoload/plug.vim')) && v:version >= 810 && !has('nvim')
     silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
 endif
 
-if filereadable(expand("~/.vim/autoload/plug.vim"))
+if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     call plug#begin('~/.vim/vim-plug')
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
@@ -123,16 +125,19 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'arcticicestudio/nord-vim'
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
     Plug 'lervag/vimtex', { 'for': 'tex' }
-	Plug 'CervEdin/vim-minizinc', { 'for': 'zinc' }
-	Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
-    Plug 'dense-analysis/ale', { 'on' : ['ALEToggle'] }
-	Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
-	Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['SignifyToggle'], 'do': ':set signcolumn yes' }
-	Plug 'romainl/vim-cool'
+    Plug 'CervEdin/vim-minizinc', { 'for': 'zinc' }
+    Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
+    Plug 'Caw3/ale', { 'on' : ['ALEToggle'] }
+    Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
+    Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['SignifyToggle'] }
+    Plug 'romainl/vim-cool'
     call plug#end()
 
-	"Termdebug
-	let g:termdebug_wide=1
+    "Vim Cool
+    let g:cool_total_matches=1
+
+    "Termdebug
+    let g:termdebug_wide=1
 
     "ALE
     nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
