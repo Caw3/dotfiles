@@ -198,6 +198,7 @@ silent! colorscheme nord
 hi VertSplit ctermbg=NONE 
 hi! link StatusLineNC VertSplit
 hi! link StatusLine LineNr
+hi! link WinSeparator LineNr
 hi! link StatusLineTermNC VertSplit
 hi! link StatusLineTerm LineNr
 hi! link debugPC Visual
