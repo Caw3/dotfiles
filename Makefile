@@ -41,6 +41,12 @@ vim: ## Init vim
 	$(LN)/.vimrc
 	$(LN)/.vim
 
+bash-completion: 
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+	grep 'bash_completion.sh' $(HOME)/.bash_profile || \
+		echo '[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"' >> \
+		$(HOME)/.bash_profile
+
 git: 
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 

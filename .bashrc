@@ -55,7 +55,7 @@ export HISTCONTROL=erasedups
 ## Aliases
 alias py='python3'
 alias la='ls -a'
-alias ll='ls -lah'
+alias ll='ls --color -lah'
 alias cp="cp -i"
 alias mv='mv -i'
 alias rm='rm -i'
