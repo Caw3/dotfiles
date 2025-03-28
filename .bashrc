@@ -28,6 +28,11 @@ cht() {
 }
 export -f cht
 
+gbf() {
+    git switch $(git reflog | grep -o 'checkout: moving from [^ ]* to [^ ]*' | awk '{print $NF}' | awk '!seen[$0]++' | fzf-tmux --preview='git log {} --decorate --graph --color=always')
+}
+export -f gbf
+
 ## Prompt
 export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] '
 
