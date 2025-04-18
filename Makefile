@@ -25,7 +25,7 @@ help:
 		| sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install: init ansible git ripgrep htop fzf wget curl rsync podman podman-compose scripts ## Basic install
+install: init nvim ansible git ripgrep htop fzf wget curl rsync podman podman-compose scripts ## Basic install
 init: bash tmux vim ## Lightweight configuration (bash, vim, tmux)
 
 bash: ## Init bash
@@ -35,6 +35,13 @@ bash: ## Init bash
 tmux: ## Init tmux
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	$(LN)/.tmux.conf
+
+nvim: ## Init nvim
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+	$(LN)/.vimrc
+	@mkdir -p ${HOME}/.config/nvim/ftplugin
+	@ln -vsfn ${PWD}/.vim/ftplugin ${HOME}/.config/nvim/ftplugin
+	$(LN)/.config/nvim/init.lua
 
 vim: ## Init vim
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
