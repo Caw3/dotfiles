@@ -16,6 +16,10 @@ require("lazy").setup({
 	"tpope/vim-dispatch",
 	"tpope/vim-surround",
 	{
+		"github/copilot.vim", cmd = "Copilot",
+
+	},
+	{
 		"romainl/vim-cool",
 		config = function()
 			vim.g.cool_total_matches = 1
@@ -235,16 +239,19 @@ require("lazy").setup({
 						vim.keymap.set(mode, keys, func, { buffer = event.buf })
 					end
 
-					vim.keymap.set("n", "]e", vim.diagnostic.goto_next, { noremap = true, silent = true })
-					vim.keymap.set("n", "[e", vim.diagnostic.goto_prev, { noremap = true, silent = true })
+					vim.keymap.set("n", "]e", vim.diagnostic.goto_next,
+						{ noremap = true, silent = true })
+					vim.keymap.set("n", "[e", vim.diagnostic.goto_prev,
+						{ noremap = true, silent = true })
 
 					map("ds", vim.lsp.stop_client)
+					map("di", vim.diagnostic.open_float)
 					--  To jump back, press <C-t>.
 					map("gd", require("telescope.builtin").lsp_definitions)
 					map("^]", require("telescope.builtin").lsp_definitions)
 
 					-- Find references for the word under your cursor.
-					map("gD", require("telescope.builtin").lsp_references)
+					map("gR", require("telescope.builtin").lsp_references)
 
 					-- Find references for the word under your cursor.
 					map("gr", vim.lsp.buf.references)
@@ -286,7 +293,8 @@ require("lazy").setup({
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
 						local highlight_augroup =
-							vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
+							vim.api.nvim_create_augroup("kickstart-lsp-highlight",
+								{ clear = false })
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 							buffer = event.buf,
 							group = highlight_augroup,
@@ -300,10 +308,15 @@ require("lazy").setup({
 						})
 
 						vim.api.nvim_create_autocmd("LspDetach", {
-							group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
+							group = vim.api.nvim_create_augroup("kickstart-lsp-detach",
+								{ clear = true }),
 							callback = function(event2)
 								vim.lsp.buf.clear_references()
-								vim.api.nvim_clear_autocmds({ group = "kickstart-lsp-highlight", buffer = event2.buf })
+								vim.api.nvim_clear_autocmds({
+									group =
+									"kickstart-lsp-highlight",
+									buffer = event2.buf
+								})
 							end,
 						})
 					end
@@ -314,40 +327,53 @@ require("lazy").setup({
 					-- This may be unwanted, since they displace some of your code
 					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
 						map("<leader>th", function()
-							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
+							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({
+								bufnr =
+									event.buf
+							}))
 						end)
 					end
 				end,
 			})
 
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities())
+			capabilities = vim.tbl_deep_extend("force", capabilities,
+				require("blink.cmp").get_lsp_capabilities())
 
 			local lspconfig = require('lspconfig')
-			-- lspconfig.ts_ls.setup{
-			-- 	root_dir = lspconfig.util.root_pattern("package.json"),
-			-- 	settings = {
-			-- 		organizeImports = true,	
-			-- 	},
-			-- }
-			lspconfig.denols.setup{
-				root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
-				settings = {
-					organizeImports = true,
-				},
-			}
-			lspconfig.lua_ls.setup{}
-			lspconfig.clangd.setup{}
-			lspconfig.gopls.setup{}
-			lspconfig.pyright.setup{}
-			lspconfig.rust_analyzer.setup{}
+			local function is_deno_project()
+				local cwd = vim.fn.getcwd()
+				return vim.fn.filereadable(cwd .. "/deno.json") == 1 or vim.fn.filereadable(cwd .. "/deno.jsonc") == 1
+			end
+
+			if is_deno_project() then
+				-- When in a Deno project, only enable denols.
+				lspconfig.denols.setup {
+					settings = {
+						organizeImports = true,
+					},
+				}
+			else
+				-- Otherwise (non-Deno project) enable ts_ls.
+				lspconfig.ts_ls.setup {
+					settings = {
+						organizeImports = true,
+					},
+				}
+			end
+			lspconfig.lua_ls.setup {}
+			lspconfig.clangd.setup {}
+			lspconfig.gopls.setup {}
+			lspconfig.pyright.setup {}
+			lspconfig.rust_analyzer.setup {}
+			lspconfig.terraformls.setup {}
+			lspconfig.bashls.setup {}
 		end,
 	},
-	{
-		"pmizio/typescript-tools.nvim",
-		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-		opts = {},
-	},
+	-- {
+	-- 	"pmizio/typescript-tools.nvim",
+	-- 	dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+	-- },
 	{ -- Autoformat
 		"stevearc/conform.nvim",
 		cmd = { "ConformInfo" },
