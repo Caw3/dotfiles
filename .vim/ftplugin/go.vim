@@ -1,7 +1,6 @@
 setl noexpandtab
 setl shiftwidth=4
 setl tabstop=4
-setl omnifunc=ale#completion#OmniFunc
 compiler go
 
 if executable("gofmt")

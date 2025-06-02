@@ -26,6 +26,9 @@ require("lazy").setup({
 		end,
 	},
 	{
+		"romainl/vim-qf",
+	},
+	{
 		"tpope/vim-fugitive",
 		config = function()
 			-- Set autocommands for Fugitive filetype
@@ -178,12 +181,11 @@ require("lazy").setup({
 				-- You can put your default mappings / updates / etc. in here
 				--  All the info you're looking for is in `:help telescope.setup()`
 				--
-				-- defaults = {
-				--   mappings = {
-				--     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-				--   },
-				-- },
-				-- pickers = {}
+				defaults = {
+				  mappings = {
+				    i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+				  },
+				},
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
@@ -368,6 +370,7 @@ require("lazy").setup({
 			lspconfig.rust_analyzer.setup {}
 			lspconfig.terraformls.setup {}
 			lspconfig.bashls.setup {}
+			lspconfig.java_language_server.setup {}
 		end,
 	},
 	-- {

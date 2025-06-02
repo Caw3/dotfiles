@@ -2,7 +2,6 @@
 setl expandtab
 setl shiftwidth=4
 setl tabstop=4
-setl omnifunc=ale#completion#OmniFunc
 compiler cargo
 
 nnoremap <Leader>mm <Cmd>make! check \| cwindow <CR>

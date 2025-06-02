@@ -1,4 +1,3 @@
-setl omnifunc=ale#completion#OmniFunc
 set expandtab
 set shiftwidth=2
 compiler stack

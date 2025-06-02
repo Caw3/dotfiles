@@ -24,9 +24,7 @@ set noswapfile
 set nobackup writebackup
 set nocompatible
 set backspace=indent,eol,start
-set foldlevelstart=99
-set foldmethod=syntax
-set foldnestmax=1
+set updatetime=100
 
 if !has('nvim')
     if !isdirectory("/var/tmp/vim/undo")
@@ -39,6 +37,7 @@ endif
 "Keymaps
 map <Space> <Leader>
 inoremap {<cr> {<cr>}<c-o><s-o>
+inoremap <Leader>rr <cmd>e! %<CR>
 
 nnoremap <Leader>co <cmd>copen<CR>
 nnoremap <Leader>cc <cmd>cclose<CR>
@@ -105,7 +104,11 @@ augroup quickfix
 	autocmd QuickFixCmdPost lgetexpr lwindow
 augroup END
 
+au CursorHold,CursorHoldI * checktime
+au FocusGained,BufEnter * checktime
+
 packadd cfilter
+packadd termdebug
 
 "Plugins
 if empty(glob('~/.vim/autoload/plug.vim')) && v:version >= 810 && !has('nvim')
@@ -116,6 +119,10 @@ endif
 
 if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     call plug#begin('~/.vim/vim-plug')
+	Plug 'prabirshrestha/vim-lsp'
+	Plug 'rhysd/vim-lsp-ale'
+	Plug 'Caw3/ale'
+
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
@@ -127,41 +134,77 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'CervEdin/vim-minizinc', { 'for': 'zinc' }
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
-    Plug 'Caw3/ale', { 'on' : ['ALEToggle'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
-    Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['SignifyToggle'] }
+    if has('patch-8.0.902')
+		Plug 'mhinz/vim-signify', { 'on' : ['SignifyToggle'] }
+    else
+		Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['SignifyToggle'] }
+    endif
     Plug 'romainl/vim-cool'
+    Plug 'romainl/vim-qf'
     call plug#end()
+
+	function! s:on_lsp_buffer_enabled() abort
+		setlocal omnifunc=lsp#complete
+		if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+		nmap <buffer> <leader>gd <plug>(lsp-definition)
+		nmap <buffer> <leader>@ <plug>(lsp-document-symbol-search)
+		nmap <buffer> <leader># <plug>(lsp-workspace-symbol-search)
+		nmap <buffer> <leader>ss <plug>(lsp-workspace-symbol)
+		nmap <buffer> <leader>gr <plug>(lsp-references)
+		nmap <buffer> <leader>gi <plug>(lsp-implementation)
+		nmap <buffer> <leader>gt <plug>(lsp-type-definition)
+		nmap <buffer> <leader>rn <plug>(lsp-rename)
+		nmap <buffer> [e <plug>(lsp-previous-diagnostic)
+		nmap <buffer> ]e <plug>(lsp-next-diagnostic)
+		nmap <buffer> K <plug>(lsp-hover)
+		nmap <buffer> <leader>ca <plug>(lsp-code-action)
+
+		let g:lsp_format_sync_timeout = 1000
+		let g:lsp_document_code_action_signs_enabled = 0
+		let g:lsp_document_code_action_signs_enabled = 0
+		let g:lsp_signature_help_delay = 1
+	endfunction
+
+	augroup lsp_install
+		au!
+		" call s:on_lsp_buffer_enabled only for languages that has the server registered.
+		autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+	augroup END
+
+	let g:lsp_plugins_loaded = 0
+	let g:lsp_enabled = 0
+	let g:ale_enabled = 0
+
+	function! ToggleLSP()
+		call ToggleSignifyAndSignColumn()
+		if !exists('g:lsp_enabled') || g:lsp_enabled == 0
+			" Enable vim-lsp and ALE
+			let g:lsp_enabled = 1
+			let g:ale_enabled = 1
+			echo "LSP client enabled"
+		else
+			" Disable vim-lsp and ALE
+			let g:lsp_enabled = 0
+			let g:ale_enabled = 0
+			echo "LSP client disabled"
+		endif
+	endfunction
+
+	noremap <leader>ds <cmd>call ToggleLSP()<CR>
+	nnoremap <silent> <leader>di <cmd>ALEDetail<CR>
+
+	noremap <leader>di <cmd>ALEDetail<CR>
+	noremap <leader>cr <cmd>ALEFix<CR>
+    let g:ale_hover_cursor = 0
+    let g:ale_set_highlights = 0
+	let g:ale_disable_lsp = 1
 
     "Vim Cool
     let g:cool_total_matches=1
 
     "Termdebug
     let g:termdebug_wide=1
-
-    "ALE
-    nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
-    vnoremap <Leader>ca <Cmd>ALECodeAction<CR>
-    nnoremap <Leader>cr <Cmd>ALEFix<CR>
-    nnoremap <Leader>rn <Cmd>ALERename<CR>
-    nnoremap <Leader>K <Cmd>ALEHover<CR>
-    nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
-    nnoremap <Leader>gt <Cmd>ALEGoToTypeDefinition<CR>
-    nnoremap <Leader>gi <Cmd>ALEGoToImplementation<CR>
-    nnoremap <Leader>gr <Cmd>ALEFindReferences -quickfix<CR><CMD>copen<CR>
-    nnoremap <Leader>di <Cmd>ALEDetail<CR>
-    nnoremap <Leader>ds <Cmd>call ExecAndRestorePos("ALEToggle")<CR><Cmd>echo g:ale_enabled<CR>
-    nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
-    nnoremap <Leader>ci <Cmd>ALEImport<CR>
-    nnoremap <Leader>ss :ALESymbolSearch 
-	inoremap <C-K> <Cmd>ALEHover<CR>
-	nnoremap <C-K> <Cmd>ALEHover<CR>
-	nnoremap [e <Cmd>ALEPrevious<CR>
-	nnoremap ]e <Cmd>ALENext<CR>
-    let g:ale_enabled = 0
-    let g:ale_hover_cursor = 0
-    let g:ale_set_highlights = 0
-    let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
 
     "Fugitive
     augroup ft_fugitve
@@ -179,16 +222,24 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
 	nnoremap dgl :diffget //3<CR>
 
 	"Signify
-    let g:signify_sign_change = "~"
-	nnoremap <Leader>ghp <cmd>SignifyHunkPreview<CR>
+	function! ToggleSignifyAndSignColumn()
+		if &signcolumn ==# 'yes'
+			set signcolumn=auto
+		else
+			set signcolumn=yes
+		endif
+		SignifyToggle
+	endfunction
+    let g:signify_sign_change = "│"
+    let g:signify_sign_add = "│"
+    let g:signify_sign_delete = "│"
+	nnoremap <Leader>ghp <cmd>SignifyHunkDiff<CR>
 	nnoremap <Leader>ghu <cmd>SignifyHunkUndo<CR>
-	nnoremap <Leader>ghr <cmd>SignifyRefresh<CR>
-	nnoremap <Leader>ght <cmd>SignifyToggle<CR>
+	nnoremap <Leader>ght <cmd>call ToggleSignifyAndSignColumn()<CR>
     omap ic <plug>(signify-motion-inner-pending)
     xmap ic <plug>(signify-motion-inner-visual)
     omap ac <plug>(signify-motion-outer-pending)
     xmap ac <plug>(signify-motion-outer-visual)
-
 endif
 
 "Cosmetic

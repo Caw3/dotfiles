@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Open in file in vim. Requires tmux.
 #
+
 INPUT=$1
 PATH="/opt/homebrew/bin":$PATH # needed for alcritty launcher
 
 SESSION=$(tmux display -p '#{session_name}' || tmux list-sessions | grep "(attached)" |  awk -F: '{print $1}')
 WINDOW=$(tmux display -p '#{window_index}'|| tmux list-windows -t $SESSION | grep "(active)" |  awk -F: '{print $1}')
-VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_current_command}' | grep -i "$EDITOR" | awk '{print $1}')
+VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_current_command}' | grep -i vim | awk '{print $1}')
 
 cd "$(tmux display -t "$SESSION:$WINDOW" -p -F "#{pane_current_path}")" || exit
 
@@ -15,8 +16,9 @@ FILE_AND_LINE=$(echo "$INPUT" | tr -d '()'| perl -nE 'use Cwd "realpath"; while 
 [[ -z "$FILE_AND_LINE" ]] && exit
 
 if [ -z "$VIM_PANE_ID" ]; then
-    tmux send-keys -t "$SESSION:$WINDOW" "$EDITOR" C-m
-    VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_current_command}' | grep -i "$EDITOR" | awk '{print $1}')
+    tmux send-keys -t "$SESSION:$WINDOW"  $'\r'
+    tmux send-keys -t "$SESSION:$WINDOW" vim C-m
+    VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_current_command}' | grep -i vim | awk '{print $1}')
 fi
 tmux send-keys -t "$SESSION:$WINDOW.$VIM_PANE_ID" ":e $FILE_AND_LINE" C-m
 tmux select-pane -t "$VIM_PANE_ID"

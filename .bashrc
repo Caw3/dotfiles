@@ -14,6 +14,15 @@ vimtag() {
 }
 export -f vimtag
 
+nvimgrep() {
+  HELP="Usage: nvimgrep {pattern} {files}..."
+  PATTERN=$1
+  [[ $# -lt 1 ]] && echo "$HELP" && return 1
+  [[ $# -gt 1 ]] && shift && nvim -c "silent Grep $PATTERN $*" && return 0
+  nvim -c "silent Grep $PATTERN" && return 0
+}
+export -f nvimgrep
+
 vimgrep() {
   HELP="Usage: vimgrep {pattern} {files}..."
   PATTERN=$1
@@ -119,3 +128,7 @@ vterm_printf() {
         printf "\e]%s\e\\" "$1"
     fi
 }
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
