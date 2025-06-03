@@ -4,7 +4,7 @@ set mouse=a
 set ttyfast
 set wildmenu
 set wildoptions="fuzzy,tagfile"
-set path=src/,test/,config/
+set path=packages/,src/,test/,config/
 set path+=~/.dotfiles
 set shiftwidth=4
 set tabstop=4
@@ -15,7 +15,7 @@ set nowrap
 set splitbelow
 set splitright
 set scrolloff=8
-set signcolumn=number
+set signcolumn=yes
 set nu
 set incsearch
 set hlsearch
@@ -24,9 +24,8 @@ set noswapfile
 set nobackup writebackup
 set nocompatible
 set backspace=indent,eol,start
-set foldlevelstart=99
-set foldmethod=syntax
-set foldnestmax=1
+set updatetime=100
+
 
 if !has('nvim')
     if !isdirectory("/var/tmp/vim/undo")
@@ -105,7 +104,8 @@ augroup quickfix
 	autocmd QuickFixCmdPost lgetexpr lwindow
 augroup END
 
-packadd cfilter
+silent! packadd cfilter
+silent! packadd termdebug
 
 "Plugins
 if empty(glob('~/.vim/autoload/plug.vim')) && v:version >= 810 && !has('nvim')
@@ -129,8 +129,13 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'Caw3/ale', { 'on' : ['ALEToggle'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
-    Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['SignifyToggle'] }
+    if has('patch-8.0.902')
+		Plug 'mhinz/vim-signify', { 'on' : ['ALEToggle'] }
+    else
+		Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['ALEToggle'] }
+    endif
     Plug 'romainl/vim-cool'
+    Plug 'romainl/vim-qf'
     call plug#end()
 
     "Vim Cool
@@ -179,11 +184,12 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
 	nnoremap dgl :diffget //3<CR>
 
 	"Signify
-    let g:signify_sign_change = "~"
-	nnoremap <Leader>ghp <cmd>SignifyHunkPreview<CR>
+    let g:signify_sign_change = "│"
+    let g:signify_sign_add = "│"
+    let g:signify_sign_delete = "│"
+	nnoremap <Leader>ghp <cmd>SignifyHunkDiff<CR>
 	nnoremap <Leader>ghu <cmd>SignifyHunkUndo<CR>
-	nnoremap <Leader>ghr <cmd>SignifyRefresh<CR>
-	nnoremap <Leader>ght <cmd>SignifyToggle<CR>
+	nnoremap <Leader>ght <cmd>call ToggleSignifyAndSignColumn()<CR>
     omap ic <plug>(signify-motion-inner-pending)
     xmap ic <plug>(signify-motion-inner-visual)
     omap ac <plug>(signify-motion-outer-pending)
