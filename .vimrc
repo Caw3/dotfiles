@@ -150,7 +150,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     vnoremap <Leader>ca <Cmd>ALECodeAction<CR>
     nnoremap <Leader>cr <Cmd>ALEFix<CR>
     nnoremap <Leader>rn <Cmd>ALERename<CR>
-    nnoremap <Leader>K <Cmd>ALEHover<CR>
+    nnoremap gh <Cmd>ALEHover<CR>
+    nnoremap <Leader>K <Cmd>ALEDocumentaion<CR>
     nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
     nnoremap <Leader>gt <Cmd>ALEGoToTypeDefinition<CR>
     nnoremap <Leader>gi <Cmd>ALEGoToImplementation<CR>
