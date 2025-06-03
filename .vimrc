@@ -3,7 +3,7 @@ set autoread
 set mouse=a
 set ttyfast
 set wildmenu
-set wildoptions="fuzzy,tagfile"
+set wildoptions=fuzzy,tagfile
 set path=packages/,src/,test/,config/
 set path+=~/.dotfiles
 set shiftwidth=4
@@ -25,6 +25,7 @@ set nobackup writebackup
 set nocompatible
 set backspace=indent,eol,start
 set updatetime=100
+set completeopt=fuzzy,menu,popup
 
 
 if !has('nvim')
@@ -127,12 +128,12 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'CervEdin/vim-minizinc', { 'for': 'zinc' }
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
-    Plug 'Caw3/ale', { 'on' : ['ALEToggle'] }
+    Plug 'Caw3/ale', { 'on' : ['ALEToggle', '<Plug>ale#completion#OmniFunc', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
     if has('patch-8.0.902')
-		Plug 'mhinz/vim-signify', { 'on' : ['ALEToggle'] }
+		Plug 'mhinz/vim-signify'
     else
-		Plug 'mhinz/vim-signify', { 'tag': 'legacy', 'on' : ['ALEToggle'] }
+		Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
     endif
     Plug 'romainl/vim-cool'
     Plug 'romainl/vim-qf'
@@ -159,14 +160,21 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
     nnoremap <Leader>ci <Cmd>ALEImport<CR>
     nnoremap <Leader>ss :ALESymbolSearch 
-	inoremap <C-K> <Cmd>ALEHover<CR>
-	nnoremap <C-K> <Cmd>ALEHover<CR>
+	inoremap <C-K> <Cmd>norm b:ALEHover<CR>
 	nnoremap [e <Cmd>ALEPrevious<CR>
 	nnoremap ]e <Cmd>ALENext<CR>
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
+	let g:ale_popup_menu_enabled = 1
+	let g:ale_completion_autoimport = 1
     let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
+	set omnifunc=ale#completion#OmniFunc
+
+	augroup HoverAfterComplete
+		autocmd!
+		autocmd User ALECompletePost ALEHover
+	augroup END
 
     "Fugitive
     augroup ft_fugitve

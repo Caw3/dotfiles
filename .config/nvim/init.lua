@@ -14,7 +14,8 @@ require("lazy").setup({
 	"tpope/vim-sleuth",
 	"tpope/vim-vinegar",
 	"tpope/vim-dispatch",
-	"tpope/vim-surround",
+	"kylechui/nvim-surround",
+	"romainl/vim-qf",
 	{
 		"github/copilot.vim", cmd = "Copilot",
 
@@ -97,32 +98,32 @@ require("lazy").setup({
 					end)
 
 					-- Actions
-					map("n", "<leader>hs", gitsigns.stage_hunk)
-					map("n", "<leader>hr", gitsigns.reset_hunk)
+					map("n", "<leader>ghs", gitsigns.stage_hunk)
+					map("n", "<leader>ghu", gitsigns.reset_hunk)
 
-					map("v", "<leader>hs", function()
+					map("v", "<leader>ghs", function()
 						gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
 					end)
 
-					map("v", "<leader>hr", function()
+					map("v", "<leader>ghu", function()
 						gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
 					end)
 
-					map("n", "<leader>hS", gitsigns.stage_buffer)
-					map("n", "<leader>hR", gitsigns.reset_buffer)
-					map("n", "<leader>hp", gitsigns.preview_hunk)
-					map("n", "<leader>hi", gitsigns.preview_hunk_inline)
+					map("n", "<leader>ghS", gitsigns.stage_buffer)
+					map("n", "<leader>ghR", gitsigns.reset_buffer)
+					map("n", "<leader>ghp", gitsigns.preview_hunk)
+					map("n", "<leader>ghi", gitsigns.preview_hunk_inline)
 
-					map("n", "<leader>hd", gitsigns.diffthis)
+					map("n", "<leader>ghd", gitsigns.diffthis)
 
-					map("n", "<leader>hD", function()
+					map("n", "<leader>ghD", function()
 						gitsigns.diffthis("~")
 					end)
 
-					map("n", "<leader>hQ", function()
+					map("n", "<leader>ghQ", function()
 						gitsigns.setqflist("all")
 					end)
-					map("n", "<leader>hq", gitsigns.setqflist)
+					map("n", "<leader>ghq", gitsigns.setqflist)
 
 					-- Text object
 					map({ "o", "x" }, "ih", gitsigns.select_hunk)
@@ -424,8 +425,6 @@ require("lazy").setup({
 			-- install jsregexp (optional!).
 			build = "make install_jsregexp",
 		},
-		event = "InsertEnter",
-
 		-- use a release tag to download pre-built binaries
 		version = "*",
 		-- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
@@ -436,6 +435,9 @@ require("lazy").setup({
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config
 		opts = {
+			fuzzy = {
+				implementation = "lua"
+		},
 			-- 'default' for mappings similar to built-in completion
 			-- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
 			-- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
@@ -454,7 +456,7 @@ require("lazy").setup({
 			-- Default list of enabled providers defined so that you can extend it
 			-- elsewhere in your config, without redefining it, due to `opts_extend`
 			sources = {
-				default = { "lsp", "path", "snippets", "buffer" },
+				default = { "lsp" },
 			},
 			signature = {
 				enabled = true,
@@ -463,7 +465,9 @@ require("lazy").setup({
 				},
 			},
 			completion = {
+				accept = { auto_brackets = { enabled = false }, },
 				menu = {
+					auto_show = false,
 					draw = {
 						columns = {
 							{ "label", "label_description", gap = 1 },
@@ -471,7 +475,7 @@ require("lazy").setup({
 						},
 					},
 				},
-				documentation = { auto_show = false, treesitter_highlighting = true },
+				documentation = { auto_show = true, treesitter_highlighting = true },
 			},
 		},
 		opts_extend = { "sources.default" },
@@ -567,6 +571,5 @@ require("lazy").setup({
 	},
 })
 vim.cmd("source ~/.vimrc")
-vim.o.signcolumn = "yes"
 vim.o.undofile = true
 vim.cmd("highlight! link NormalFloat Pmenu")
