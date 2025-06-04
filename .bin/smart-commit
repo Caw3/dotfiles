@@ -30,7 +30,6 @@ generate_with_openai() {
 if [[ -z $(git status --porcelain) ]]; then
   echo "No changes to commit."
 else
-  git add .
   git_diff=$(git diff --cached)
 
   prompt="Generate a clear, concise 80 charachres long Git commit message for the following diff:\n$git_diff with $(git log --oneline -n 20) as inspiration"
