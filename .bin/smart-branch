@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -e 
+
+MODEL="gpt-4.1"
+OPENAI_API_KEY="${OPENAI_API_KEY:?Set your OpenAI API key in the OPENAI_API_KEY environment variable}"
+
+generate_with_openai() {
+  local prompt="$1"
+  local response
+
+  response=$(curl -s https://api.openai.com/v1/chat/completions \
+    -H "Authorization: Bearer $OPENAI_API_KEY" \
+    -H "Content-Type: application/json" \
+    -d "$(jq -nc \
+        --arg model "$MODEL" \
+        --arg prompt "$prompt" \
+        '{model: $model, messages: [{role: "user", content: $prompt}], temperature: 0.7}')")
+
+  # Debug: check if OpenAI returned an error
+  if echo "$response" | jq -e '.error' >/dev/null; then
+    echo "OpenAI API error:" >&2
+    echo "$response" | jq '.' >&2
+    return 1
+  fi
+
+  # Extract content
+  echo "$response" | jq -r '.choices[0].message.content // empty'
+}
+
+# --- STEP 1: Create new branch if on protected branch ---
+current_branch=$(git symbolic-ref --short HEAD)
+
+if [[ "$current_branch" =~ ^(main|master|develop)$ ]]; then
+  echo "You're on a protected branch: $current_branch"
+  git fetch --all
+
+  git_diff=$(git diff --cached)
+  if [[ -z "$git_diff" ]]; then
+    echo "No changes detected in diff. Cannot generate branch name."
+    exit 1
+  fi
+  prompt="Suggest a single and brief descriptive git branch name for these changes:\n$git_diff based on these branches $(git branch)"
+  new_branch=$(generate_with_openai "$prompt" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//')
+
+  echo "Creating and switching to branch: $new_branch"
+  git checkout -b "$new_branch"
+else
+  echo "You're on branch: $current_branch"
+fi
