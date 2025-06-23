@@ -39,6 +39,7 @@ endif
 "Keymaps
 map <Space> <Leader>
 inoremap {<cr> {<cr>}<c-o><s-o>
+nnoremap <Leader>rr <cmd>e! %<CR>
 
 nnoremap <Leader>co <cmd>copen<CR>
 nnoremap <Leader>cc <cmd>cclose<CR>
