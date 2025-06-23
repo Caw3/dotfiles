@@ -66,6 +66,7 @@ require("lazy").setup({
 	},
 	{
 		"mhinz/vim-signify",
+		event = "BufReadPost",
 		init = function()
 			vim.g.signify_sign_change = "│"
 			vim.g.signify_sign_add = "│"
@@ -126,9 +127,19 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			{ "j-hui/fidget.nvim", opts = {} },
-			"saghen/blink.cmp",
+			{ "saghen/blink.cmp", event = "InsertEnter" },
 		},
 		config = function()
+			local function populate_loclist()
+				local diagnostics = vim.diagnostic.get(0)
+				if #diagnostics > 0 then
+					vim.diagnostic.setloclist({ open = false })
+				end
+			end
+
+			vim.api.nvim_create_autocmd("DiagnosticChanged", {
+				callback = populate_loclist,
+			})
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
 				callback = function(event)
@@ -160,18 +171,42 @@ require("lazy").setup({
 						{ noremap = true, silent = true })
 
 					map("di", vim.diagnostic.open_float)
-					map("gd", require("telescope.builtin").lsp_definitions)
+					map("<leader>gd", require("telescope.builtin").lsp_definitions)
 					map("^]", require("telescope.builtin").lsp_definitions)
-					map("gR", require("telescope.builtin").lsp_references)
-					map("gr", vim.lsp.buf.references)
-					map("gI", require("telescope.builtin").lsp_implementations)
-					map("gI", vim.lsp.buf.implementation)
+					map("<leader>gR", require("telescope.builtin").lsp_references)
+					map("<leader>gr", vim.lsp.buf.references)
+					map("<leader>gI", require("telescope.builtin").lsp_implementations)
+					map("<leader>gi", vim.lsp.buf.implementation)
 					map("<leader>gt", require("telescope.builtin").lsp_type_definitions)
 					map("<leader>@", require("telescope.builtin").lsp_document_symbols)
 					map("<leader>#", require("telescope.builtin").lsp_dynamic_workspace_symbols)
 					map("<leader>rn", vim.lsp.buf.rename)
 					map("<leader>ca", vim.lsp.buf.code_action, { "n", "x" })
-					map("gD", vim.lsp.buf.declaration)
+					map("<leader>gD", vim.lsp.buf.declaration)
+					map("<leader>oc", vim.lsp.buf.outgoing_calls)
+					map("<leader>ic", vim.lsp.buf.outgoing_calls)
+					map("gh", function()
+						local params = vim.lsp.util.make_position_params(0, 'utf-8')
+						vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result, ctx, _)
+						  if err or not result or vim.tbl_isempty(result) then
+							return
+						  end
+					  
+						  -- Normalize single vs list results
+						  local location = vim.islist(result) and result[1] or result
+					  
+						  -- location can be a Location or LocationLink
+						  local uri = location.uri or location.targetUri
+						  local range = location.range or location.targetSelectionRange
+						  if not uri or not range then
+							return
+						  end
+					  
+						  local path = vim.uri_to_fname(uri)
+						  vim.cmd("pedit "  .. "+" .. range.start.line + 1 .. " " .. vim.fn.fnameescape(path))
+						end)
+					  end)
+					  
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 					
 					if client and client.server_capabilities.semanticTokensProvider then
@@ -254,6 +289,7 @@ require("lazy").setup({
 	{
 		"saghen/blink.cmp",
 		version = "*",
+		event = "InsertEnter",
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config
 		opts = {
