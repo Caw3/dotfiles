@@ -39,7 +39,6 @@ require("lazy").setup({
 				end,
 			})
 
-			-- Define key mappings
 			local map = vim.keymap.set
 			local opts = { noremap = true, silent = true }
 
@@ -102,7 +101,7 @@ require("lazy").setup({
 						i = {
 							['<c-enter>'] = 'to_fuzzy_refine',
 							["<C-q>"] = require("telescope.actions").smart_send_to_qflist +
-							    require("telescope.actions").open_qflist
+								require("telescope.actions").open_qflist
 						}
 					}
 				},
@@ -114,7 +113,6 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>fr", builtin.registers)
 		end,
 	},
-	-- LSP Plugins
 	{
 		"folke/lazydev.nvim",
 		ft = "lua",
@@ -125,7 +123,6 @@ require("lazy").setup({
 		},
 	},
 	{
-		-- Main LSP Configuration
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			{ "j-hui/fidget.nvim", opts = {} },
@@ -176,43 +173,13 @@ require("lazy").setup({
 					map("<leader>ca", vim.lsp.buf.code_action, { "n", "x" })
 					map("gD", vim.lsp.buf.declaration)
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-						local highlight_augroup =
-						    vim.api.nvim_create_augroup("kickstart-lsp-highlight",
-							    { clear = false })
-						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-							buffer = event.buf,
-							group = highlight_augroup,
-							callback = vim.lsp.buf.document_highlight,
-						})
-
-						vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-							buffer = event.buf,
-							group = highlight_augroup,
-							callback = vim.lsp.buf.clear_references,
-						})
-
-						vim.api.nvim_create_autocmd("LspDetach", {
-							group = vim.api.nvim_create_augroup("kickstart-lsp-detach",
-								{ clear = true }),
-							callback = function(event2)
-								vim.lsp.buf.clear_references()
-								vim.api.nvim_clear_autocmds({
-									group =
-									"kickstart-lsp-highlight",
-									buffer = event2.buf
-								})
-							end,
-						})
+					
+					if client and client.server_capabilities.semanticTokensProvider then
+						client.server_capabilities.semanticTokensProvider = nil
 					end
 
 					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-						map("<leader>th", function()
-							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({
-								bufnr =
-								    event.buf
-							}))
-						end)
+						client.server_capabilities.inlayHintProvider = nil
 					end
 				end,
 			})
@@ -225,7 +192,7 @@ require("lazy").setup({
 			local function is_deno_project()
 				local cwd = vim.fn.getcwd()
 				return vim.fn.filereadable(cwd .. "/deno.json") == 1 or
-				    vim.fn.filereadable(cwd .. "/deno.jsonc") == 1
+					vim.fn.filereadable(cwd .. "/deno.jsonc") == 1
 			end
 
 			if is_deno_project() then
@@ -252,7 +219,7 @@ require("lazy").setup({
 			lspconfig.bashls.setup {}
 		end,
 	},
-	{ -- Autoformat
+	{
 		"stevearc/conform.nvim",
 		cmd = { "ConformInfo" },
 		keys = {
@@ -352,7 +319,7 @@ require("lazy").setup({
 			highlight = {
 				enable = true,
 			},
-			disable = function(lang, buf)
+			disable = function(_lang, buf)
 				local max_filesize = 100 * 1024 -- 100 KB
 				local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
 				if ok and stats and stats.size > max_filesize then
