@@ -89,7 +89,7 @@ binding = { key = "f", mods = "Command|Shift" }
 regex = '(\.?([(file://)~\/])?[-a-zA-Z0-9_+-,.\/@\[\]]+)(?:(?::|", line )(\d+))?'
 
 [[hints.enabled]]
-command = { program = "/Users/cararo/.dotfiles/.bin/send-to-vim" }
+command = { program = "/Users/cararo/.dotfiles/.bin/send-to-editor" }
 mouse = { enabled = true, mods = "Control|Shift" }
 binding = { key = "f", mods = "Control|Shift" }
 regex = '(\.?([(file://)~\/])?[-a-zA-Z0-9_+-,.\/@\[\]]+)(?:(?::|", line )(\d+))?'

@@ -10,7 +10,7 @@ vimtag() {
   TAGS="./tags"
   [[ -f "$TAGS" ]] || return 1
   TAG=$(grep -v ^\! $TAGS | cut -f 1,2,3 | column -t -s $'\t' | fzf | awk '{print $1}')
-  vim -t $TAG
+  $EDITOR -t $TAG
 }
 export -f vimtag
 
@@ -18,8 +18,8 @@ vimgrep() {
   HELP="Usage: vimgrep {pattern} {files}..."
   PATTERN=$1
   [[ $# -lt 1 ]] && echo "$HELP" && return 1
-  [[ $# -gt 1 ]] && shift && vim -c "silent Grep $PATTERN $*" && return 0
-  vim -c "silent Grep $PATTERN" && return 0
+  [[ $# -gt 1 ]] && shift && $EDITOR -c "silent Grep $PATTERN $*" && return 0
+  $EDITOR -c "silent Grep $PATTERN" && return 0
 }
 export -f vimgrep
 
@@ -50,14 +50,16 @@ shopt -s checkwinsize
 set -o vi
 
 ## Exports
-export EDITOR='vim'
-export MANPAGER="vim -M +MANPAGER -"
+export EDITOR='nvim'
+export MANPAGER="nvim -M +MANPAGER -"
 
 export HISTSIZE= 
 export HISTFILESIZE=
 export HISTCONTROL=erasedups
 
 ## Aliases
+alias vi="nvim"
+alias vim="nvim"
 alias py='python3'
 alias la='ls -a'
 alias ll='ls --color -lah'

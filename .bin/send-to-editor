@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Open file in editor. Requires tmux.
+
+INPUT=$1
+PATH="/opt/homebrew/bin":$PATH # needed for alcritty launcher
+
+# Use $EDITOR if set, otherwise fall back to nvim
+EDITOR_CMD="${EDITOR:-nvim}"
+
+SESSION=$(tmux display -p '#{session_name}' || tmux list-sessions | grep "(attached)" |  awk -F: '{print $1}')
+WINDOW=$(tmux display -p '#{window_index}'|| tmux list-windows -t $SESSION | grep "(active)" |  awk -F: '{print $1}')
+VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_current_command}' | grep -i "$(basename "$EDITOR_CMD")" | awk '{print $1}')
+
+cd "$(tmux display -t "$SESSION:$WINDOW" -p -F "#{pane_current_path}")" || exit
+
+FILE_AND_LINE=$(echo "$INPUT" | perl -nE '
+    use Cwd "realpath";
+    
+    # Remove parentheses and clean input
+    s/[()]//g;
+    chomp;
+    
+    # Regex to match file paths with optional line numbers
+    # Supports: file, file:line, file, line X
+    if (m/([a-zA-Z0-9_.\/~-]+)(?::(\d+)|,\s*line\s+(\d+))?/) {
+        my ($file_path, $line_colon, $line_text) = ($1, $2, $3);
+        my $line = $line_colon || $line_text;
+        
+        # Clean up file path
+        $file_path =~ s/^\s+|\s+$//g;
+        
+        # Try to resolve realpath directly first
+        my $real_path = eval { realpath($file_path) };
+        
+        # If not found directly, try git ls-files
+        if (!$real_path || !-e $real_path) {
+            # Check if we are in a git repository
+            if (-d ".git" || system("git", "rev-parse", "--git-dir", ">/dev/null", "2>&1") == 0) {
+                # Get git ls-files output
+                my @git_files = `git ls-files 2>/dev/null`;
+                chomp @git_files;
+                
+                # Look for matching file
+                foreach my $git_file (@git_files) {
+                    # Match exact filename or basename
+                    my $basename = $file_path;
+                    $basename =~ s|.*/||;
+                    
+                    if ($git_file eq $file_path || 
+                        $git_file =~ m|/$file_path$| || 
+                        $git_file =~ m|^$file_path$| ||
+                        $git_file =~ m|/$basename$|) {
+                        $real_path = realpath($git_file);
+                        last;
+                    }
+                }
+            }
+        }
+        
+        if ($real_path && -e $real_path) {
+            my $output = $real_path;
+            if ($line && $line =~ /^\d+$/) {
+                $output = "+$line $output";
+            }
+            say $output;
+            exit 0;
+        }
+    }
+')
+
+[[ -z "$FILE_AND_LINE" ]] && exit
+
+if [ -z "$VIM_PANE_ID" ]; then
+    tmux send-keys -t "$SESSION:$WINDOW" "$EDITOR_CMD" C-m
+    VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_current_command}' | grep -i "$(basename "$EDITOR_CMD")" | awk '{print $1}')
+fi
+tmux send-keys -t "$SESSION:$WINDOW.$VIM_PANE_ID" ":e $FILE_AND_LINE" C-m
+tmux select-pane -t "$VIM_PANE_ID"
