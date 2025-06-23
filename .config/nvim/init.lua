@@ -9,8 +9,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
-vim.cmd("source ~/.vimrc")
-
 require("lazy").setup({
 	"tpope/vim-sleuth",
 	"tpope/vim-vinegar",
@@ -354,9 +352,17 @@ require("lazy").setup({
 			highlight = {
 				enable = true,
 			},
+			disable = function(lang, buf)
+				local max_filesize = 100 * 1024 -- 100 KB
+				local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+				if ok and stats and stats.size > max_filesize then
+					return true
+				end
+			end,
 			indent = { enable = true, disable = { "ruby" } },
 		},
 	},
 })
+vim.cmd("source ~/.vimrc")
 vim.o.undofile = true
 vim.cmd("highlight! link NormalFloat Pmenu")
