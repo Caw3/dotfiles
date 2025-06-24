@@ -70,7 +70,9 @@ FILE_AND_LINE=$(echo "$INPUT" | perl -nE '
 
 [[ -z "$FILE_AND_LINE" ]] && exit
 
-tmux send-keys -t "$SESSION:$WINDOW" q
+if tmux display -t "$SESSION:$WINDOW" -p '#{pane_in_mode}' | grep -q "1"; then
+    tmux send-keys -t "$SESSION:$WINDOW" q
+fi
 
 if [ -z "$VIM_PANE_ID" ]; then
     tmux send-keys -t "$SESSION:$WINDOW" "$EDITOR_CMD" C-m

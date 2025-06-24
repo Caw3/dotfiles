@@ -44,7 +44,7 @@ if [[ "$current_branch" =~ ^(main|master|develop)$ ]]; then
     echo "No changes detected in diff. Cannot generate branch name."
     exit 1
   fi
-  prompt="Suggest a single and brief descriptive git branch name for these changes:\n$git_diff based on these branches $(git branch)"
+  prompt="Suggest a single and brief (max 20 chars) descriptive git branch name for these changes:\n$git_diff based on these branches $(git branch) only return the result."
   new_branch=$(generate_with_openai "$prompt" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//')
 
   echo "Creating and switching to branch: $new_branch"
@@ -60,7 +60,7 @@ else
   git add .
   git_diff=$(git diff --cached)
 
-  prompt="Generate a clear, concise 80 charachres long Git commit message for the following diff:\n$git_diff with $(git log --oneline -n 20) as inspiration"
+  prompt="Generate a clear, concise 80 charachres long all lower-case Git commit message for the following diff:\n$git_diff with $(git log --oneline -n 20) as inspiration"
   commit_message=$(generate_with_openai "$prompt")
   echo -e "\nProposed commit message:\n$commit_message"
 
@@ -78,20 +78,17 @@ fi
 branch_name=$(git symbolic-ref --short HEAD)
 
 git_diff_summary=$(git log -1 --pretty=format:%B)
-prompt="Generate a GitLab merge request title and short description for the following commit:\n$git_diff_summary"
-mr_output=$(generate_with_openai "$prompt")
+prompt="Generate a GitLab merge request title ,WITHOUT any formating and lower-case, the following commit:\n$git_diff_summary, you can use the following as inspiration $(glab mr list)"
+mr_title=$(generate_with_openai "$prompt")
 
-mr_title=$(echo "$mr_output" | head -n 1)
-mr_description=$(echo "$mr_output" | tail -n +2)
 
 echo -e "\nProposed MR Title: $mr_title"
-echo -e "Proposed MR Description:\n$mr_description"
 
 read -rp $'\nDo you want to push the branch and create a merge request? [y/N]: ' confirm_push
 if [[ "$confirm_push" =~ ^[Yy]$ ]]; then
   git push -u origin "$branch_name"
   echo "Creating Merge Request..."
-  glab mr create --title "$mr_title" --description "$mr_description"
+  glab mr create --title "$mr_title" --description ""
 else
   echo "Push and merge request creation canceled."
   git switch -
