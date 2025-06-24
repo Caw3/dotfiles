@@ -86,7 +86,6 @@ require("lazy").setup({
 	},
 	{
 		"nvim-telescope/telescope.nvim",
-		cmd = "Telescope",
 		branch = "0.1.x",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
@@ -96,7 +95,7 @@ require("lazy").setup({
 				defaults = {
 					layout_strategy = "vertical",
 					layout_config = {
-						vertical = { width = 120, heigth = 60, preview_cutoff = 40 }
+						vertical = { width = 120, preview_cutoff = 40 }
 					},
 					mappings = {
 						i = {

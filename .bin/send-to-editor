@@ -70,6 +70,8 @@ FILE_AND_LINE=$(echo "$INPUT" | perl -nE '
 
 [[ -z "$FILE_AND_LINE" ]] && exit
 
+tmux send-keys -t "$SESSION:$WINDOW" q
+
 if [ -z "$VIM_PANE_ID" ]; then
     tmux send-keys -t "$SESSION:$WINDOW" "$EDITOR_CMD" C-m
     VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_current_command}' | grep -i "$(basename "$EDITOR_CMD")" | awk '{print $1}')
