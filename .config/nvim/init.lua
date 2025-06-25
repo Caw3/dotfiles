@@ -37,6 +37,7 @@ require("lazy").setup({
 					vim.opt_local.signcolumn = "yes"
 					vim.opt_local.number = false
 				end,
+
 			})
 
 			local map = vim.keymap.set
@@ -66,7 +67,6 @@ require("lazy").setup({
 	},
 	{
 		"mhinz/vim-signify",
-		event = "BufReadPost",
 		init = function()
 			vim.g.signify_sign_change = "│"
 			vim.g.signify_sign_add = "│"
@@ -95,7 +95,7 @@ require("lazy").setup({
 				defaults = {
 					layout_strategy = "vertical",
 					layout_config = {
-						vertical = { width = 120, preview_cutoff = 40 }
+						vertical = { mirror = true, prompt_position = 'top', width = 120, preview_cutoff = 60, height = 40 }
 					},
 					mappings = {
 						i = {
@@ -107,9 +107,16 @@ require("lazy").setup({
 				},
 			})
 			local builtin = require("telescope.builtin")
-			vim.keymap.set("n", "<leader>ff", builtin.find_files)
 			vim.keymap.set("n", "<leader>ft", builtin.tags)
-			vim.keymap.set("n", "<leader>fp", builtin.git_files)
+			vim.keymap.set("n", "<leader>fp", function()
+				builtin.git_files({
+					previewer = false,
+					layout_config = {
+						vertical = { height = 20 }
+					}
+
+				})
+			end)
 			vim.keymap.set("n", "<leader>fr", builtin.registers)
 		end,
 	},
@@ -126,14 +133,11 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			{ "j-hui/fidget.nvim", opts = {} },
-			{ "saghen/blink.cmp", event = "InsertEnter" },
+			{ "saghen/blink.cmp",  event = "InsertEnter" },
 		},
 		config = function()
 			local function populate_loclist()
-				local diagnostics = vim.diagnostic.get(0)
-				if #diagnostics > 0 then
-					vim.diagnostic.setloclist({ open = false })
-				end
+				vim.diagnostic.setloclist({ open = false })
 			end
 
 			vim.api.nvim_create_autocmd("DiagnosticChanged", {
@@ -178,7 +182,7 @@ require("lazy").setup({
 					map("<leader>gi", vim.lsp.buf.implementation)
 					map("<leader>gt", require("telescope.builtin").lsp_type_definitions)
 					map("<leader>@", require("telescope.builtin").lsp_document_symbols)
-					map("<leader>#", require("telescope.builtin").lsp_dynamic_workspace_symbols)
+					map("<leader>#", require("telescope.builtin").lsp_workspace_symbols)
 					map("<leader>rn", vim.lsp.buf.rename)
 					map("<leader>ca", vim.lsp.buf.code_action, { "n", "x" })
 					map("<leader>gD", vim.lsp.buf.declaration)
@@ -186,32 +190,32 @@ require("lazy").setup({
 					map("<leader>ic", vim.lsp.buf.outgoing_calls)
 					map("gh", function()
 						local params = vim.lsp.util.make_position_params(0, 'utf-8')
-						vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result, ctx, _)
-						  if err or not result or vim.tbl_isempty(result) then
-							return
-						  end
-					  
-						  -- Normalize single vs list results
-						  local location = vim.islist(result) and result[1] or result
-					  
-						  -- location can be a Location or LocationLink
-						  local uri = location.uri or location.targetUri
-						  local range = location.range or location.targetSelectionRange
-						  if not uri or not range then
-							return
-						  end
-					  
-						  local path = vim.uri_to_fname(uri)
-						  vim.cmd("pedit "  .. "+" .. range.start.line + 1 .. " " .. vim.fn.fnameescape(path))
-						end)
-					  end)
-					  
+						vim.lsp.buf_request(0, "textDocument/definition", params,
+							function(err, result, ctx, _)
+								if err or not result or vim.tbl_isempty(result) then
+									return
+								end
+								-- Normalize single vs list results
+								local location = vim.islist(result) and result[1] or
+									result
+								-- location can be a Location or LocationLink
+								local uri = location.uri or location.targetUri
+								local range = location.range or
+									location.targetSelectionRange
+								if not uri or not range then
+									return
+								end
+								local path = vim.uri_to_fname(uri)
+								vim.cmd("pedit " ..
+									"+" ..
+									range.start.line + 1 ..
+									" " .. vim.fn.fnameescape(path))
+							end)
+					end)
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					
 					if client and client.server_capabilities.semanticTokensProvider then
 						client.server_capabilities.semanticTokensProvider = nil
 					end
-
 					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
 						client.server_capabilities.inlayHintProvider = nil
 					end
@@ -363,6 +367,61 @@ require("lazy").setup({
 			end,
 			indent = { enable = true, disable = { "ruby" } },
 		},
+	},
+	{
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		config = function()
+			require("nvim-treesitter.configs").setup({
+				auto_install = false,
+				ensure_installed = {},
+				sync_install = false,
+				ignore_install = {},
+				modules = {},
+				textobjects = {
+					select = {
+						enable = true,
+						lookahead = true,
+						keymaps = {
+							["af"] = "@function.outer",
+							["if"] = "@function.inner",
+							["am"] = "@method.outer",
+							["im"] = "@method.inner",
+						},
+						selection_modes = {
+							["@parameter.outer"] = "v",
+							["@function.outer"] = "V",
+							["@class.outer"] = "<c-v>",
+						},
+						include_surrounding_whitespace = true,
+					},
+
+					move = {
+						enable = true,
+						set_jumps = true,
+						goto_next_start = {
+							["]f"] = "@function.outer",
+							["]m"] = "@method.outer",
+							["]a"] = "@parameter.outer",
+						},
+						goto_next_end = {
+							["]F"] = "@function.outer",
+							["]M"] = "@method.outer",
+							["]A"] = "@parameter.outer",
+						},
+						goto_previous_start = {
+							["[f"] = "@function.outer",
+							["[m"] = "@method.outer",
+							["[a"] = "@parameter.outer",
+						},
+						goto_previous_end = {
+							["[F"] = "@function.outer",
+							["[M"] = "@method.outer",
+							["[A"] = "@parameter.outer",
+						},
+					},
+				},
+			})
+		end,
 	},
 })
 vim.cmd("source ~/.vimrc")
