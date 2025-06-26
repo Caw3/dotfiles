@@ -173,7 +173,7 @@ require("lazy").setup({
 					vim.keymap.set("n", "[e", vim.diagnostic.goto_prev,
 						{ noremap = true, silent = true })
 
-					map("di", vim.diagnostic.open_float)
+					map("gh", vim.diagnostic.open_float)
 					map("<leader>gd", require("telescope.builtin").lsp_definitions)
 					map("^]", require("telescope.builtin").lsp_definitions)
 					map("<leader>gR", require("telescope.builtin").lsp_references)
@@ -188,7 +188,7 @@ require("lazy").setup({
 					map("<leader>gD", vim.lsp.buf.declaration)
 					map("<leader>oc", vim.lsp.buf.outgoing_calls)
 					map("<leader>ic", vim.lsp.buf.outgoing_calls)
-					map("gh", function()
+					map("<leader>K", function()
 						local params = vim.lsp.util.make_position_params(0, 'utf-8')
 						vim.lsp.buf_request(0, "textDocument/definition", params,
 							function(err, result, ctx, _)
@@ -300,7 +300,8 @@ require("lazy").setup({
 				implementation = "lua"
 			},
 			keymap = {
-				preset = "enter",
+				preset = "default",
+				['<C-space>'] = {"show_and_insert", "show_documentation", "hide_documentation"}
 			},
 			cmdline = {
 				enabled = false,
@@ -320,6 +321,7 @@ require("lazy").setup({
 			},
 			completion = {
 				accept = { auto_brackets = { enabled = false }, },
+				list = { selection = { preselect = true, auto_insert = true } },
 				menu = {
 					auto_show = false,
 					draw = {
@@ -394,7 +396,6 @@ require("lazy").setup({
 						},
 						include_surrounding_whitespace = true,
 					},
-
 					move = {
 						enable = true,
 						set_jumps = true,
