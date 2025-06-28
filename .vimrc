@@ -171,6 +171,34 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
     set omnifunc=ale#completion#OmniFunc
 
+    "ALE Linters and Fixers
+    let g:ale_linters = {
+    \   'java': ['javalsp'],
+    \   'javascript': ['tsserver'],
+    \   'typescript': ['tsserver'],
+    \   'python': ['pyright'],
+    \   'rust': ['analyzer'],
+    \   'c': ['cc'],
+    \   'cpp': ['cc'],
+    \   'haskell': ['hls'],
+    \   'go': ['gopls'],
+    \   'sh': ['shellcheck']
+    \}
+
+    let g:ale_fixers = {
+    \   'java': ['javalsp'],
+    \   'javascript': ['eslint'],
+    \   'typescript': ['eslint'],
+    \   'python': ['autopep8'],
+    \   'rust': ['rustfmt'],
+    \   'haskell': ['ormolu'],
+    \   'go': ['gofmt'],
+    \   'sh': ['shfmt']
+    \}
+
+    "TypeScript Deno support
+    autocmd FileType typescript if filereadable('./deno.lock') | let b:ale_fixers = ['deno'] | let b:ale_linters = ['deno'] | endif
+
     "Fugitive
     augroup ft_fugitve
         autocmd Filetype fugitive setlocal scl=yes

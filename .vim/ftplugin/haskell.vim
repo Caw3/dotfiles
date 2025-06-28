@@ -1,4 +1,3 @@
-setl omnifunc=ale#completion#OmniFunc
 set expandtab
 set shiftwidth=2
 compiler stack
@@ -7,7 +6,6 @@ let &makeprg='stack'
 if executable("ormolu")
     nnoremap <Leader>cr <Cmd>call ExecAndRestorePos("%!ormolu --stdin-input-file %")<CR>
 endif
-let b:ale_linters = ['hls']
 
 nnoremap <Leader>mm <Cmd>make! build \| cwindow <CR>
 nnoremap <Leader>mr <Cmd>make! run \| cwindow<CR>
