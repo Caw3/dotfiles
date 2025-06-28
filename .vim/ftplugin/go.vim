@@ -1,6 +1,3 @@
-setl noexpandtab
-setl shiftwidth=4
-setl tabstop=4
 compiler go
 
 if executable("gofmt")

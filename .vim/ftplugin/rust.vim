@@ -1,6 +1,3 @@
-setl expandtab
-setl shiftwidth=4
-setl tabstop=4
 compiler cargo
 
 nnoremap <Leader>mm <Cmd>make! check \| cwindow <CR>

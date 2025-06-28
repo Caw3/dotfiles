@@ -1,6 +1,3 @@
-set expandtab
-set shiftwidth=4
-set tabstop=4
 compiler perl
 
 if executable("perltidy")

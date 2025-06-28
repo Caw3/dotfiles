@@ -1,5 +1,3 @@
-set expandtab
-set shiftwidth=2
 compiler stack
 let &makeprg='stack'
 
