@@ -6,8 +6,6 @@ set wildmenu
 set wildoptions=fuzzy,tagfile
 set path=packages/,src/,test/,config/
 set path+=~/.dotfiles
-set shiftwidth=4
-set tabstop=4
 set smarttab
 set autoindent
 set smartindent
@@ -25,7 +23,7 @@ set nobackup writebackup
 set nocompatible
 set backspace=indent,eol,start
 set updatetime=100
-set completeopt=fuzzy,menu,popup
+set completeopt=fuzzy,menuone,popup
 
 
 if !has('nvim')
@@ -118,6 +116,7 @@ endif
 
 if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     call plug#begin('~/.vim/vim-plug')
+    Plug 'tpope/vim-sleuth'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-commentary'
@@ -132,9 +131,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'Caw3/ale', { 'on' : ['ALEToggle', '<Plug>ale#completion#OmniFunc', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
     if has('patch-8.0.902')
-		Plug 'mhinz/vim-signify'
+	Plug 'mhinz/vim-signify'
     else
-		Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
+	Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
     endif
     Plug 'romainl/vim-cool'
     Plug 'romainl/vim-qf'
@@ -153,29 +152,24 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     nnoremap <Leader>rn <Cmd>ALERename<CR>
     nnoremap <Leader>K <Cmd>ALEHover<CR>
     nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
+    autocmd! User ale.vim nnoremap <C-]> <Cmd>ALEGoToTypeDefinition<CR>
     nnoremap <Leader>gt <Cmd>ALEGoToTypeDefinition<CR>
     nnoremap <Leader>gi <Cmd>ALEGoToImplementation<CR>
     nnoremap <Leader>gr <Cmd>ALEFindReferences -quickfix<CR><CMD>copen<CR>
-    nnoremap <Leader>di <Cmd>ALEDetail<CR>
+    nnoremap gh <Cmd>ALEDetail<CR>
     nnoremap <Leader>ds <Cmd>call ExecAndRestorePos("ALEToggle")<CR><Cmd>echo g:ale_enabled<CR>
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
     nnoremap <Leader>ci <Cmd>ALEImport<CR>
-    nnoremap <Leader>ss :ALESymbolSearch 
-	inoremap <C-K> <Cmd>norm b:ALEHover<CR>
-	nnoremap [e <Cmd>ALEPrevious<CR>
-	nnoremap ]e <Cmd>ALENext<CR>
+    nnoremap <Leader># :ALESymbolSearch 
+    nnoremap [e <Cmd>ALEPrevious<CR>
+    nnoremap ]e <Cmd>ALENext<CR>
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0
-	let g:ale_popup_menu_enabled = 1
-	let g:ale_completion_autoimport = 1
+    let g:ale_popup_menu_enabled = 1
+    let g:ale_completion_autoimport = 1
     let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
-	set omnifunc=ale#completion#OmniFunc
-
-	augroup HoverAfterComplete
-		autocmd!
-		autocmd User ALECompletePost ALEHover
-	augroup END
+    set omnifunc=ale#completion#OmniFunc
 
     "Fugitive
     augroup ft_fugitve
@@ -185,20 +179,18 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     nnoremap <silent> <Leader>gs :vert Git \|vertical resize 80 <CR>
     nnoremap <Leader>gb :G blame <CR>
     nnoremap <Leader>gl :Gclog<CR>
-	vnoremap <leader>gl <ESC>:execute 'vert G log -L' . line("'<") . ',' . line("'>") . ':' . expand('%') <CR>
+    vnoremap <leader>gl <ESC>:execute 'vert G log -L' . line("'<") . ',' . line("'>") . ':' . expand('%') <CR>
     nnoremap <Leader>gv :Gvdiffsplit <CR>
-    nnoremap <Leader>gV :Gvdiffsplit! <CR>
-    nnoremap <Leader>gm :G mergetool <CR>
-	nnoremap dgh :diffget //2<CR>
-	nnoremap dgl :diffget //3<CR>
+    nnoremap dgh :diffget //2<CR>
+    nnoremap dgl :diffget //3<CR>
 
-	"Signify
+    "Signify
     let g:signify_sign_change = "│"
     let g:signify_sign_add = "│"
     let g:signify_sign_delete = "│"
-	nnoremap <Leader>ghp <cmd>SignifyHunkDiff<CR>
-	nnoremap <Leader>ghu <cmd>SignifyHunkUndo<CR>
-	nnoremap <Leader>ght <cmd>call ToggleSignifyAndSignColumn()<CR>
+    nnoremap <Leader>ghp <cmd>SignifyHunkPreview<CR>
+    nnoremap <Leader>ghu <cmd>SignifyHunkUndo<CR>
+    nnoremap <Leader>ght <cmd>SignifyToggle<CR>
     omap ic <plug>(signify-motion-inner-pending)
     xmap ic <plug>(signify-motion-inner-visual)
     omap ac <plug>(signify-motion-outer-pending)
