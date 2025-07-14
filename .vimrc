@@ -24,7 +24,7 @@ set nocompatible
 set backspace=indent,eol,start
 set updatetime=100
 set completeopt=fuzzy,menuone,popup
-
+set pumheight=40
 
 if !has('nvim')
     if !isdirectory("/var/tmp/vim/undo")

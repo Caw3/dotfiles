@@ -10,7 +10,7 @@ vimtag() {
   TAGS="./tags"
   [[ -f "$TAGS" ]] || return 1
   TAG=$(grep -v ^\! $TAGS | cut -f 1,2,3 | column -t -s $'\t' | fzf | awk '{print $1}')
-  $EDITOR -t $TAG
+  $EDITOR -t "$TAG"
 }
 export -f vimtag
 
@@ -51,8 +51,6 @@ set -o vi
 
 ## Exports
 export EDITOR='nvim'
-export MANPAGER="nvim -M +MANPAGER -"
-
 export HISTSIZE= 
 export HISTFILESIZE=
 export HISTCONTROL=erasedups
@@ -121,3 +119,7 @@ vterm_printf() {
         printf "\e]%s\e\\" "$1"
     fi
 }
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/cararo/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

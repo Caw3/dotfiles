@@ -133,7 +133,6 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			{ "j-hui/fidget.nvim", opts = {} },
-			{ "saghen/blink.cmp",  event = "InsertEnter" },
 		},
 		config = function()
 			local function populate_loclist()
@@ -146,6 +145,14 @@ require("lazy").setup({
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
 				callback = function(event)
+					vim.diagnostic.config({
+						virtual_text = false,
+						signs = true,
+						underline = true,
+						severity_sort = true,
+						update_in_insert = false
+					})
+					vim.lsp.completion.enable(true, event.data.client_id, event.buf, { autotrigger = false })
 					local lsp_enabled = true
 
 					local function toggle_all_lsps()
@@ -173,6 +180,27 @@ require("lazy").setup({
 					vim.keymap.set("n", "[e", vim.diagnostic.goto_prev,
 						{ noremap = true, silent = true })
 
+					local border = {
+						" ",
+						" ",
+						" ",
+						" ",
+						" ",
+						" ",
+						" ",
+						" "
+					}
+
+					map("<c-s>",
+						function() vim.lsp.buf.signature_help({ focusable = true, max_width = 80, border = border }) end,
+						"i")
+					map("<c-k>", function()
+						local offset_x = 0
+						if vim.fn.pumvisible() == 1 then
+							offset_x = 40
+						end
+						vim.lsp.buf.hover({ offset_x = offset_x, focusable = false, max_width = 80, border = border })
+					end, "i")
 					map("gh", vim.diagnostic.open_float)
 					map("<leader>gd", require("telescope.builtin").lsp_definitions)
 					map("^]", require("telescope.builtin").lsp_definitions)
@@ -221,10 +249,6 @@ require("lazy").setup({
 					end
 				end,
 			})
-
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities = vim.tbl_deep_extend("force", capabilities,
-				require("blink.cmp").get_lsp_capabilities())
 
 			local lspconfig = require('lspconfig')
 			local function is_deno_project()
@@ -288,53 +312,6 @@ require("lazy").setup({
 				lua = { "stylua" },
 			},
 		},
-	},
-	{
-		"saghen/blink.cmp",
-		version = "*",
-		event = "InsertEnter",
-		---@module 'blink.cmp'
-		---@type blink.cmp.Config
-		opts = {
-			fuzzy = {
-				implementation = "lua"
-			},
-			keymap = {
-				preset = "default",
-				['<C-space>'] = {"show_and_insert", "show_documentation", "hide_documentation"}
-			},
-			cmdline = {
-				enabled = false,
-			},
-
-			appearance = {
-				kind_icons = {},
-			},
-			sources = {
-				default = { "lsp" },
-			},
-			signature = {
-				enabled = true,
-				window = {
-					treesitter_highlighting = true,
-				},
-			},
-			completion = {
-				accept = { auto_brackets = { enabled = false }, },
-				list = { selection = { preselect = true, auto_insert = true } },
-				menu = {
-					auto_show = false,
-					draw = {
-						columns = {
-							{ "label", "label_description", gap = 1 },
-							{ "kind" },
-						},
-					},
-				},
-				documentation = { auto_show = true, treesitter_highlighting = true },
-			},
-		},
-		opts_extend = { "sources.default" },
 	},
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
