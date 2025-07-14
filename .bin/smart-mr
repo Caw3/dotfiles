@@ -4,7 +4,43 @@ set -e
 
 # --- CONFIG ---
 MODEL="gpt-4.1"
-OPENAI_API_KEY="${OPENAI_API_KEY:?Set your OpenAI API key in the OPENAI_API_KEY environment variable}"
+OPENAI_API_KEY="${OPENAI_API_KEY:?Set your OPENAI_API_KEY environment variable}"
+
+# --- FLAGS ---
+DO_BRANCH=false
+DO_COMMIT=false
+DO_MR=false
+FLAGS_GIVEN=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --branch)
+      DO_BRANCH=true
+      shift
+      ;;
+    --commit)
+      DO_COMMIT=true
+      FLAGS_GIVEN=true
+      shift
+      ;;
+    --mr)
+      DO_MR=true
+      FLAGS_GIVEN=true
+      shift
+      ;;
+    *)
+      echo "Unknown flag: $1"
+      exit 1
+      ;;
+  esac
+done
+
+# If no flags provided, run everything
+if ! $FLAGS_GIVEN; then
+  DO_BRANCH=true
+  DO_COMMIT=true
+  DO_MR=true
+fi
 
 # --- FUNCTIONS ---
 
@@ -20,77 +56,118 @@ generate_with_openai() {
         --arg prompt "$prompt" \
         '{model: $model, messages: [{role: "user", content: $prompt}], temperature: 0.7}')")
 
-  # Debug: check if OpenAI returned an error
   if echo "$response" | jq -e '.error' >/dev/null; then
     echo "OpenAI API error:" >&2
     echo "$response" | jq '.' >&2
     return 1
   fi
 
-  # Extract content
   echo "$response" | jq -r '.choices[0].message.content // empty'
 }
 
+# --- STEP 1: Create new branch ---
+if $DO_BRANCH; then
+  current_branch=$(git symbolic-ref --short HEAD)
 
-# --- STEP 1: Create new branch if on protected branch ---
-current_branch=$(git symbolic-ref --short HEAD)
+  if [[ "$current_branch" =~ ^(main|master|develop)$ ]]; then
+    echo "You're on a protected branch: $current_branch"
+    git fetch --all
 
-if [[ "$current_branch" =~ ^(main|master|develop)$ ]]; then
-  echo "You're on a protected branch: $current_branch"
-  git fetch --all
+    git_diff=$(git diff --cached)
+    if [[ -z "$git_diff" ]]; then
+      echo "No changes detected in diff. Cannot generate branch name."
+      exit 1
+    fi
 
-  git_diff=$(git diff --cached)
-  if [[ -z "$git_diff" ]]; then
-    echo "No changes detected in diff. Cannot generate branch name."
-    exit 1
-  fi
-  prompt="Suggest a single and brief (max 20 chars) descriptive git branch name for these changes:\n$git_diff based on these branches $(git branch) only return the result."
-  new_branch=$(generate_with_openai "$prompt" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//')
+    prompt="Suggest a single and brief (max 20 chars) descriptive git branch name for these changes:\n$git_diff based on these branches $(git branch) only return the result."
+    new_branch=$(generate_with_openai "$prompt" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//')
 
-  echo "Creating and switching to branch: $new_branch"
-  git checkout -b "$new_branch"
-else
-  echo "You're on branch: $current_branch"
-fi
-
-# --- STEP 2: Commit changes with AI-generated message ---
-if [[ -z $(git status --porcelain) ]]; then
-  echo "No changes to commit."
-else
-  git add .
-  git_diff=$(git diff --cached)
-
-  prompt="Generate a clear, concise 80 charachres long all lower-case Git commit message for the following diff:\n$git_diff with $(git log --oneline -n 20) as inspiration"
-  commit_message=$(generate_with_openai "$prompt")
-  echo -e "\nProposed commit message:\n$commit_message"
-
-  read -rp $'\nDo you want to proceed with this commit? [y/N]: ' confirm_commit
-  if [[ "$confirm_commit" =~ ^[Yy]$ ]]; then
-    git commit -m "$commit_message"
+    echo "Creating and switching to branch: $new_branch"
+    git checkout -b "$new_branch"
   else
-    git switch -
-    echo "Commit cancelled."
-    exit 1
+    echo "You're on branch: $current_branch"
   fi
 fi
 
-# --- STEP 3: Push and create MR ---
-branch_name=$(git symbolic-ref --short HEAD)
+# --- STEP 2: Commit changes ---
+if $DO_COMMIT; then
+  if [[ -z $(git status --porcelain) ]]; then
+    echo "No changes to commit."
+  else
+    git add .
+    git_diff=$(git diff --cached)
 
-git_diff_summary=$(git log -1 --pretty=format:%B)
-prompt="Generate a GitLab merge request title ,WITHOUT any formating and lower-case, the following commit:\n$git_diff_summary, you can use the following as inspiration $(glab mr list)"
-mr_title=$(generate_with_openai "$prompt")
+    prompt="Generate a clear, concise 80 chars long all lower-case Git commit message for the following diff:\n$git_diff with $(git log --oneline -n 20) as inspiration. If there is a format please respect it (i.e if there is a prefix shell: ... you should also include a prefix)"
+    commit_message=$(generate_with_openai "$prompt")
+    echo -e "\nProposed commit message:\n$commit_message"
 
-
-echo -e "\nProposed MR Title: $mr_title"
-
-read -rp $'\nDo you want to push the branch and create a merge request? [y/N]: ' confirm_push
-if [[ "$confirm_push" =~ ^[Yy]$ ]]; then
-  git push -u origin "$branch_name"
-  echo "Creating Merge Request..."
-  glab mr create --title "$mr_title" --description ""
-else
-  echo "Push and merge request creation canceled."
-  git switch -
-  exit 1
+    while true; do
+      read -rp $'\nAccept, edit, or cancel the commit? [y/e/N]: ' confirm_commit
+      case "$confirm_commit" in
+        [Yy])
+          git commit -m "$commit_message"
+          break
+          ;;
+        [Ee])
+          echo -e "\nCurrent commit message:\n$commit_message"
+          read -rp 'New message: ' edited_commit_message
+          if [[ -z "$edited_commit_message" ]]; then
+            echo "Empty commit message. Cancelled."
+            git switch -
+            exit 1
+          fi
+          git commit -m "$edited_commit_message"
+          break
+          ;;
+        *)
+          git switch -
+          echo "Commit cancelled."
+          exit 1
+          ;;
+      esac
+    done
+  fi
 fi
+
+# --- STEP 3: Push and create Merge Request ---
+if $DO_MR; then
+  branch_name=$(git symbolic-ref --short HEAD)
+  git_diff_summary=$(git log -1 --pretty=format:%B)
+
+  prompt="Generate a GitLab merge request title ,WITHOUT any formating and lower-case, the following commit:\n$git_diff_summary, you can use the following as inspiration $(glab mr list). If there is a format please respect it (i.e if there is a prefix shell: ... you should also include a prefix)"
+
+  mr_title=$(generate_with_openai "$prompt")
+
+  echo -e "\nProposed MR Title: $mr_title"
+
+  while true; do
+    read -rp $'\nAccept, edit, or cancel push + MR creation? [y/e/N]: ' confirm_push
+    case "$confirm_push" in
+      [Yy])
+        git push -u origin "$branch_name"
+        echo "Creating Merge Request..."
+        glab mr create --title "$mr_title" --description ""
+        break
+        ;;
+      [Ee])
+        echo -e "\nCurrent MR title:\n$mr_title"
+        read -rp 'New mr title: ' edited_mr_title 
+        if [[ -z "$edited_mr_title" ]]; then
+          echo "Empty MR title. Cancelled."
+          git switch -
+          exit 1
+        fi
+        git push -u origin "$branch_name"
+        echo "Creating Merge Request..."
+        glab mr create --title "$edited_mr_title" --description ""
+        break
+        ;;
+      *)
+        echo "Push and merge request creation canceled."
+        git switch -
+        exit 1
+        ;;
+    esac
+  done
+fi
+
