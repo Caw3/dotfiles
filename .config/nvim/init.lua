@@ -52,7 +52,6 @@ require("lazy").setup({
 				"<ESC>:execute 'vert G log -L' . line(\"'<\") . ',' . line(\"'>\") . ':' . expand('%') <CR>"
 			)
 			map("n", "<Leader>gv", ":Gvdiffsplit<CR>", opts)
-			map("n", "<Leader>gV", ":Gvdiffsplit!<CR>", opts)
 			map("n", "<Leader>gm", ":G mergetool<CR>", opts)
 			map("n", "dgh", ":diffget //2<CR>", opts)
 			map("n", "dgl", ":diffget //3<CR>", opts)
@@ -101,7 +100,7 @@ require("lazy").setup({
 						i = {
 							['<c-enter>'] = 'to_fuzzy_refine',
 							["<C-q>"] = require("telescope.actions").smart_send_to_qflist +
-								require("telescope.actions").open_qflist
+							    require("telescope.actions").open_qflist
 						}
 					}
 				},
@@ -133,6 +132,10 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			{ "j-hui/fidget.nvim", opts = {} },
+			{
+				"nanotee/sqls.nvim",
+				ft = "sql"
+			},
 		},
 		config = function()
 			local function populate_loclist()
@@ -152,7 +155,8 @@ require("lazy").setup({
 						severity_sort = true,
 						update_in_insert = false
 					})
-					vim.lsp.completion.enable(true, event.data.client_id, event.buf, { autotrigger = false })
+					vim.lsp.completion.enable(true, event.data.client_id, event.buf,
+						{ autotrigger = false })
 					local lsp_enabled = true
 
 					local function toggle_all_lsps()
@@ -192,15 +196,16 @@ require("lazy").setup({
 					}
 
 					map("<c-s>",
-						function() vim.lsp.buf.signature_help({ focusable = true, max_width = 80, border = border }) end,
+						function()
+							vim.lsp.buf.signature_help({
+								focusable = true,
+								max_width = 80,
+								border =
+								    border
+							})
+						end,
 						"i")
-					map("<c-k>", function()
-						local offset_x = 0
-						if vim.fn.pumvisible() == 1 then
-							offset_x = 40
-						end
-						vim.lsp.buf.hover({ offset_x = offset_x, focusable = false, max_width = 80, border = border })
-					end, "i")
+
 					map("gh", vim.diagnostic.open_float)
 					map("<leader>gd", require("telescope.builtin").lsp_definitions)
 					map("^]", require("telescope.builtin").lsp_definitions)
@@ -225,11 +230,11 @@ require("lazy").setup({
 								end
 								-- Normalize single vs list results
 								local location = vim.islist(result) and result[1] or
-									result
+								    result
 								-- location can be a Location or LocationLink
 								local uri = location.uri or location.targetUri
 								local range = location.range or
-									location.targetSelectionRange
+								    location.targetSelectionRange
 								if not uri or not range then
 									return
 								end
@@ -254,12 +259,13 @@ require("lazy").setup({
 			local function is_deno_project()
 				local cwd = vim.fn.getcwd()
 				return vim.fn.filereadable(cwd .. "/deno.json") == 1 or
-					vim.fn.filereadable(cwd .. "/deno.jsonc") == 1
+				    vim.fn.filereadable(cwd .. "/deno.jsonc") == 1
 			end
 
 			if is_deno_project() then
 				-- When in a Deno project, only enable denols.
 				lspconfig.denols.setup {
+					root_dir = lspconfig.util.root_pattern("deno.json", "deno.lock"),
 					settings = {
 						organizeImports = true,
 					},
@@ -267,6 +273,7 @@ require("lazy").setup({
 			else
 				-- Otherwise (non-Deno project) enable ts_ls.
 				lspconfig.ts_ls.setup {
+					root_dir = lspconfig.util.root_pattern("package.json", "yarn.lock"),
 					settings = {
 						organizeImports = true,
 					},
@@ -279,6 +286,19 @@ require("lazy").setup({
 			lspconfig.rust_analyzer.setup {}
 			lspconfig.terraformls.setup {}
 			lspconfig.bashls.setup {}
+
+			local sqls_root_pattern = lspconfig.util.root_pattern(".sqls.yml")
+			local sqls_root_dir = sqls_root_pattern(vim.fn.getcwd()) or vim.loop.cwd()
+
+			lspconfig.sqls.setup {
+				root_dir = sqls_root_pattern,
+				cmd = {
+					vim.fn.expand("$HOME/go/bin/sqls"),
+					"-config",
+					vim.fn.expand(sqls_root_dir .. "/.sqls.yml"),
+				},
+				on_attach = function(client, bufnr) require("sqls").on_attach(client, bufnr) end
+			}
 		end,
 	},
 	{
@@ -295,19 +315,6 @@ require("lazy").setup({
 		},
 		opts = {
 			notify_on_error = false,
-			format_on_save = function(bufnr)
-				local disable_filetypes = { c = true, cpp = true }
-				local lsp_format_opt
-				if disable_filetypes[vim.bo[bufnr].filetype] then
-					lsp_format_opt = "never"
-				else
-					lsp_format_opt = "fallback"
-				end
-				return {
-					timeout_ms = 500,
-					lsp_format = lsp_format_opt,
-				}
-			end,
 			formatters_by_ft = {
 				lua = { "stylua" },
 			},
@@ -316,8 +323,7 @@ require("lazy").setup({
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
-		main = "nvim-treesitter.configs", -- Sets main module to use for opts
-		-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+		main = "nvim-treesitter.configs",
 		opts = {
 			ensure_installed = {
 				"bash",
@@ -328,15 +334,18 @@ require("lazy").setup({
 				"luadoc",
 				"markdown",
 				"typescript",
-				"markdown_inline",
-				"query",
-				"vim",
-				"vimdoc",
+				"css",
+				"javascript",
+				"go",
+				"java",
+				"rust",
+				"sql",
+				"yaml",
+				"json",
+				"tsx",
 			},
-			auto_install = true,
-			highlight = {
-				enable = true,
-			},
+			auto_install = false,
+			highlight = { enable = true, },
 			disable = function(_lang, buf)
 				local max_filesize = 100 * 1024 -- 100 KB
 				local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
@@ -344,62 +353,8 @@ require("lazy").setup({
 					return true
 				end
 			end,
-			indent = { enable = true, disable = { "ruby" } },
+			indent = { enable = true },
 		},
-	},
-	{
-		"nvim-treesitter/nvim-treesitter-textobjects",
-		config = function()
-			require("nvim-treesitter.configs").setup({
-				auto_install = false,
-				ensure_installed = {},
-				sync_install = false,
-				ignore_install = {},
-				modules = {},
-				textobjects = {
-					select = {
-						enable = true,
-						lookahead = true,
-						keymaps = {
-							["af"] = "@function.outer",
-							["if"] = "@function.inner",
-							["am"] = "@method.outer",
-							["im"] = "@method.inner",
-						},
-						selection_modes = {
-							["@parameter.outer"] = "v",
-							["@function.outer"] = "V",
-							["@class.outer"] = "<c-v>",
-						},
-						include_surrounding_whitespace = true,
-					},
-					move = {
-						enable = true,
-						set_jumps = true,
-						goto_next_start = {
-							["]f"] = "@function.outer",
-							["]m"] = "@method.outer",
-							["]a"] = "@parameter.outer",
-						},
-						goto_next_end = {
-							["]F"] = "@function.outer",
-							["]M"] = "@method.outer",
-							["]A"] = "@parameter.outer",
-						},
-						goto_previous_start = {
-							["[f"] = "@function.outer",
-							["[m"] = "@method.outer",
-							["[a"] = "@parameter.outer",
-						},
-						goto_previous_end = {
-							["[F"] = "@function.outer",
-							["[M"] = "@method.outer",
-							["[A"] = "@parameter.outer",
-						},
-					},
-				},
-			})
-		end,
 	},
 })
 vim.cmd("source ~/.vimrc")
