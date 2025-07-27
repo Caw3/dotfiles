@@ -12,7 +12,15 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	"tpope/vim-sleuth",
 	"tpope/vim-vinegar",
-	"tpope/vim-dispatch",
+	{ 
+		"tpope/vim-dispatch" ,
+		config = function()
+			local map = vim.keymap.set
+			map("n", "<Leader>mm", "<cmd>Make<cr>")
+			map("n", "<Leader>mM", ":Make ")
+			map("n", "<Leader>md", ":Dispatch -compiler=")
+		end,
+	},
 	"tpope/vim-surround",
 	"romainl/vim-qf",
 	{

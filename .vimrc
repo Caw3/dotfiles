@@ -5,7 +5,6 @@ set ttyfast
 set wildmenu
 set wildoptions=fuzzy,tagfile
 set path=packages/,src/,test/,config/
-set path+=~/.dotfiles
 set smarttab
 set autoindent
 set smartindent
@@ -38,29 +37,10 @@ endif
 map <Space> <Leader>
 inoremap {<cr> {<cr>}<c-o><s-o>
 nnoremap <Leader>rr <cmd>e! %<CR>
-
-nnoremap <Leader>co <cmd>copen<CR>
-nnoremap <Leader>cc <cmd>cclose<CR>
-nnoremap <Leader>cn <cmd>cnext<CR>
-nnoremap <Leader>cf <cmd>cfirst<CR>
-nnoremap <Leader>cl <cmd>clast<CR>
-nnoremap <Leader>cp <cmd>cprev<CR>
-nnoremap <Leader>cN <cmd>cnf<CR>
-nnoremap <Leader>cP <cmd>cpf<CR>
-
-nnoremap <Leader>lo <cmd>lopen<CR>
-nnoremap <Leader>lc <cmd>lclose<CR>
-nnoremap <Leader>ln <cmd>lnext<CR>
-nnoremap <Leader>lp <cmd>lprev<CR>
-nnoremap <Leader>lf <cmd>lfirst<CR>
-nnoremap <Leader>ll <cmd>llast<CR>
-
 nnoremap <Leader>nn <cmd>set nu!<CR>
-
 nnoremap <silent> <Leader>* :Grep <C-R><C-W><CR>
 nnoremap <Leader>/ :Grep 
-
-nnoremap <Leader>fF :find **/*
+nnoremap <Leader>fF :find 
 nnoremap <Leader>ff :edit **/*
 nnoremap <Leader>tt :tag 
 
@@ -202,6 +182,10 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     "TypeScript Deno support
     autocmd FileType typescript if filereadable('./deno.lock') | let b:ale_fixers = ['deno'] | let b:ale_linters = ['deno'] | endif
 
+    "Dispatch
+    nnoremap <Leader>mm <cmd>Make<cr>
+    nnoremap <Leader>md <cmd>Dispatch -compiler=
+
     "Fugitive
     augroup ft_fugitve
         autocmd Filetype fugitive setlocal scl=yes
@@ -248,20 +232,6 @@ highlight Visual ctermfg=NONE guifg=NONE
 
 
 "Filetypes
-""C++ 
-augroup ft_cpp
-    autocmd!
-    autocmd FileType cpp call s:CppSetup()
-augroup END
-
-function! s:CppSetup()
-    if executable("astyle")
-        nnoremap <buffer> <Leader>cr <Cmd>call ExecAndRestorePos("%!astyle")<CR>
-    endif
-    nnoremap <buffer> <Leader>mr <Cmd>!./a.out<CR>
-endfunction
-
-"Go 
 augroup ft_go
     autocmd!
     autocmd FileType go call s:GoSetup()
@@ -269,14 +239,10 @@ augroup END
 
 function! s:GoSetup()
     compiler go
-    if executable("gofmt")
-        nnoremap <buffer> <Leader>cr <Cmd>call ExecAndRestorePos("%!gofmt")<CR>
-    endif
-    nnoremap <buffer> <Leader>mr <Cmd>!go run %<CR>
-    nnoremap <buffer> <Leader>mt <Cmd>!go test<CR>
+    nnoremap <buffer> <Leader>mr <Cmd>Make run<CR>
+    nnoremap <buffer> <Leader>mt <Cmd>Make test<CR>
 endfunction
 
-"Haskell (stack) 
 augroup ft_haskell
     autocmd!
     autocmd FileType haskell call s:HaskellSetup()
@@ -285,50 +251,32 @@ augroup END
 function! s:HaskellSetup()
     compiler stack
     let &l:makeprg = 'stack'
-    if executable("ormolu")
-        nnoremap <buffer> <Leader>cr <Cmd>call ExecAndRestorePos("%!ormolu --stdin-input-file %")<CR>
-    endif
-    nnoremap <buffer> <Leader>mm <Cmd>make! build | cwindow<CR>
-    nnoremap <buffer> <Leader>mr <Cmd>make! run | cwindow<CR>
+    nnoremap <buffer> <Leader>mm <Cmd>Make build<CR>
+    nnoremap <buffer> <Leader>mr <Cmd>Make run<CR>
     nnoremap <buffer> <Leader>cL <Cmd>GhcidErrors<CR>
     command! GhcidErrors let &errorformat = '%f:%l:%c:%m,%f:%l:%c-%n:%m,%f:(%l\,%c)-%m' | cexpr [] | cgetfile | compiler stack | cfirst
 endfunction
 
-
-"Java 
-augroup ft_java
-    autocmd!
-    autocmd FileType java compiler javac
-augroup END
-
-"JavaScript 
 augroup ft_javascript
     autocmd!
     autocmd FileType javascript compiler eslint
-    autocmd FileType javascript source $HOME/.vim/ftplugin/javascript.vim
+    autocmd FileType javascript setlocal shiftwidth=2 expandtab
 augroup END
 
-"CSS (example line, likely misplaced) 
+augroup ft_typescript
+    autocmd!
+    autocmd FileType typescript compiler eslint
+    autocmd FileType typescript setlocal shiftwidth=2 expandtab
+augroup END
+
+autocmd FileType java compiler javac
+
 autocmd FileType css setlocal ofu=csscomplete#CompleteCSS
 
-"markdown
 autocmd FileType markdown setlocal textwidth=80 noexpandtab spell spelllang=en_us,sv
 
-"Perl 
-augroup ft_perl
-    autocmd!
-    autocmd FileType perl call s:PerlSetup()
-augroup END
+autocmd FileType sh compiler shellcheck
 
-function! s:PerlSetup()
-    compiler perl
-    if executable("perltidy")
-        nnoremap <buffer> <Leader>cr <Cmd>call ExecAndRestorePos("%!perltidy")<CR>
-    endif
-    nnoremap <buffer> <Leader>mm <cmd>Make<CR>
-endfunction
-
-"Rust 
 augroup ft_rust
     autocmd!
     autocmd FileType rust call s:RustSetup()
@@ -372,21 +320,6 @@ function! RustDebugTest()
     execute 'Run'
 endfunction
 
-"Shell scripts 
-augroup ft_sh
-    autocmd!
-    autocmd FileType sh call s:ShellSetup()
-augroup END
-
-function! s:ShellSetup()
-    compiler shellcheck
-    if executable("shfmt")
-        nnoremap <buffer> <Leader>cr <Cmd>call ExecAndRestorePos("%!shfmt -i 2")<CR>
-    endif
-    nnoremap <buffer> <Leader>mr <cmd>w !bash<CR>
-endfunction
-
-"LaTeX / VimTeX 
 augroup ft_tex
     autocmd!
     autocmd FileType tex call s:TexSetup()
@@ -394,10 +327,8 @@ augroup END
 
 function! s:TexSetup()
     let g:tex_flavor = 'latex'
-    let g:vimtex_view_method = 'zathura'
     let g:vimtex_fold_enabled = 1
     let g:vimtex_quickfix_mode = 0
     setlocal spell
     setlocal spelllang=en,sv
-    nnoremap <buffer> <localleader>ll <Cmd>VimtexCompile<CR>
 endfunction
