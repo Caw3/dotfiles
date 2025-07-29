@@ -8,8 +8,14 @@
 ## Functions
 vimtag() {
   TAGS="./tags"
-  [[ -f "$TAGS" ]] || return 1
-  TAG=$(grep -v ^\! $TAGS | cut -f 1,2,3 | column -t -s $'\t' | fzf | awk '{print $1}')
+  QUERY=$1
+  if [[ -z "$QUERY" ]]; then
+      FZF_CMD="fzf"
+  else
+      FZF_CMD="fzf -q $QUERY"
+  fi
+  [[ -f "$TAGS" ]] || ctags $(git ls-files)
+  TAG=$(grep -v ^\! $TAGS | cut -f 1,2,3 | column -t -s $'\t' | $FZF_CMD | awk '{print $1}')
   $EDITOR -t "$TAG"
 }
 export -f vimtag
@@ -33,7 +39,7 @@ vimgrep() {
   if [[ $(command -v rg) ]]; then
       GREP_CMD="rg --vimgrep $PATTERN $FILES"
   else
-      GREP_CMD="grep $PATTERN"
+      GREP_CMD="grep -Hin $PATTERN $FILES"
   fi
 
   $GREP_CMD | $EDITOR -q -
