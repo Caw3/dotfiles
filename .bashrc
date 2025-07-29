@@ -15,11 +15,28 @@ vimtag() {
 export -f vimtag
 
 vimgrep() {
-  HELP="Usage: vimgrep {pattern} {files}..."
-  PATTERN=$1
+  HELP="Usage: vimgrep {pattern} [files...]"
   [[ $# -lt 1 ]] && echo "$HELP" && return 1
-  [[ $# -gt 1 ]] && shift && $EDITOR -c "silent Grep $PATTERN $*" && return 0
-  $EDITOR -c "silent Grep $PATTERN" && return 0
+  PATTERN=$1
+  shift
+
+  if [[ $# -eq 0 ]]; then
+      if git rev-parse --is-inside-work-tree &>/dev/null; then
+          FILES=$(git ls-files)
+      else
+          FILES=$(find .)
+      fi
+  else
+    FILES="$*"
+  fi
+
+  if [[ $(command -v rg) ]]; then
+      GREP_CMD="rg --vimgrep $PATTERN $FILES"
+  else
+      GREP_CMD="grep $PATTERN"
+  fi
+
+  $GREP_CMD | $EDITOR -q -
 }
 export -f vimgrep
 
