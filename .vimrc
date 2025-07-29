@@ -4,7 +4,6 @@ set mouse=a
 set ttyfast
 set wildmenu
 set wildoptions=fuzzy,tagfile
-set path=packages/**,src/**,test/**,config/**,~/.dotfiles/**
 set smarttab
 set autoindent
 set smartindent
@@ -25,6 +24,10 @@ set updatetime=100
 set completeopt=fuzzy,menu,popup
 set pumheight=40
 
+let git_files = split(system('git ls-files'), '\n')
+let dirs = uniq(map(git_files, 'fnamemodify(v:val, ":p:h")'))
+let &path .= ',' . join(dirs, ',')
+
 if !has('nvim')
     if !isdirectory("/var/tmp/vim/undo")
 	call mkdir("/var/tmp/vim/undo", "p", 0700)
@@ -40,8 +43,8 @@ nnoremap <Leader>rr <cmd>e! %<CR>
 nnoremap <Leader>nn <cmd>set nu!<CR>
 nnoremap <silent> <Leader>* :Grep <C-R><C-W><CR>
 nnoremap <Leader>/ :Grep 
-nnoremap <Leader>fF :find 
-nnoremap <Leader>ff :edit **/*
+nnoremap <Leader>ff :find 
+nnoremap <Leader>fe :edit **/*
 nnoremap <Leader>tt :tag 
 
 nnoremap <leader>co <cmd>cope<cr>
