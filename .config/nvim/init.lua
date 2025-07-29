@@ -60,6 +60,7 @@ require("lazy").setup({
 				"<ESC>:execute 'vert G log -L' . line(\"'<\") . ',' . line(\"'>\") . ':' . expand('%') <CR>"
 			)
 			map("n", "<Leader>gv", ":Gvdiffsplit<CR>", opts)
+			map("n", "<Leader>gV", ":Gvdiffsplit!<CR>", opts)
 			map("n", "<Leader>gm", ":G mergetool<CR>", opts)
 			map("n", "dgh", ":diffget //2<CR>", opts)
 			map("n", "dgl", ":diffget //3<CR>", opts)
@@ -86,9 +87,9 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>ght", "<cmd>SignifyToggle<CR>", { desc = "Toggle Signify " })
 
 			-- Motions
-			vim.keymap.set("o", "ic", "<plug>(signify-motion-inner-pending)", { silent = true })
-			vim.keymap.set("x", "ic", "<plug>(signify-motion-inner-visual)", { silent = true })
-			vim.keymap.set("o", "ac", "<plug>(signify-motion-outer-pending)", { silent = true })
+			vim.keymap.set("o", "ih", "<plug>(signify-motion-inner-pending)", { silent = true })
+			vim.keymap.set("x", "ih", "<plug>(signify-motion-inner-visual)", { silent = true })
+			vim.keymap.set("o", "ah", "<plug>(signify-motion-outer-pending)", { silent = true })
 		end,
 	},
 	{
@@ -114,6 +115,8 @@ require("lazy").setup({
 				},
 			})
 			local builtin = require("telescope.builtin")
+			vim.keymap.set("n", "<leader>fg", builtin.live_grep)
+			vim.keymap.set("n", "<leader>fs", builtin.find_files)
 			vim.keymap.set("n", "<leader>ft", builtin.tags)
 			vim.keymap.set("n", "<leader>fp", function()
 				builtin.git_files({

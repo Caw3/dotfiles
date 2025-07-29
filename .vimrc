@@ -4,7 +4,7 @@ set mouse=a
 set ttyfast
 set wildmenu
 set wildoptions=fuzzy,tagfile
-set path=packages/,src/,test/,config/
+set path=packages/**,src/**,test/**,config/**,~/.dotfiles/**
 set smarttab
 set autoindent
 set smartindent
@@ -44,8 +44,22 @@ nnoremap <Leader>fF :find
 nnoremap <Leader>ff :edit **/*
 nnoremap <Leader>tt :tag 
 
-"Abbreviations
-cabbr gls `git ls-files`
+nnoremap <leader>co <cmd>cope<cr>
+nnoremap <leader>cc <cmd>cclose<cr>
+nnoremap ]q <cmd>cnext<cr>
+nnoremap [q <cmd>cprev<cr>
+nnoremap ]Q <cmd>clast<cr>
+nnoremap [Q <cmd>cfirst<cr>
+
+nnoremap <leader>lo <cmd>cope<cr>
+nnoremap <leader>lc <cmd>lclose<cr>
+nnoremap ]l <cmd>lnext<cr>
+nnoremap [l <cmd>lprev<cr>
+nnoremap ]L <cmd>llast<cr>
+nnoremap [L <cmd>lfirst<cr>
+
+nnoremap ]b <cmd>bnext<cr>
+nnoremap [b <cmd>bprevious<cr>
 
 "Functions
 function! ExecAndRestorePos(cmd)
@@ -56,8 +70,6 @@ endfunction
 
 if executable('rg')
 	set grepprg=rg\ --vimgrep
-else
-	set grepprg=grep\ -n\ $*
 endif
 
 function! Grep(pattern, ...)
@@ -71,9 +83,6 @@ endfunction
 
 command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
 command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
-
-cnoreabbrev <expr> grep  (getcmdtype() ==# ':' && getcmdline() ==# 'grep')  ? 'Grep'  : 'grep'
-cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'LGrep' : 'lgrep'
 
 augroup quickfix
 	autocmd!
@@ -195,7 +204,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     nnoremap <Leader>gb :G blame <CR>
     nnoremap <Leader>gl :Gclog<CR>
     vnoremap <leader>gl <ESC>:execute 'vert G log -L' . line("'<") . ',' . line("'>") . ':' . expand('%') <CR>
-    nnoremap <Leader>gv :Gvdiffsplit <CR>
+    nnoremap <Leader>gv :Gvdiffsplit<CR>
+    nnoremap <Leader>gV :Gvdiffsplit!<CR>
     nnoremap dgh :diffget //2<CR>
     nnoremap dgl :diffget //3<CR>
 
@@ -206,10 +216,10 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     nnoremap <Leader>ghp <cmd>SignifyHunkPreview<CR>
     nnoremap <Leader>ghu <cmd>SignifyHunkUndo<CR>
     nnoremap <Leader>ght <cmd>SignifyToggle<CR>
-    omap ic <plug>(signify-motion-inner-pending)
-    xmap ic <plug>(signify-motion-inner-visual)
-    omap ac <plug>(signify-motion-outer-pending)
-    xmap ac <plug>(signify-motion-outer-visual)
+    omap ih <plug>(signify-motion-inner-pending)
+    xmap ih <plug>(signify-motion-inner-visual)
+    omap ah <plug>(signify-motion-outer-pending)
+    xmap ah <plug>(signify-motion-outer-visual)
 
 endif
 
