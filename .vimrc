@@ -72,7 +72,9 @@ function! ExecAndRestorePos(cmd)
 endfunction
 
 if executable('rg')
-	set grepprg=rg\ --vimgrep
+	set grepprg=rg\ --vimgrep\ -uu
+    else
+	set grepprg=grep\ -Hin
 endif
 
 function! Grep(pattern, ...)
