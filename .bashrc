@@ -28,11 +28,6 @@ cht() {
 }
 export -f cht
 
-gbf() {
-    git switch $(git reflog | grep -o 'checkout: moving from [^ ]* to [^ ]*' | awk '{print $NF}' | awk '!seen[$0]++' | fzf-tmux --preview='git log {} --decorate --graph --color=always')
-}
-export -f gbf
-
 ## Prompt
 export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] '
 
@@ -81,7 +76,7 @@ alias ta="tmux a"
 alias tm="tmux"
 
 ## FZF
-OPTIONS=" --preview='bat --color=always --style=numbers --line-range=:500 {} || cat {}' --preview-window=hidden "
+OPTIONS=" --preview='cat {}' --preview-window=hidden "
 BINDS="\
 --bind '?:toggle-preview' \
 --bind 'tab:toggle+up' \
