@@ -100,13 +100,19 @@ silent! packadd cfilter
 silent! packadd termdebug
 
 "Plugins
-if empty(glob('~/.vim/autoload/plug.vim')) && v:version >= 810 && !has('nvim')
+if !has("nvim") && empty(glob('~/.vim/autoload/plug.vim')) && v:version >= 810
     silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
 endif
 
-if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
+if has("nvim") && empty(glob("~/.config/nvim/site/autoload/plug.vim")) 
+    silent !curl -sfLo ~/.config/nvim/site/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall
+endif
+
+if (!has("nvim") && filereadable(expand("~/.vim/autoload/plug.vim"))) || ( has("nvim") && filereadable(expand("~/.config/nvim/site/autoload/plug.vim")))
     call plug#begin('~/.vim/vim-plug')
     Plug 'tpope/vim-sleuth'
     Plug 'tpope/vim-surround'
@@ -120,7 +126,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'CervEdin/vim-minizinc', { 'for': 'zinc' }
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
-    Plug 'Caw3/ale', { 'on' : ['ALEToggle', '<Plug>ale#completion#OmniFunc', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch'] }
+    Plug 'Caw3/ale', { 'on' : ['ALEToggle', '<Plug>ale#completion#OmniFunc', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch', 'ALEFix'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
     if has('patch-8.0.902')
 	Plug 'mhinz/vim-signify'
@@ -138,67 +144,69 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     let g:termdebug_wide=1
 
     "ALE
-    nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
-    vnoremap <Leader>ca <Cmd>ALECodeAction<CR>
-    nnoremap <Leader>cr <Cmd>ALEFix<CR>
-    nnoremap <Leader>rn <Cmd>ALERename<CR>
-    nnoremap <Leader>K <Cmd>ALEHover<CR>
-    nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
-    autocmd! User ale.vim nnoremap <C-]> <Cmd>ALEGoToTypeDefinition<CR>
-    nnoremap <Leader>gt <Cmd>ALEGoToTypeDefinition<CR>
-    nnoremap <Leader>gi <Cmd>ALEGoToImplementation<CR>
-    nnoremap <Leader>gr <Cmd>ALEFindReferences -quickfix<CR><CMD>copen<CR>
-    nnoremap gh <Cmd>ALEDetail<CR>
-    nnoremap <Leader>ds <Cmd>call ExecAndRestorePos("ALEToggle")<CR><Cmd>echo g:ale_enabled<CR>
-    nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
-    nnoremap <Leader>ci <Cmd>ALEImport<CR>
-    nnoremap <Leader># :ALESymbolSearch 
-    nnoremap [e <Cmd>ALEPrevious<CR>
-    nnoremap ]e <Cmd>ALENext<CR>
-    let g:ale_enabled = 0
-    let g:ale_hover_cursor = 0
-    let g:ale_set_highlights = 0
-    let g:ale_popup_menu_enabled = 1
-    let g:ale_completion_autoimport = 1
-    let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
-    set omnifunc=ale#completion#OmniFunc
-    if !exists("tags")
-	nnoremap <C-]> <cmd>ALEGoToDefinition<cr>
+    if has("nvim")
+	    let g:ale_disable_lsp = 'auto'
+	    let g:ale_use_neovim_diagnostic = 1
+    else
+	    nnoremap <Leader>ca <Cmd>ALECodeAction<CR>
+	    nnoremap <Leader>rn <Cmd>ALERename<CR>
+	    nnoremap <Leader>K <Cmd>ALEHover<CR>
+	    nnoremap <Leader>gd <Cmd>ALEGoToDefinition<CR>
+	    autocmd! User ale.vim nnoremap <C-]> <Cmd>ALEGoToTypeDefinition<CR>
+	    nnoremap <Leader>gt <Cmd>ALEGoToTypeDefinition<CR>
+	    nnoremap <Leader>gi <Cmd>ALEGoToImplementation<CR>
+	    nnoremap <Leader>gr <Cmd>ALEFindReferences -quickfix<CR><CMD>copen<CR>
+	    nnoremap gh <Cmd>ALEDetail<CR>
+	    nnoremap <Leader>ds <Cmd>call ExecAndRestorePos("ALEToggle")<CR><Cmd>echo g:ale_enabled<CR>
+	    nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
+	    nnoremap <Leader>ci <Cmd>ALEImport<CR>
+	    nnoremap <Leader># :ALESymbolSearch 
+	    nnoremap [e <Cmd>ALEPrevious<CR>
+	    nnoremap ]e <Cmd>ALENext<CR>
+	    let g:ale_enabled = 0
+	    let g:ale_hover_cursor = 0
+	    let g:ale_set_highlights = 0
+	    let g:ale_popup_menu_enabled = 1
+	    let g:ale_completion_autoimport = 1
+	    let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
+	    set omnifunc=ale#completion#OmniFunc
+	    if !exists("tags")
+		    nnoremap <C-]> <cmd>ALEGoToDefinition<cr>
+	    endif
     endif
-
+    nnoremap <Leader>cr <Cmd>ALEFix<CR>
     "ALE Linters and Fixers
     let g:ale_linters = {
-    \   'java': ['javalsp'],
-    \   'javascript': ['tsserver'],
-    \   'typescript': ['tsserver'],
-    \   'typescriptreact': ['tsserver'],
-    \   'python': ['pyright'],
-    \   'rust': ['analyzer'],
-    \   'c': ['cc'],
-    \   'cpp': ['cc'],
-    \   'haskell': ['hls'],
-    \   'go': ['gopls'],
-    \   'sh': ['shellcheck']
-    \}
+			    \   'java': ['javalsp'],
+			    \   'javascript': ['tsserver'],
+			    \   'typescript': ['tsserver'],
+			    \   'typescriptreact': ['tsserver'],
+			    \   'python': ['pyright'],
+			    \   'rust': ['analyzer'],
+			    \   'c': ['cc'],
+			    \   'cpp': ['cc'],
+			    \   'haskell': ['hls'],
+			    \   'go': ['gopls'],
+			    \   'sh': ['shellcheck']
+			    \}
 
     let g:ale_fixers = {
-    \   'java': ['javalsp'],
-    \   'javascript': ['eslint'],
-    \   'typescript': ['tsserver'],
-    \   'typescriptreact': ['tsserver'],
-    \   'python': ['autopep8'],
-    \   'rust': ['rustfmt'],
-    \   'haskell': ['ormolu'],
-    \   'go': ['gofmt'],
-    \   'sh': ['shfmt']
-    \}
+			    \   'java': ['javalsp'],
+			    \   'javascript': ['prettier'],
+			    \   'typescript': ['prettier'],
+			    \   'typescriptreact': ['prettier'],
+			    \   'python': ['autopep8'],
+			    \   'rust': ['rustfmt'],
+			    \   'haskell': ['ormolu'],
+			    \   'go': ['gofmt'],
+			    \   'sh': ['shfmt']
+			    \}
 
     "TypeScript Deno support
     autocmd FileType typescript if filereadable('./deno.lock') | let b:ale_fixers = ['deno'] | let b:ale_linters = ['deno'] | endif
-
     "Dispatch
     nnoremap <Leader>mm <cmd>Make<cr>
-    nnoremap <Leader>md <cmd>Dispatch -compiler=
+    nnoremap <Leader>md :Dispatch -compiler=
 
     "Fugitive
     augroup ft_fugitve

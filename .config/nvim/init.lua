@@ -10,88 +10,6 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	"tpope/vim-sleuth",
-	"tpope/vim-vinegar",
-	{ 
-		"tpope/vim-dispatch" ,
-		config = function()
-			local map = vim.keymap.set
-			map("n", "<Leader>mm", "<cmd>Make<cr>")
-			map("n", "<Leader>mM", ":Make ")
-			map("n", "<Leader>md", ":Dispatch -compiler=")
-		end,
-	},
-	"tpope/vim-surround",
-	"romainl/vim-qf",
-	{
-		"github/copilot.vim", cmd = "Copilot",
-
-	},
-	{
-		"romainl/vim-cool",
-		config = function()
-			vim.g.cool_total_matches = 1
-		end,
-	},
-	{
-		"tpope/vim-fugitive",
-		config = function()
-			-- Set autocommands for Fugitive filetype
-			vim.api.nvim_create_augroup("ft_fugitive", { clear = true })
-			vim.api.nvim_create_autocmd("FileType", {
-				group = "ft_fugitive",
-				pattern = "fugitive",
-				callback = function()
-					vim.opt_local.signcolumn = "yes"
-					vim.opt_local.number = false
-				end,
-
-			})
-
-			local map = vim.keymap.set
-			local opts = { noremap = true, silent = true }
-
-			map("n", "<Leader>gs", ":vert Git | vertical resize 80<CR>", opts)
-			map("n", "<Leader>gb", ":G blame<CR>", opts)
-			map("n", "<Leader>gl", ":Gclog<CR>", opts)
-			map(
-				"v",
-				"<Leader>gl",
-				"<ESC>:execute 'vert G log -L' . line(\"'<\") . ',' . line(\"'>\") . ':' . expand('%') <CR>"
-			)
-			map("n", "<Leader>gv", ":Gvdiffsplit<CR>", opts)
-			map("n", "<Leader>gV", ":Gvdiffsplit!<CR>", opts)
-			map("n", "<Leader>gm", ":G mergetool<CR>", opts)
-			map("n", "dgh", ":diffget //2<CR>", opts)
-			map("n", "dgl", ":diffget //3<CR>", opts)
-		end,
-	},
-	{
-		"arcticicestudio/nord-vim",
-		priority = 1000,
-		config = function()
-			vim.cmd("colorscheme nord")
-		end,
-	},
-	{
-		"mhinz/vim-signify",
-		init = function()
-			vim.g.signify_sign_change = "│"
-			vim.g.signify_sign_add = "│"
-			vim.g.signify_sign_delete = "│"
-		end,
-		config = function()
-			-- Keymaps
-			vim.keymap.set("n", "<leader>ghp", "<cmd>SignifyHunkDiff<CR>", { desc = "Signify hunk diff" })
-			vim.keymap.set("n", "<leader>ghu", "<cmd>SignifyHunkUndo<CR>", { desc = "Signify hunk undo" })
-			vim.keymap.set("n", "<leader>ght", "<cmd>SignifyToggle<CR>", { desc = "Toggle Signify " })
-
-			-- Motions
-			vim.keymap.set("o", "ih", "<plug>(signify-motion-inner-pending)", { silent = true })
-			vim.keymap.set("x", "ih", "<plug>(signify-motion-inner-visual)", { silent = true })
-			vim.keymap.set("o", "ah", "<plug>(signify-motion-outer-pending)", { silent = true })
-		end,
-	},
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
@@ -311,25 +229,6 @@ require("lazy").setup({
 				on_attach = function(client, bufnr) require("sqls").on_attach(client, bufnr) end
 			}
 		end,
-	},
-	{
-		"stevearc/conform.nvim",
-		cmd = { "ConformInfo" },
-		keys = {
-			{
-				"<leader>cr",
-				function()
-					require("conform").format({ async = true, lsp_format = "fallback" })
-				end,
-				mode = "",
-			},
-		},
-		opts = {
-			notify_on_error = false,
-			formatters_by_ft = {
-				lua = { "stylua" },
-			},
-		},
 	},
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
