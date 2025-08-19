@@ -21,7 +21,7 @@ set nobackup writebackup
 set nocompatible
 set backspace=indent,eol,start
 set updatetime=100
-set completeopt=fuzzy,menu,popup
+set completeopt=fuzzy,menuone,popup
 set pumheight=40
 
 let git_files = split(system('git ls-files'), '\n')
