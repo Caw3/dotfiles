@@ -121,7 +121,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'CervEdin/vim-minizinc', { 'for': 'zinc' }
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
-    Plug 'Caw3/ale', { 'on' : ['ALEToggle', '<Plug>ale#completion#OmniFunc', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch'] }
+    Plug 'Caw3/ale', { 'on' : ['ALEToggle', '<Plug>ale#completion#OmniFunc', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch', 'ALEFix'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
     if has('patch-8.0.902')
 	Plug 'mhinz/vim-signify'
