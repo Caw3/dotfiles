@@ -83,7 +83,7 @@ function! Grep(pattern, ...)
 		let l:files = systemlist('git ls-files')
 	endif
 	let l:files = map(l:files, 'shellescape(v:val)')
-	let l:command = join([&grepprg] + [a:pattern] + [expandcmd(join(l:files, ' '))], ' ')
+	let l:command = join([&grepprg, shellescape(a:pattern)] + l:files, ' ')
 	return system(l:command)
 endfunction
 
