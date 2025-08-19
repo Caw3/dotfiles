@@ -82,6 +82,7 @@ function! Grep(pattern, ...)
 	if a:0 == 0 && system('git rev-parse --is-inside-work-tree') ==# "true\n" 
 		let l:files = systemlist('git ls-files')
 	endif
+	let l:files = map(l:files, 'shellescape(v:val)')
 	let l:command = join([&grepprg] + [a:pattern] + [expandcmd(join(l:files, ' '))], ' ')
 	return system(l:command)
 endfunction

@@ -23,28 +23,30 @@ export -f vimtag
 vimgrep() {
   HELP="Usage: vimgrep {pattern} [files...]"
   [[ $# -lt 1 ]] && echo "$HELP" && return 1
+
   PATTERN=$1
   shift
 
   if [[ $# -eq 0 ]]; then
-      if git rev-parse --is-inside-work-tree &>/dev/null; then
-          FILES=$(git ls-files)
-      else
-          FILES=$(find .)
-      fi
+    if git rev-parse --is-inside-work-tree &>/dev/null; then
+      mapfile -t FILES < <(git ls-files)
+    else
+      mapfile -t FILES < <(find . -type f)
+    fi
   else
-    FILES="$*"
+    FILES=("$@")
   fi
 
-  if [[ $(command -v rg) ]]; then
-      GREP_CMD="rg --vimgrep $PATTERN $FILES"
+  if command -v rg >/dev/null 2>&1; then
+    GREP_CMD=(rg --vimgrep "$PATTERN" "${FILES[@]}")
   else
-      GREP_CMD="grep -Hin $PATTERN $FILES"
+    GREP_CMD=(grep -Hin "$PATTERN" "${FILES[@]}")
   fi
 
-  $GREP_CMD | $EDITOR -q -
+  "${GREP_CMD[@]}" | "$EDITOR" -q -
 }
 export -f vimgrep
+
 
 cht() {
   curl -s cht.sh/"$1" | less -R
@@ -129,3 +131,7 @@ vterm_printf() {
         printf "\e]%s\e\\" "$1"
     fi
 }
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
