@@ -12,8 +12,8 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	"tpope/vim-sleuth",
 	"tpope/vim-vinegar",
-	{ 
-		"tpope/vim-dispatch" ,
+	{
+		"tpope/vim-dispatch",
 		config = function()
 			local map = vim.keymap.set
 			map("n", "<Leader>mm", "<cmd>Make<cr>")
@@ -218,15 +218,18 @@ require("lazy").setup({
 						"i")
 
 					map("gh", vim.diagnostic.open_float)
-					map("<leader>gd", require("telescope.builtin").lsp_definitions)
-					map("^]", require("telescope.builtin").lsp_definitions)
+					map("<leader>gD", vim.lsp.buf.declaration)
+					map("<leader>gd", vim.lsp.buf.definition)
 					map("<leader>gR", require("telescope.builtin").lsp_references)
 					map("<leader>gr", vim.lsp.buf.references)
 					map("<leader>gI", require("telescope.builtin").lsp_implementations)
 					map("<leader>gi", vim.lsp.buf.implementation)
 					map("<leader>gt", require("telescope.builtin").lsp_type_definitions)
 					map("<leader>@", require("telescope.builtin").lsp_document_symbols)
-					map("<leader>#", require("telescope.builtin").lsp_workspace_symbols)
+					map("<leader>#", function()
+						local query = vim.fn.input("#")
+						require("telescope.builtin").lsp_workspace_symbols({ query = query })
+					end)
 					map("<leader>rn", vim.lsp.buf.rename)
 					map("<leader>ca", vim.lsp.buf.code_action, { "n", "x" })
 					map("<leader>gD", vim.lsp.buf.declaration)
@@ -262,6 +265,10 @@ require("lazy").setup({
 					end
 					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
 						client.server_capabilities.inlayHintProvider = nil
+					end
+					if client and client.supports_method(vim.lsp.protocol.Methods.workspaceSymbol_resolve) then
+						map("<leader>#",
+							require("telescope.builtin").lsp_dynamic_workspace_symbols)
 					end
 				end,
 			})
