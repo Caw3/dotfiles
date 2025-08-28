@@ -74,6 +74,9 @@ export EDITOR='nvim'
 export HISTSIZE=10000
 export HISTFILESIZE=
 export HISTCONTROL=erasedups
+export PAGER="$EDITOR +Man!"
+export MANROFFOPT="-c"
+
 
 ## Aliases
 alias vi="nvim"
