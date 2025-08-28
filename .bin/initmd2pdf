@@ -5,7 +5,7 @@ USAGE="usage: initmd2pdf [NAME]"
 
 [[ $# -ne 1 ]] && echo "$USAGE" 1>&2 && exit 1
 
-if ! (command -v pandoc && command -v pdflatex && command -v rsvg-convert) &>/dev/null; then
+if ! (command -v pandoc && command -v pdflatex ) &>/dev/null; then
   echo "Dependencies are missing!" 1>&2 && exit 1
 fi
 
