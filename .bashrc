@@ -92,6 +92,7 @@ alias gbl='git branch -vva --sort=-committerdate'
 alias gs='git status -s'
 alias gw='git worktree'
 alias gl='git log --oneline --graph --abbrev-commit'
+alias gc='git checkout'
 
 alias ta="tmux a"
 alias tm="tmux"
