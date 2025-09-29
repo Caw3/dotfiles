@@ -12,7 +12,7 @@ fi
 file_name="$(find "$search_path" -maxdepth 5 -type f | \
   awk -F'/' '{print $NF}' | \
   sort | \
-  fzf-tmux -p --prompt "$prompt")"
+  fzf-tmux --reverse -p --prompt "$prompt")"
 
 if [[ -n $file_name ]]; then
   xdg-open "$(find "$search_path" -maxdepth 5 -name "$file_name" )" | disown &

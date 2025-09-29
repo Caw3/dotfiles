@@ -43,6 +43,10 @@ nnoremap <Leader>rr <cmd>e! %<CR>
 nnoremap <Leader>nn <cmd>set nu!<CR>
 nnoremap <silent> <Leader>* :Grep <C-R><C-W><CR>
 nnoremap <Leader>/ :Grep 
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap <Leader>s :%s/
+vnoremap <Leader>s :s/
 nnoremap <Leader>ff :find 
 nnoremap <Leader>fe :edit **/*
 nnoremap <Leader>tt :tag 
@@ -63,6 +67,8 @@ nnoremap [L <cmd>lfirst<cr>
 
 nnoremap ]b <cmd>bnext<cr>
 nnoremap [b <cmd>bprevious<cr>
+nnoremap ]a <cmd>next<cr>
+nnoremap [a <cmd>prev<cr>
 
 "Functions
 function! ExecAndRestorePos(cmd)
@@ -164,9 +170,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     let g:ale_completion_autoimport = 1
     let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
     set omnifunc=ale#completion#OmniFunc
-    if !exists("tags")
-	nnoremap <C-]> <cmd>ALEGoToDefinition<cr>
-    endif
 
     "ALE Linters and Fixers
     let g:ale_linters = {
@@ -220,7 +223,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     let g:signify_sign_change = "│"
     let g:signify_sign_add = "│"
     let g:signify_sign_delete = "│"
-    nnoremap <Leader>ghp <cmd>SignifyHunkPreview<CR>
+    nnoremap <Leader>ghp <cmd>SignifyHunkDiff<CR>
     nnoremap <Leader>ghu <cmd>SignifyHunkUndo<CR>
     nnoremap <Leader>ght <cmd>SignifyToggle<CR>
     omap ih <plug>(signify-motion-inner-pending)
