@@ -123,6 +123,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'Caw3/ale', { 'on' : ['ALEToggle', '<Plug>ale#completion#OmniFunc', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch', 'ALEFix'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
+    Plug 'ludovicchabant/vim-gutentags'
     if has('patch-8.0.902')
 	Plug 'mhinz/vim-signify'
     else
@@ -199,7 +200,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
 
     "Dispatch
     nnoremap <Leader>mm <cmd>Make<cr>
-    nnoremap <Leader>md <cmd>Dispatch -compiler=
+    nnoremap <Leader>md :Dispatch -compiler=
 
     "Fugitive
     augroup ft_fugitve

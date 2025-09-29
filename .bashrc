@@ -70,17 +70,15 @@ shopt -s checkwinsize
 set -o vi
 
 ## Exports
-export EDITOR='nvim'
+export EDITOR='vim'
 export HISTSIZE=10000
 export HISTFILESIZE=
 export HISTCONTROL=erasedups
-export PAGER="$EDITOR +Man!"
 export MANROFFOPT="-c"
 
-
 ## Aliases
-alias vi="nvim"
-alias vim="nvim"
+alias vi="$EDITOR"
+alias vim="$EDITOR"
 alias ll='ls --color -lah'
 alias cp="cp -i"
 alias mv='mv -i'
@@ -135,7 +133,3 @@ vterm_printf() {
         printf "\e]%s\e\\" "$1"
     fi
 }
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
