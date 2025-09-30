@@ -65,11 +65,6 @@ nnoremap [l <cmd>lprev<cr>
 nnoremap ]L <cmd>llast<cr>
 nnoremap [L <cmd>lfirst<cr>
 
-nnoremap ]b <cmd>bnext<cr>
-nnoremap [b <cmd>bprevious<cr>
-nnoremap ]a <cmd>next<cr>
-nnoremap [a <cmd>prev<cr>
-
 "Functions
 function! ExecAndRestorePos(cmd)
 	let save_pos = getpos(".")
@@ -129,7 +124,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'Caw3/ale', { 'on' : ['ALEToggle', '<Plug>ale#completion#OmniFunc', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch', 'ALEFix'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
-    Plug 'ludovicchabant/vim-gutentags'
     if has('patch-8.0.902')
 	Plug 'mhinz/vim-signify'
     else
@@ -251,32 +245,6 @@ hi! link qfFilename Conditional
 highlight Visual ctermfg=NONE guifg=NONE
 
 
-"Filetypes
-augroup ft_go
-    autocmd!
-    autocmd FileType go call s:GoSetup()
-augroup END
-
-function! s:GoSetup()
-    compiler go
-    nnoremap <buffer> <Leader>mr <Cmd>Make run<CR>
-    nnoremap <buffer> <Leader>mt <Cmd>Make test<CR>
-endfunction
-
-augroup ft_haskell
-    autocmd!
-    autocmd FileType haskell call s:HaskellSetup()
-augroup END
-
-function! s:HaskellSetup()
-    compiler stack
-    let &l:makeprg = 'stack'
-    nnoremap <buffer> <Leader>mm <Cmd>Make build<CR>
-    nnoremap <buffer> <Leader>mr <Cmd>Make run<CR>
-    nnoremap <buffer> <Leader>cL <Cmd>GhcidErrors<CR>
-    command! GhcidErrors let &errorformat = '%f:%l:%c:%m,%f:%l:%c-%n:%m,%f:(%l\,%c)-%m' | cexpr [] | cgetfile | compiler stack | cfirst
-endfunction
-
 augroup ft_javascript
     autocmd!
     autocmd FileType javascript compiler eslint
@@ -289,12 +257,8 @@ augroup ft_typescript
     autocmd FileType typescript setlocal shiftwidth=2 expandtab
 augroup END
 
-autocmd FileType java compiler javac
-
 autocmd FileType css setlocal ofu=csscomplete#CompleteCSS
-
 autocmd FileType markdown setlocal textwidth=80 noexpandtab spell spelllang=en_us,sv
-
 autocmd FileType sh compiler shellcheck
 
 augroup ft_rust
