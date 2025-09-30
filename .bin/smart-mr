@@ -94,7 +94,6 @@ if $DO_COMMIT; then
   if [[ -z $(git status --porcelain) ]]; then
     echo "No changes to commit."
   else
-    git add .
     git_diff=$(git diff --cached)
 
     prompt="Generate a clear, concise 80 chars long all lower-case Git commit message for the following diff:\n$git_diff with $(git log --oneline -n 20) as inspiration. If there is a format please respect it (i.e if there is a prefix shell: ... you should also include a prefix)"

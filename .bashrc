@@ -42,8 +42,7 @@ vimgrep() {
   else
     GREP_CMD=(grep -Hin "$PATTERN" "${FILES[@]}")
   fi
-
-  "${GREP_CMD[@]}" | "$EDITOR" -q -
+  "$EDITOR" -q <("${GREP_CMD[@]}")
 }
 export -f vimgrep
 
@@ -55,6 +54,7 @@ export -f cht
 
 ## Prompt
 export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] '
+export PROMPT_COMMAND='history -a'
 
 ## SHOPT
 shopt -s autocd
@@ -72,8 +72,8 @@ set -o vi
 ## Exports
 export EDITOR='vim'
 export HISTSIZE=10000
-export HISTFILESIZE=
-export HISTCONTROL=erasedups
+export HISTFILESIZE=20000
+export HISTCONTROL=ignoreredups:erasedups
 export MANROFFOPT="-c"
 
 ## Aliases
