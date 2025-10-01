@@ -15,7 +15,7 @@ file_name="$(find "$search_path" -maxdepth 5 -type f | \
   fzf --reverse --prompt "$prompt")"
 
 if [[ -n $file_name ]]; then
-  xdg-open "$(find "$search_path" -maxdepth 5 -name "$file_name" )" | disown &
+  xdg-open "$(find "$search_path" -maxdepth 5 -name "$file_name" )"
 fi
 
 exit 0

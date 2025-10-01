@@ -2,7 +2,7 @@
 
 IFS=' ' read -r -a search_path <<< "$REPO_SEARCH_PATH"
 prompt="Select project: "
-repo_name="$(find "${search_path[@]}" -maxdepth 1 -not -path '*/[@.]*' -type d | \
+repo_name="$(find "${search_path[@]}" -maxdepth 1 -not -path '*/[@.]*' -type d,l | \
   awk -F'/' '{print $NF}' | \
   sort | \
   uniq | \
@@ -13,7 +13,8 @@ if [[ -z $repo_name ]]; then
 fi
 
 if [[ -n $repo_name ]]; then
-  dir="$(find "${search_path[@]}" -maxdepth 1 -name "$repo_name")"
+  dir="$(find "${search_path[@]}" -maxdepth 1 -type d,l  -name "$repo_name")"
+  echo $dir
   tmux new-session -c "$dir" -s "$repo_name" -d
   tmux switch-client -t "$repo_name"
 fi

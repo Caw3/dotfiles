@@ -182,9 +182,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
 
     let g:ale_fixers = {
     \   'java': ['javalsp'],
-    \   'javascript': ['eslint'],
-    \   'typescript': ['tsserver'],
-    \   'typescriptreact': ['tsserver'],
+    \   'javascript': ['prettier', 'eslint'],
+    \   'typescript': ['prettier', 'eslint'],
+    \   'typescriptreact': ['prettier', 'eslint'],
     \   'python': ['autopep8'],
     \   'rust': ['rustfmt'],
     \   'haskell': ['ormolu'],

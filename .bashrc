@@ -14,7 +14,7 @@ vimtag() {
   else
       FZF_CMD="fzf -q $QUERY"
   fi
-  [[ -f "$TAGS" ]] || ctags $(git ls-files)
+  ctags --tag-relative $(git ls-files)
   TAG=$(grep -v ^\! $TAGS | cut -f 1,2,3 | column -t -s $'\t' | $FZF_CMD | awk '{print $1}')
   $EDITOR -t "$TAG"
 }
