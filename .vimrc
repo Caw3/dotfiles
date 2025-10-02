@@ -117,6 +117,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'tpope/vim-vinegar'
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-dispatch'
+    Plug 'tpope/vim-rhubarb'
+    Plug 'shumphrey/fugitive-gitlab.vim'
     Plug 'arcticicestudio/nord-vim'
     Plug 'maxmellon/vim-jsx-pretty', { 'for' : ['javascript', 'javascriptreact'] }
     Plug 'lervag/vimtex', { 'for': 'tex' }
