@@ -75,6 +75,7 @@ export HISTSIZE=10000
 export HISTFILESIZE=20000
 export HISTCONTROL=ignoreredups:erasedups
 export MANROFFOPT="-c"
+export MANPAGER="vim -M +MANPAGER - "
 
 ## Aliases
 alias vi="$EDITOR"
