@@ -123,7 +123,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'lervag/vimtex', { 'for': 'tex' }
     Plug 'CervEdin/vim-minizinc', { 'for': 'zinc' }
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
-    Plug 'Caw3/ale', { 'on' : ['ALEToggle', '<Plug>ale#completion#OmniFunc', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch', 'ALEFix'] }
+    Plug 'Caw3/ale', { 'on' : ['ALEToggle', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch', 'ALEFix'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
     if has('patch-8.0.902')
 	Plug 'mhinz/vim-signify'
@@ -164,7 +164,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     let g:ale_popup_menu_enabled = 1
     let g:ale_completion_autoimport = 1
     let g:ale_echo_msg_format = '[%severity%][%linter%] %s'
-    set omnifunc=ale#completion#OmniFunc
 
     "ALE Linters and Fixers
     let g:ale_linters = {
@@ -192,6 +191,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     \   'go': ['gofmt'],
     \   'sh': ['shfmt']
     \}
+
+    autocmd! User ALELSPStarted set omnifunc=ale#completion#OmniFunc
 
     "TypeScript Deno support
     autocmd FileType typescript if filereadable('./deno.lock') | let b:ale_fixers = ['deno'] | let b:ale_linters = ['deno'] | endif
