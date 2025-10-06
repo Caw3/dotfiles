@@ -25,7 +25,7 @@ help:
 		| sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install: init nvim ansible git ripgrep htop fzf wget curl rsync podman podman-compose scripts ## Basic install
+install: init vim ansible git ripgrep htop fzf wget curl rsync podman podman-compose jq scripts ## Basic install
 init: bash tmux vim ## Lightweight configuration (bash, vim, tmux)
 
 bash: ## Init bash
@@ -36,23 +36,12 @@ tmux: ## Init tmux
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	$(LN)/.tmux.conf
 
-nvim: ## Init nvim
-	$(PKG_CHECK) || $(PKG_INSTALL) $@
-	$(LN)/.vimrc
-	@mkdir -p ${HOME}/.config/nvim/ftplugin
-	@ln -vsfn ${PWD}/.vim/ftplugin ${HOME}/.config/nvim/ftplugin
-	$(LN)/.config/nvim/init.lua
-
 vim: ## Init vim
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	$(LN)/.vimrc
-	$(LN)/.vim
 
-bash-completion: 
+jq: 
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
-	grep 'bash_completion.sh' $(HOME)/.bash_profile || \
-		echo '[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"' >> \
-		$(HOME)/.bash_profile
 
 git: 
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
@@ -84,17 +73,10 @@ wget:
 curl:
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
-emacs: git ## Inits Doom emacs config
-	$(PKG_CHECK) || $(PKG_INSTALL) $@
-	$(PKG_INSTALL) cmake
-	$(LN)/.config/doom
-	@git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
-	@~/.config/emacs/bin/doom install
-
 key: ## Decrypt ssh-key
-	@ansible-vault decrypt --output $(REMOTE_KEY) encrypted_key
+	@ansible-vault decrypt --output $(REMOTE_KEY) ~/.ssh/key
 
-scripts: ## Init scripts
+scripts: ## Make a .bin dir, update path, and symlink scripts to it
 	$(LN)/.bin
 	grep '$$HOME/.bin' $(HOME)/.bash_profile || \
 		echo 'export PATH=$$PATH:$$HOME/.bin' >> \

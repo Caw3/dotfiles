@@ -27,13 +27,11 @@ set pumheight=40
 set wildignore=*.o,node_modules/**,dist/**,build/**
 set path=src/,apps/,libs/,test/,e2e/
 
-if !has('nvim')
-    if !isdirectory("/var/tmp/vim/undo")
-	call mkdir("/var/tmp/vim/undo", "p", 0700)
-    endif
-    set undodir=/var/tmp/vim/undo
-    set undofile
+if !isdirectory("/var/tmp/vim/undo")
+    call mkdir("/var/tmp/vim/undo", "p", 0700)
 endif
+set undodir=/var/tmp/vim/undo
+set undofile
 
 "Keymaps
 map <Space> <Leader>
@@ -63,6 +61,9 @@ nnoremap ]l <cmd>lnext<cr>
 nnoremap [l <cmd>lprev<cr>
 nnoremap ]L <cmd>llast<cr>
 nnoremap [L <cmd>lfirst<cr>
+
+nnoremap ]t <cmd>tprev<cr>
+nnoremap [t <cmd>tnext<cr>
 
 "Functions
 function! ExecAndRestorePos(cmd)
@@ -247,64 +248,11 @@ hi! link qfFilename Conditional
 highlight Visual ctermfg=NONE guifg=NONE
 
 
-augroup ft_javascript
-    autocmd!
-    autocmd FileType javascript compiler eslint
-    autocmd FileType javascript setlocal shiftwidth=2 expandtab
-augroup END
-
-augroup ft_typescript
-    autocmd!
-    autocmd FileType typescript compiler eslint
-    autocmd FileType typescript setlocal shiftwidth=2 expandtab
-augroup END
-
+autocmd FileType javascript setlocal shiftwidth=2 expandtab
+autocmd FileType typescript setlocal shiftwidth=2 expandtab
 autocmd FileType css setlocal ofu=csscomplete#CompleteCSS
 autocmd FileType markdown setlocal textwidth=80 noexpandtab spell spelllang=en_us,sv
 autocmd FileType sh compiler shellcheck
-
-augroup ft_rust
-    autocmd!
-    autocmd FileType rust call s:RustSetup()
-augroup END
-
-function! s:RustSetup()
-    compiler cargo
-    nnoremap <buffer> <Leader>mm <Cmd>Make! check | cwindow<CR>
-    nnoremap <buffer> <Leader>mr <Cmd>Make! run | cwindow<CR>
-    nnoremap <buffer> <Leader>ml <Cmd>Make! clippy | cwindow<CR>
-    nnoremap <buffer> <Leader>mf <Cmd>Make! clippy --fix --allow-dirty | cwindow<CR>
-    nnoremap <buffer> <Leader>mt <Cmd>Make! test | cwindow<CR>
-    nnoremap <buffer> <Leader>cL <Cmd>cfile .errors.txt | cwindow<CR>
-    nnoremap <buffer> <Leader>dt <Cmd>call RustDebugTest()<Cr>
-    nnoremap <buffer> <Leader>dr <Cmd>call RustDebugRun()<Cr>
-    nnoremap <buffer> <Leader>db <Cmd>call RustDebug()<Cr>
-    let g:termdebugger = "rust-gdb"
-endfunction
-
-function! RustDebug()
-    let path = trim(system("find target/debug -maxdepth 1 -type f -executable"))
-    execute 'Termdebug' path
-endfunction
-
-function! RustDebugRun()
-    call RustDebug()
-    wincmd h
-    normal j
-    execute 'Break'
-    execute 'Run'
-endfunction
-
-function! RustDebugTest()
-    let test = expand("<cword>")
-    let regex = 's/.*(\(.*\))/\1/'
-    let path = trim(system("cargo test " . test . " --no-run 2>&1 | tail -n 1 | sed '" . regex . "'"))
-    execute 'Termdebug' path
-    wincmd h
-    normal j
-    execute 'Break'
-    execute 'Run'
-endfunction
 
 augroup ft_tex
     autocmd!

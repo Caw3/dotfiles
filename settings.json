@@ -11,19 +11,37 @@
     "workbench.editor.showTabs": "none",
     "editor.stickyScroll.enabled": false,
     "git.openRepositoryInParentFolders": "always",
-    "redhat.telemetry.enabled": false,
     "workbench.startupEditor": "none",
     "workbench.editor.editorActionsLocation": "hidden",
-    "github.copilot.enable": {
-        "*": false,
-        "plaintext": false,
-        "markdown": false,
-        "scminput": false
-    },
     "window.commandCenter": false,
     "workbench.layoutControl.enabled": false,
+    "vim.surround": true,
+    "git.blame.editorDecoration.enabled": false,
+    "editor.wordWrap": "off",
     "typescript.updateImportsOnFileMove.enabled": "always",
+    "terminal.integrated.enablePersistentSessions": false,
+    "editor.fontSize": 11,
+    "workbench.localHistory.enabled": false,
+    "workbench.editor.closeOnFileDelete": true,
     "[typescript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[dockercompose]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.autoIndent": "advanced",
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "[github-actions-workflow]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
     }
 }
