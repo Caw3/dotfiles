@@ -5,7 +5,7 @@ INPUT=$1
 PATH="/opt/homebrew/bin":$PATH # needed for alcritty launcher
 
 # Use $EDITOR if set, otherwise fall back to nvim
-EDITOR_CMD="${EDITOR:-nvim}"
+EDITOR_CMD="${EDITOR:-vim}"
 
 SESSION=$(tmux display -p '#{session_name}' || tmux list-sessions | grep "(attached)" |  awk -F: '{print $1}')
 WINDOW=$(tmux display -p '#{window_index}'|| tmux list-windows -t $SESSION | grep "(active)" |  awk -F: '{print $1}')

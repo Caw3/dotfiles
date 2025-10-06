@@ -24,9 +24,8 @@ set updatetime=100
 set completeopt=fuzzy,menuone,popup
 set pumheight=40
 
-let git_files = split(system('git ls-files'), '\n')
-let dirs = uniq(map(git_files, 'fnamemodify(v:val, ":p:h")'))
-let &path .= ',' . join(dirs, ',')
+set wildignore=*.o,node_modules/**,dist/**,build/**
+set path=src/,apps/,libs/,test/,e2e/
 
 if !has('nvim')
     if !isdirectory("/var/tmp/vim/undo")
@@ -47,7 +46,7 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 nnoremap <Leader>s :%s/
 vnoremap <Leader>s :s/
-nnoremap <Leader>ff :find 
+nnoremap <Leader>ff :find **/*
 nnoremap <Leader>fe :edit **/*
 nnoremap <Leader>tt :tag 
 
