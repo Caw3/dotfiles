@@ -2,21 +2,26 @@
 
 IFS=' ' read -r -a search_path <<< "$REPO_SEARCH_PATH"
 prompt="Select project: "
-repo_name="$(find "${search_path[@]}" -maxdepth 1 -not -path '*/[@.]*' -type d,l | \
-  awk -F'/' '{print $NF}' | \
-  sort | \
-  uniq | \
-  fzf --reverse --prompt "$prompt")"
 
-if [[ -z $repo_name ]]; then 
-  exit 0
+repo_dir="$(find "${search_path[@]}" -maxdepth 1 -mindepth 1 -not -path '*/[@.]*' -not -name '.git' -not -name 'node_modules' -type d,l | \
+    sort | uniq | \
+    fzf \
+    --reverse \
+    --prompt "$prompt" \
+    --preview-window=hidden \
+    --preview 'tree -C {}' \
+    --bind 'ctrl-o:execute(code {})+accept' \
+    --bind '?:toggle-preview' \
+    --bind 'ctrl-d:preview-half-page-down' \
+    --bind 'ctrl-u:preview-half-page-up' \
+    --footer "(ctrl-o: open with vscode), (enter: opens new session), (?: toggle preview)")"
+
+if [[ -z $repo_dir ]]; then 
+    exit 0
 fi
 
-if [[ -n $repo_name ]]; then
-  dir="$(find "${search_path[@]}" -maxdepth 1 -type d,l  -name "$repo_name")"
-  echo $dir
-  tmux new-session -c "$dir" -s "$repo_name" -d
-  tmux switch-client -t "$repo_name"
-fi
+echo "$repo_dir"
+tmux new-session -c "$repo_dir" -s "$(basename "$repo_dir")" -d
+tmux switch-client -t "$(basename "$repo_dir")"
 
 exit 0
