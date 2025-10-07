@@ -20,8 +20,6 @@ if [[ -z $repo_dir ]]; then
     exit 0
 fi
 
-echo "$repo_dir"
 tmux new-session -c "$repo_dir" -s "$(basename "$repo_dir")" -d
-tmux switch-client -t "$(basename "$repo_dir")"
-
+tmux switch-client -t "$(basename "${repo_dir//./_}")"
 exit 0
