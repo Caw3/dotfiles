@@ -25,7 +25,7 @@ set completeopt=fuzzy,menuone,popup
 set pumheight=40
 
 set wildignore=*.o,node_modules/**,dist/**,build/**
-set path=src/,apps/,libs/,test/,e2e/
+set path=src/,apps/,libs/,test/,e2e/,cmd/,utils/
 
 if !isdirectory("/var/tmp/vim/undo")
     call mkdir("/var/tmp/vim/undo", "p", 0700)
@@ -55,7 +55,7 @@ nnoremap [q <cmd>cprev<cr>
 nnoremap ]Q <cmd>clast<cr>
 nnoremap [Q <cmd>cfirst<cr>
 
-nnoremap <leader>lo <cmd>cope<cr>
+nnoremap <leader>lo <cmd>lope<cr>
 nnoremap <leader>lc <cmd>lclose<cr>
 nnoremap ]l <cmd>lnext<cr>
 nnoremap [l <cmd>lprev<cr>
@@ -190,7 +190,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     \   'rust': ['rustfmt'],
     \   'haskell': ['ormolu'],
     \   'go': ['gofmt'],
-    \   'sh': ['shfmt']
+    \   'sh': ['shfmt'],
+    \   'terraform': ['terraform']
     \}
 
     autocmd! User ALELSPStarted set omnifunc=ale#completion#OmniFunc
@@ -235,6 +236,7 @@ set fillchars=vert:\│,stl:\―,stlnc:\―
 set laststatus=0
 silent! colorscheme nord
 hi VertSplit ctermbg=NONE 
+hi link IncSearch LineNr
 hi! link StatusLineNC VertSplit
 hi! link StatusLine LineNr
 hi! link WinSeparator LineNr
@@ -246,6 +248,8 @@ hi! link QuickFixLine Visual
 hi! link qfError Number 
 hi! link qfFilename Conditional
 highlight Visual ctermfg=NONE guifg=NONE
+highlight Search ctermfg=6 ctermbg=8
+highlight CurSearch ctermfg=5 ctermbg=8
 
 
 autocmd FileType javascript setlocal shiftwidth=2 expandtab
