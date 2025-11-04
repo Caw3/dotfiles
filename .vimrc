@@ -74,7 +74,7 @@ endfunction
 
 function! FindGitFiles(cmdarg, cmdcomplete)
     let l:fnames = systemlist('git ls-files')
-    return l:fnamess->filter('v:val =~? a:cmdarg')
+    return l:fnames->filter('v:val =~? a:cmdarg')
 endfunc
 set findfunc=FindGitFiles
 
