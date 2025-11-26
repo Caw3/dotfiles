@@ -42,8 +42,10 @@ nnoremap <silent> <Leader>* :Grep <C-R><C-W><CR>
 nnoremap <Leader>/ :Grep 
 nnoremap n nzzzv
 nnoremap N Nzzzv
-nnoremap <Leader>s :%s/
-vnoremap <Leader>s :s/
+nnoremap <Leader>s :%s//g<Left><Left>
+vnoremap <Leader>s :s//g<Left><Left>
+xnoremap * "vy/\V<C-r>=escape(@v,'/\')<CR>
+xnoremap <Leader>* "vy:Grep <C-r>=escape(@v,'/\ ')<CR><CR>
 nnoremap <Leader>ff :find **/*
 nnoremap <Leader>fe :edit **/*
 nnoremap <Leader>tt :tag 
@@ -139,6 +141,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     endif
     Plug 'romainl/vim-cool'
     Plug 'romainl/vim-qf'
+    Plug 'romainl/vim-devdocs'
     call plug#end()
 
     "Vim Cool
@@ -184,7 +187,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     \   'cpp': ['cc'],
     \   'haskell': ['hls'],
     \   'go': ['gopls'],
-    \   'sh': ['shellcheck']
+    \   'sh': ['shellcheck'],
+    \   'terraform': ['terraform_ls']
     \}
 
     let g:ale_fixers = {
