@@ -47,6 +47,7 @@ vnoremap <Leader>s :s//g<Left><Left>
 xnoremap * "vy/\V<C-r>=escape(@v,'/\')<CR>
 xnoremap <Leader>* "vy:Grep -F <C-r>=shellescape(@v)<CR><CR>
 nnoremap <Leader>ff :find **/*
+nnoremap <Leader>fq :Findqf 
 nnoremap <Leader>fe :edit **/*
 nnoremap <Leader>tt :tag 
 
@@ -78,7 +79,9 @@ function! FindGitFiles(cmdarg, cmdcomplete)
     let l:fnames = systemlist('git ls-files')
     return l:fnames->filter('v:val =~? a:cmdarg')
 endfunc
-set findfunc=FindGitFiles
+if system('git rev-parse --is-inside-work-tree') ==# "true\n" 
+    set findfunc=FindGitFiles
+endif
 
 if executable('rg')
     set grepprg=rg\ --vimgrep\ --hidden\ --iglob=!.git/*
@@ -100,6 +103,19 @@ else
     endfunction
 endif
 
+
+function! FdSetQuickfix(...) abort
+    let fdresults = systemlist("fd -t f --hidden " .. join(a:000, " "))
+    if v:shell_error
+        echoerr "Fd error: " .. fdresults[0]
+        return
+    endif
+    call setqflist(map(fdresults, {_, val -> 
+        \{'filename': val, 'lnum': 1, 'text': val}}))
+    copen
+endfunction
+
+command! -nargs=+ -complete=file_in_path Findqf call FdSetQuickfix(<f-args>)
 command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
 command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
 
