@@ -45,7 +45,7 @@ nnoremap N Nzzzv
 nnoremap <Leader>s :%s//g<Left><Left>
 vnoremap <Leader>s :s//g<Left><Left>
 xnoremap * "vy/\V<C-r>=escape(@v,'/\')<CR>
-xnoremap <Leader>* "vy:Grep <C-r>=escape(@v,'/\ ')<CR><CR>
+xnoremap <Leader>* "vy:Grep -F <C-r>=shellescape(@v)<CR><CR>
 nnoremap <Leader>ff :find **/*
 nnoremap <Leader>fe :edit **/*
 nnoremap <Leader>tt :tag 
@@ -84,7 +84,7 @@ if executable('rg')
     set grepprg=rg\ --vimgrep\ --hidden\ --iglob=!.git/*
     function! Grep(...)
 	let l:args = map(copy(a:000), 'expand(v:val)')
-	let l:command = &grepprg . ' ' . join(map(l:args, 'shellescape(v:val)'), ' ')
+	let l:command = &grepprg . ' ' . join(l:args, ' ')
 	return system(l:command)
     endfunction
 else
