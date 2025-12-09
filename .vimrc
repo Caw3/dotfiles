@@ -81,20 +81,25 @@ endfunc
 set findfunc=FindGitFiles
 
 if executable('rg')
-	set grepprg=rg\ --vimgrep\ -uu
-    else
-	set grepprg=grep\ -Hin
-endif
+    set grepprg=rg\ --vimgrep\ -uu
+    function! Grep(...)
+	let l:args = map(copy(a:000), 'expand(v:val)')
+	let l:command = &grepprg . ' ' . join(map(l:args, 'shellescape(v:val)'), ' ')
+	return system(l:command)
+    endfunction
 
-function! Grep(pattern, ...)
+else
+    set grepprg=grep\ -Hin
+    function! Grep(pattern, ...)
 	let l:files = a:000
 	if a:0 == 0 && system('git rev-parse --is-inside-work-tree') ==# "true\n" 
-		let l:files = systemlist('git ls-files')
+	    let l:files = systemlist('git ls-files')
 	endif
 	let l:files = map(l:files, 'shellescape(v:val)')
 	let l:command = join([&grepprg, shellescape(a:pattern)] + l:files, ' ')
 	return system(l:command)
-endfunction
+    endfunction
+endif
 
 command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
 command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
