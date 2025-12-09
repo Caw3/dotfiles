@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+#glab repo view --output json | jq '.namespace.parent_id'
+open "https://gitlab.com/search?group_id=15918516&scope=blobs&search=$1"
