@@ -112,10 +112,11 @@ augroup END
 
 if has('timers') && ! exists("g:CheckUpdateStarted")
     let g:CheckUpdateStarted=1
-    call timer_start(1,'CheckUpdate')
+    call timer_start(&g:updatetime,'CheckUpdate')
 endif
 function! CheckUpdate(timer)
     silent! checktime
+    silent! GitGutterAll
     call timer_start(&g:updatetime,'CheckUpdate')
 endfunction
 
@@ -148,11 +149,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'Caw3/ale', { 'on' : ['ALEToggle', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch', 'ALEFix'] }
     Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
-    if has('patch-8.0.902')
-	Plug 'mhinz/vim-signify'
-    else
-	Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
-    endif
+    Plug 'airblade/vim-gitgutter'
     Plug 'romainl/vim-cool'
     Plug 'romainl/vim-qf'
     Plug 'romainl/vim-devdocs'
@@ -241,17 +238,18 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     nnoremap dgh :diffget //2<CR>
     nnoremap dgl :diffget //3<CR>
 
-    "Signify
-    let g:signify_sign_change = "│"
-    let g:signify_sign_add = "│"
-    let g:signify_sign_delete = "│"
-    nnoremap <Leader>ghp <cmd>SignifyHunkDiff<CR>
-    nnoremap <Leader>ghu <cmd>SignifyHunkUndo<CR>
-    nnoremap <Leader>ght <cmd>SignifyToggle<CR>
-    omap ih <plug>(signify-motion-inner-pending)
-    xmap ih <plug>(signify-motion-inner-visual)
-    omap ah <plug>(signify-motion-outer-pending)
-    xmap ah <plug>(signify-motion-outer-visual)
+    let g:gitgutter_show_msg_on_hunk_jumping = 1
+    nmap <Leader>ghs <Plug>(GitGutterStageHunk)
+    nmap <Leader>ghu <Plug>(GitGutterUndoHunk)
+    nmap <Leader>ghp <Plug>(GitGutterPreviewHunk)
+    nmap <Leader>ght :GitGutterToggle<CR>
+    omap ih <Plug>(GitGutterTextObjectInnerPending)
+    omap ah <Plug>(GitGutterTextObjectOuterPending)
+    xmap ih <Plug>(GitGutterTextObjectInnerVisual)
+    xmap ah <Plug>(GitGutterTextObjectOuterVisual)
+    let g:gitgutter_sign_added = '│'
+    let g:gitgutter_sign_modified = '│'
+    let g:gitgutter_sign_removed = '│'
 
 endif
 
