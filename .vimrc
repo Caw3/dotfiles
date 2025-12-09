@@ -81,13 +81,12 @@ endfunc
 set findfunc=FindGitFiles
 
 if executable('rg')
-    set grepprg=rg\ --vimgrep\ -uu
+    set grepprg=rg\ --vimgrep\ --hidden\ --iglob=!.git/*
     function! Grep(...)
 	let l:args = map(copy(a:000), 'expand(v:val)')
 	let l:command = &grepprg . ' ' . join(map(l:args, 'shellescape(v:val)'), ' ')
 	return system(l:command)
     endfunction
-
 else
     set grepprg=grep\ -Hin
     function! Grep(pattern, ...)
