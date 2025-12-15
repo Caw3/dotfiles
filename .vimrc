@@ -132,7 +132,7 @@ if has('timers') && ! exists("g:CheckUpdateStarted")
 endif
 function! CheckUpdate(timer)
     silent! checktime
-    if (g:gitgutter_enabled)
+    if (exists("g:gitgutter_enabled"))
 	silent! GitGutterAll
     endif
     call timer_start(&g:updatetime,'CheckUpdate')
