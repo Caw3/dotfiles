@@ -20,18 +20,18 @@ set noswapfile
 set nobackup writebackup
 set nocompatible
 set backspace=indent,eol,start
-set updatetime=100
+set updatetime=200
 set completeopt=fuzzy,menuone,popup
 set pumheight=40
 
 set wildignore=*.o,node_modules/**,dist/**,build/**
 set path=src/,apps/,libs/,test/,e2e/,cmd/,utils/
 
-if !isdirectory("/var/tmp/vim/undo")
+if !isdirectory("/var/tmp/vim/undo") && !has('nvim')
     call mkdir("/var/tmp/vim/undo", "p", 0700)
+    set undodir=/var/tmp/vim/undo
+    set undofile
 endif
-set undodir=/var/tmp/vim/undo
-set undofile
 
 "Keymaps
 map <Space> <Leader>
@@ -130,10 +130,14 @@ if has('timers') && ! exists("g:CheckUpdateStarted")
     let g:CheckUpdateStarted=1
     call timer_start(&g:updatetime,'CheckUpdate')
 endif
+
+let g:gitgutter_running = 0
 function! CheckUpdate(timer)
     silent! checktime
-    if (exists("g:gitgutter_enabled"))
+    if (exists("g:gitgutter_enabled") && !g:gitgutter_running)
+	let g:gitgutter_running = 1
 	silent! GitGutterAll
+	let g:gitgutter_running = 0
     endif
     call timer_start(&g:updatetime,'CheckUpdate')
 endfunction
