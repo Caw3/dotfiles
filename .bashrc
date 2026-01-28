@@ -42,7 +42,9 @@ vimgrep() {
   else
     GREP_CMD=(grep -Hin "$PATTERN" "${FILES[@]}")
   fi
-  "$EDITOR" -q <("${GREP_CMD[@]}")
+  tmpfile=$(mktemp)
+  ${GREP_CMD[@]} > $tmpfile
+  "$EDITOR" -q $tmpfile
 }
 export -f vimgrep
 
@@ -70,12 +72,12 @@ shopt -s checkwinsize
 set -o vi
 
 ## Exports
-export EDITOR='vim'
+export EDITOR='nvim'
 export HISTSIZE=10000
 export HISTFILESIZE=20000
 export HISTCONTROL=ignoreredups:erasedups
 export MANROFFOPT="-c"
-export MANPAGER="vim -M +MANPAGER - "
+export MANPAGER="nvim +Man!"
 
 ## Aliases
 alias vi="$EDITOR"

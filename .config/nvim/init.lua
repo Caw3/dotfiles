@@ -307,18 +307,14 @@ require("lazy").setup({
 			-- Helper to ensure LSP is running before calling LSP function
 			local function with_lsp(fn)
 				return function()
-					local clients = vim.lsp.get_clients({ bufnr = 0 })
+					local bufnr = vim.api.nvim_get_current_buf()
+					local clients = vim.lsp.get_clients({ bufnr = bufnr })
 					if #clients == 0 then
 						vim.cmd("LspStart")
-						-- Wait for LSP to attach, then run function
-						vim.notify("Starting LSP...", vim.log.levels.INFO)
 						vim.api.nvim_create_autocmd("LspAttach", {
-							buffer = 0,
+							buffer = bufnr,
 							once = true,
-							callback = function()
-								handle:finish()
-								vim.schedule(fn)
-							end,
+							callback = vim.schedule_wrap(fn),
 						})
 					else
 						fn()
@@ -344,26 +340,20 @@ require("lazy").setup({
 			})
 
 			-- Global LSP keymaps (will start LSP if needed)
-			local lsp_enabled = true
+			local lsp_enabled = false
 			local function toggle_all_lsps()
-				local fidget = require("fidget")
 				if lsp_enabled then
 					for _, client in pairs(vim.lsp.get_clients()) do
 						client.stop()
 					end
-					fidget.notify("All LSPs stopped", vim.log.levels.INFO)
+					vim.notify("All LSPs stopped", vim.log.levels.INFO)
 				else
-					local handle = fidget.progress.handle.create({
-						title = "LSP",
-						message = "Restarting...",
-						lsp_client = { name = "lsp" },
-					})
-					vim.cmd("edit")
+					vim.cmd("LspStart")
 					vim.api.nvim_create_autocmd("LspAttach", {
 						buffer = 0,
 						once = true,
 						callback = function()
-							handle:finish()
+							vim.notify("LSP started", vim.log.levels.INFO)
 						end,
 					})
 				end
