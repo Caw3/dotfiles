@@ -25,8 +25,7 @@ help:
 		| sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install: init vim ansible git ripgrep htop fzf wget curl rsync podman podman-compose jq scripts ## Basic install
-init: bash tmux vim ## Lightweight configuration (bash, vim, tmux)
+install: init neovim ansible git ripgrep htop fzf wget curl rsync podman podman-compose jq scripts ## Basic install
 
 bash: ## Init bash
 	$(LN)/.bashrc
@@ -40,6 +39,10 @@ vim: ## Init vim
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 	$(LN)/.vimrc
 
+neovim: ## Init neovim
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+	mkdir -p ${HOME}/.config/init.lua
+	$(LN)/.config/nvim/init.lua
 jq: 
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
