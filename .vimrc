@@ -20,7 +20,7 @@ set noswapfile
 set nobackup writebackup
 set nocompatible
 set backspace=indent,eol,start
-set updatetime=200
+set updatetime=100
 set completeopt=fuzzy,menuone,popup
 set pumheight=40
 
@@ -131,17 +131,10 @@ if has('timers') && ! exists("g:CheckUpdateStarted")
     call timer_start(&g:updatetime,'CheckUpdate')
 endif
 
-let g:gitgutter_running = 0
 function! CheckUpdate(timer)
     silent! checktime
-    if (exists("g:gitgutter_enabled") && !g:gitgutter_running)
-	let g:gitgutter_running = 1
-	silent! GitGutterAll
-	let g:gitgutter_running = 0
-    endif
     call timer_start(&g:updatetime,'CheckUpdate')
 endfunction
-
 
 silent! packadd cfilter
 silent! packadd termdebug
@@ -259,6 +252,13 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     nnoremap <Leader>gV :Gvdiffsplit!<CR>
     nnoremap dgh :diffget //2<CR>
     nnoremap dgl :diffget //3<CR>
+
+    augroup GitWatch
+	autocmd!
+	autocmd FileChangedShellPost * silent! GitGutterAll
+	autocmd User FugitiveChanged silent! GitGutterAll
+	autocmd FocusGained,BufEnter * silent! checktime
+    augroup END
 
     let g:gitgutter_show_msg_on_hunk_jumping = 1
     nmap <Leader>ghs <Plug>(GitGutterStageHunk)
