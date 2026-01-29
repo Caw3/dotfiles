@@ -388,9 +388,7 @@ require("lazy").setup({
 				require("telescope.builtin").lsp_implementations()
 			end))
 			vim.keymap.set("n", "<leader>gi", with_lsp(vim.lsp.buf.implementation))
-			vim.keymap.set("n", "<leader>gt", with_lsp(function()
-				require("telescope.builtin").lsp_type_definitions()
-			end))
+			vim.keymap.set("n", "<leader>gt", with_lsp(vim.lsp.buf.type_definition))
 			vim.keymap.set("n", "<leader>@", with_lsp(function()
 				require("telescope.builtin").lsp_document_symbols()
 			end))
@@ -472,6 +470,7 @@ require("lazy").setup({
 			vim.lsp.config("rust_analyzer", {})
 			vim.lsp.config("terraformls", {})
 			vim.lsp.config("bashls", {})
+			vim.lsp.config("jdtls", {})
 		end,
 	},
 	{
@@ -500,7 +499,8 @@ require("lazy").setup({
 			"nvim-treesitter/nvim-treesitter-textobjects",
 		},
 		main = "nvim-treesitter.configs",
-		config = function()
+		config = function(_, opts)
+			require("nvim-treesitter.configs").setup(opts)
 			vim.keymap.set("n", "<leader>ts", function()
 				if vim.b.ts_highlight then
 					vim.treesitter.stop()
@@ -533,8 +533,11 @@ require("lazy").setup({
 			},
 			auto_install = false,
 			highlight = { enable = true },
+			incremental_selection = {
+				enable = true,
+			},
 			disable = function(_lang, buf)
-				local max_filesize = 100 * 1024 -- 100 KB
+				local max_filesize = 1000 * 1000 * 1024 -- 1 MB
 				local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
 				if ok and stats and stats.size > max_filesize then
 					return true
@@ -556,40 +559,61 @@ require("lazy").setup({
 						["ii"] = "@conditional.inner",
 						["al"] = "@loop.outer",
 						["il"] = "@loop.inner",
+						["ao"] = "@call.outer",
+						["io"] = "@call.inner",
+						["a/"] = "@comment.outer",
+						["i/"] = "@comment.inner",
 					},
 				},
 				move = {
 					enable = true,
 					set_jumps = true,
 					goto_next_start = {
-						["]f"] = "@function.outer",
-						["]c"] = "@class.outer",
-						["]a"] = "@parameter.inner",
+						["]gf"] = "@function.outer",
+						["]gc"] = "@class.outer",
+						["]ga"] = "@parameter.inner",
+						["]gi"] = "@conditional.outer",
+						["]go"] = "@call.outer",
+						["]gl"] = "@loop.outer",
+						["]g/"] = "@comment.outer",
 					},
 					goto_next_end = {
-						["]F"] = "@function.outer",
-						["]C"] = "@class.outer",
+						["]gF"] = "@function.outer",
+						["]gC"] = "@class.outer",
+						["]gA"] = "@parameter.inner",
+						["]gI"] = "@conditional.outer",
+						["]gL"] = "@loop.outer",
+						["]gO"] = "@call.outer",
+						["]g?"] = "@comment.outer",
 					},
 					goto_previous_start = {
-						["[f"] = "@function.outer",
-						["[c"] = "@class.outer",
-						["[a"] = "@parameter.inner",
+						["[gf"] = "@function.outer",
+						["[gc"] = "@class.outer",
+						["[ga"] = "@parameter.inner",
+						["[gi"] = "@conditional.outer",
+						["[gl"] = "@loop.outer",
+						["[go"] = "@call.outer",
+						["[g/"] = "@comment.outer",
 					},
 					goto_previous_end = {
-						["[F"] = "@function.outer",
-						["[C"] = "@class.outer",
+						["[gF"] = "@function.outer",
+						["[gC"] = "@class.outer",
+						["[gA"] = "@parameter.inner",
+						["[gI"] = "@conditional.outer",
+						["[gL"] = "@loop.outer",
+						["[gO"] = "@call.outer",
+						["[g?"] = "@comment.outer",
 					},
 				},
 				swap = {
 					enable = true,
 					swap_next = {
-						["gs"] = "@parameter.inner",
+						["gsa"] = "@parameter.inner",
 					},
 					swap_previous = {
-						["gS"] = "@parameter.inner",
+						["gsA"] = "@parameter.inner",
 					},
 				},
-				
 			},
 		},
 	},
