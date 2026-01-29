@@ -535,6 +535,12 @@ require("lazy").setup({
 			highlight = { enable = true },
 			incremental_selection = {
 				enable = true,
+				keymaps = {
+					init_selection = "gnn",
+					node_incremental = "grn",
+					scope_incremental = "grc",
+					node_decremental = "grm",
+				},
 			},
 			disable = function(_lang, buf)
 				local max_filesize = 1000 * 1000 * 1024 -- 1 MB
