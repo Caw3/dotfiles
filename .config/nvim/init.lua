@@ -171,6 +171,7 @@ require("lazy").setup({
 			vim.g.cool_total_matches = 1
 		end,
 	},
+	'shumphrey/fugitive-gitlab.vim',
 	{
 		"tpope/vim-fugitive",
 		config = function()
