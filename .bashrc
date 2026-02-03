@@ -54,6 +54,17 @@ cht() {
 }
 export -f cht
 
+vifzf() {
+  if command -v fd >/dev/null 2>&1; then
+    FD_CMD=(fd)
+  else
+    FD_CMD=(find)
+  fi
+  "${FD_CMD[@]}" | fzf --multi --bind="enter:become($EDITOR {})" --preview='cat {}'
+}
+export -f vifzf
+
+
 ## Prompt
 export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] '
 export PROMPT_COMMAND='history -a'
