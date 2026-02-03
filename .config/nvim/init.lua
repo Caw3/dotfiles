@@ -101,11 +101,11 @@ vim.api.nvim_create_user_command("Findqf", function(opts)
 end, { nargs = "+", complete = "file_in_path" })
 
 
-local function find_git_files(cmdarg, _cmdcomplete)
-	local fnames = vim.fn.systemlist("git ls-files")
-	return vim.tbl_filter(function(v)
-		return v:lower():find(cmdarg:lower())
-	end, fnames)
+local function find_git_files(cmdarg, _)
+  local fnames = vim.fn.systemlist("git ls-files")
+  return vim.tbl_filter(function(v)
+    return vim.fn.match(v, cmdarg) ~= -1
+  end, fnames)
 end
 
 if vim.fn.system("git rev-parse --is-inside-work-tree"):match("^true") then
