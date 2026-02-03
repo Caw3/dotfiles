@@ -213,7 +213,7 @@ require("lazy").setup({
 			local hl = vim.api.nvim_set_hl
 			hl(0, "VertSplit", { link = "LineNr" })
 			hl(0, "WinSeparator", { link = "LineNr" })
-			hl(0, "IncSearch", { link = "LineNr" })
+			hl(0, "IncSearch", { link = "Search" })
 			hl(0, "StatusLineNC", { link = "LineNr" })
 			hl(0, "StatusLine", { link = "LineNr" })
 			hl(0, "StatusLineTermNC", { link = "LineNr" })
