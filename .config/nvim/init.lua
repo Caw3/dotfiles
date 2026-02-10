@@ -102,10 +102,10 @@ end, { nargs = "+", complete = "file_in_path" })
 
 
 local function find_git_files(cmdarg, _)
-  local fnames = vim.fn.systemlist("git ls-files")
-  return vim.tbl_filter(function(v)
-    return vim.fn.match(v, cmdarg) ~= -1
-  end, fnames)
+	local fnames = vim.fn.systemlist("git ls-files")
+	return vim.tbl_filter(function(v)
+		return vim.fn.match(v, cmdarg) ~= -1
+	end, fnames)
 end
 
 if vim.fn.system("git rev-parse --is-inside-work-tree"):match("^true") then
@@ -160,6 +160,9 @@ require("lazy").setup({
 		end,
 	},
 	"tpope/vim-surround",
+	"tpope/vim-dotenv",
+	"tpope/vim-dadbod",
+	{ 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
 	"romainl/vim-qf",
 	{
 		"github/copilot.vim", cmd = "Copilot",
@@ -253,44 +256,6 @@ require("lazy").setup({
 		end,
 	},
 	{
-		"nvim-telescope/telescope.nvim",
-		branch = "0.1.x",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-		},
-		config = function()
-			require("telescope").setup({
-				defaults = {
-					layout_strategy = "vertical",
-					layout_config = {
-						vertical = { mirror = true, prompt_position = 'top', width = 120, preview_cutoff = 60, height = 40 }
-					},
-					mappings = {
-						i = {
-							['<c-enter>'] = 'to_fuzzy_refine',
-							["<C-q>"] = require("telescope.actions").smart_send_to_qflist +
-							    require("telescope.actions").open_qflist
-						}
-					}
-				},
-			})
-			local builtin = require("telescope.builtin")
-			vim.keymap.set("n", "<leader>fg", builtin.live_grep)
-			vim.keymap.set("n", "<leader>fs", builtin.find_files)
-			vim.keymap.set("n", "<leader>ft", builtin.tags)
-			vim.keymap.set("n", "<leader>fp", function()
-				builtin.git_files({
-					previewer = false,
-					layout_config = {
-						vertical = { height = 20 }
-					}
-
-				})
-			end)
-			vim.keymap.set("n", "<leader>fr", builtin.registers)
-		end,
-	},
-	{
 		"folke/lazydev.nvim",
 		ft = "lua",
 		opts = {
@@ -369,21 +334,15 @@ require("lazy").setup({
 			vim.keymap.set("n", "[e", vim.diagnostic.goto_prev, { noremap = true, silent = true })
 			vim.keymap.set("n", "gh", vim.diagnostic.open_float)
 
-			vim.keymap.set("i", "<c-h>", with_lsp(function()
+			vim.keymap.set("i", "<c-s>", with_lsp(function()
 				vim.lsp.buf.signature_help({ focusable = true, max_width = 80, border = border })
 			end))
 
 			vim.keymap.set("n", "<C-]>", function()
-				local ok = pcall(vim.cmd, "tag " .. vim.fn.expand("<cword>"))
-				if not ok then
-					with_lsp(vim.lsp.buf.definition)()
-				end
+				with_lsp(vim.lsp.buf.definition)()
 			end, { desc = "Tag or LSP definition" })
 			vim.keymap.set("n", "<leader>gD", with_lsp(vim.lsp.buf.declaration))
 			vim.keymap.set("n", "<leader>gd", with_lsp(vim.lsp.buf.definition))
-			vim.keymap.set("n", "<leader>gR", with_lsp(function()
-				require("telescope.builtin").lsp_references()
-			end))
 			vim.keymap.set("n", "<leader>gr", with_lsp(vim.lsp.buf.references))
 			vim.keymap.set("n", "<leader>gI", with_lsp(function()
 				require("telescope.builtin").lsp_implementations()
@@ -391,14 +350,14 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>gi", with_lsp(vim.lsp.buf.implementation))
 			vim.keymap.set("n", "<leader>gt", with_lsp(vim.lsp.buf.type_definition))
 			vim.keymap.set("n", "<leader>@", with_lsp(function()
-				require("telescope.builtin").lsp_document_symbols()
+				vim.lsp.buf.document_symbol()
 			end))
 			vim.keymap.set("n", "<leader>#", with_lsp(function()
 				local query = vim.fn.input("#")
 				if query == "" then
 					return
 				end
-				require("telescope.builtin").lsp_workspace_symbols({ query = query })
+				vim.lsp.buf.workspace_symbol(query)
 			end))
 			vim.keymap.set("n", "<leader>rn", with_lsp(vim.lsp.buf.rename))
 			vim.keymap.set({ "n", "x" }, "<leader>ca", with_lsp(vim.lsp.buf.code_action))
@@ -419,7 +378,7 @@ require("lazy").setup({
 						end
 						local path = vim.uri_to_fname(uri)
 						vim.cmd("pedit +" ..
-						range.start.line + 1 .. " " .. vim.fn.fnameescape(path))
+							range.start.line + 1 .. " " .. vim.fn.fnameescape(path))
 					end)
 			end))
 
@@ -429,19 +388,6 @@ require("lazy").setup({
 				callback = function(event)
 					vim.lsp.completion.enable(true, event.data.client_id, event.buf,
 						{ autotrigger = false })
-
-					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					if client and client.server_capabilities.semanticTokensProvider then
-						client.server_capabilities.semanticTokensProvider = nil
-					end
-					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-						client.server_capabilities.inlayHintProvider = nil
-					end
-					if client and client.supports_method(vim.lsp.protocol.Methods.workspaceSymbol_resolve) then
-						vim.keymap.set("n", "<leader>#",
-							require("telescope.builtin").lsp_dynamic_workspace_symbols,
-							{ buffer = event.buf })
-					end
 				end,
 			})
 
@@ -472,6 +418,7 @@ require("lazy").setup({
 			vim.lsp.config("terraformls", {})
 			vim.lsp.config("bashls", {})
 			vim.lsp.config("jdtls", {})
+			vim.lsp.config("postgres_lsp", {})
 		end,
 	},
 	{
@@ -490,137 +437,6 @@ require("lazy").setup({
 			notify_on_error = false,
 			formatters_by_ft = {
 				lua = { "stylua" },
-			},
-		},
-	},
-	{ -- Highlight, edit, and navigate code
-		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter-textobjects",
-		},
-		main = "nvim-treesitter.configs",
-		config = function(_, opts)
-			require("nvim-treesitter.configs").setup(opts)
-			vim.keymap.set("n", "<leader>ts", function()
-				if vim.b.ts_highlight then
-					vim.treesitter.stop()
-					vim.notify("Treesitter disabled", vim.log.levels.INFO)
-				else
-					vim.treesitter.start()
-					vim.notify("Treesitter enabled", vim.log.levels.INFO)
-				end
-			end, { desc = "Toggle treesitter" })
-		end,
-		opts = {
-			ensure_installed = {
-				"bash",
-				"c",
-				"diff",
-				"html",
-				"lua",
-				"luadoc",
-				"markdown",
-				"typescript",
-				"css",
-				"javascript",
-				"go",
-				"java",
-				"rust",
-				"sql",
-				"yaml",
-				"json",
-				"tsx",
-			},
-			auto_install = false,
-			highlight = { enable = true },
-			incremental_selection = {
-				enable = true,
-				keymaps = {
-					init_selection = "gnn",
-					node_incremental = "grn",
-					scope_incremental = "grc",
-					node_decremental = "grm",
-				},
-			},
-			disable = function(_lang, buf)
-				local max_filesize = 1000 * 1000 * 1024 -- 1 MB
-				local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-				if ok and stats and stats.size > max_filesize then
-					return true
-				end
-			end,
-			indent = { enable = true },
-			textobjects = {
-				select = {
-					enable = true,
-					lookahead = true,
-					keymaps = {
-						["af"] = "@function.outer",
-						["if"] = "@function.inner",
-						["ac"] = "@class.outer",
-						["ic"] = "@class.inner",
-						["aa"] = "@parameter.outer",
-						["ia"] = "@parameter.inner",
-						["ai"] = "@conditional.outer",
-						["ii"] = "@conditional.inner",
-						["al"] = "@loop.outer",
-						["il"] = "@loop.inner",
-						["ao"] = "@call.outer",
-						["io"] = "@call.inner",
-						["a/"] = "@comment.outer",
-						["i/"] = "@comment.inner",
-					},
-				},
-				move = {
-					enable = true,
-					set_jumps = true,
-					goto_next_start = {
-						["]gf"] = "@function.outer",
-						["]gc"] = "@class.outer",
-						["]ga"] = "@parameter.inner",
-						["]gi"] = "@conditional.outer",
-						["]go"] = "@call.outer",
-						["]gl"] = "@loop.outer",
-						["]g/"] = "@comment.outer",
-					},
-					goto_next_end = {
-						["]gF"] = "@function.outer",
-						["]gC"] = "@class.outer",
-						["]gA"] = "@parameter.inner",
-						["]gI"] = "@conditional.outer",
-						["]gL"] = "@loop.outer",
-						["]gO"] = "@call.outer",
-						["]g?"] = "@comment.outer",
-					},
-					goto_previous_start = {
-						["[gf"] = "@function.outer",
-						["[gc"] = "@class.outer",
-						["[ga"] = "@parameter.inner",
-						["[gi"] = "@conditional.outer",
-						["[gl"] = "@loop.outer",
-						["[go"] = "@call.outer",
-						["[g/"] = "@comment.outer",
-					},
-					goto_previous_end = {
-						["[gF"] = "@function.outer",
-						["[gC"] = "@class.outer",
-						["[gA"] = "@parameter.inner",
-						["[gI"] = "@conditional.outer",
-						["[gL"] = "@loop.outer",
-						["[gO"] = "@call.outer",
-						["[g?"] = "@comment.outer",
-					},
-				},
-				swap = {
-					enable = true,
-					swap_next = {
-						["gsa"] = "@parameter.inner",
-					},
-					swap_previous = {
-						["gsA"] = "@parameter.inner",
-					},
-				},
 			},
 		},
 	},
