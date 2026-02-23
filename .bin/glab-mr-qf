@@ -5,11 +5,8 @@
 MR=$(glab mr view --output json | jq .iid);
 [[ -z "$MR" ]] && return 1
 
-JSON=$(glab api "projects/:fullpath/merge_requests/$MR/discussions")
+JSON=$(glab api "projects/:fullpath/merge_requests/$MR/notes")
 jq_filter='
-  [.[].notes] |
-    flatten |
-    map(select(.type)) |
     map(select(.resolved == false)) |
     map(select(.position)) |
     .[] |
@@ -17,4 +14,6 @@ jq_filter='
 ' 
 
 cd $(git rev-parse --show-toplevel)
-vim -q <(echo "$JSON" | jq "$jq_filter" | tr -d \")
+tmp_file=$(mktemp)
+echo "$JSON" | jq "$jq_filter" | tr -d \" > $tmp_file
+$EDITOR -q $tmp_file
