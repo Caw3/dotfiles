@@ -279,9 +279,11 @@ endif
 set fillchars=vert:\│,stl:\―,stlnc:\―
 set laststatus=0
 silent! colorscheme nord
+set background=dark
 hi VertSplit ctermbg=NONE 
 hi link IncSearch LineNr
 hi! link StatusLineNC VertSplit
+hi SignColumn ctermfg=NONE ctermbg=NONE
 hi! link StatusLine LineNr
 hi! link WinSeparator LineNr
 hi! link StatusLineTermNC VertSplit

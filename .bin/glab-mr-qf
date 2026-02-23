@@ -2,18 +2,34 @@
 # Opens vim quickfixlist with all unresolved discussions on the current
 # checkedout MR
 
+output_only=false
+while getopts "o" opt; do
+  case $opt in
+    o) output_only=true ;;
+    *) exit 1 ;;
+  esac
+done
+
 MR=$(glab mr view --output json | jq .iid);
 [[ -z "$MR" ]] && return 1
 
 JSON=$(glab api "projects/:fullpath/merge_requests/$MR/notes")
 jq_filter='
     map(select(.resolved == false)) |
-    map(select(.position)) |
     .[] |
-    .position.new_path + ":" + (.position.new_line | tostring) + ":0:" + .author.name + ": "+ .body
+    if .position then
+      .position.new_path + ":" + (.position.new_line | tostring) + ":0:" + .author.name + ": " + .body
+    else
+      ">> " + .author.name + ": " + .body
+    end
 ' 
 
 cd $(git rev-parse --show-toplevel)
 tmp_file=$(mktemp)
 echo "$JSON" | jq "$jq_filter" | tr -d \" > $tmp_file
-$EDITOR -q $tmp_file
+
+if $output_only; then
+  echo "$tmp_file"
+else
+  $EDITOR -q $tmp_file
+fi

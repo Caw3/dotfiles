@@ -45,7 +45,7 @@ vim.keymap.set("n", "<leader>s", ":%s//g<Left><Left>")
 vim.keymap.set("v", "<leader>s", ":s//g<Left><Left>")
 vim.keymap.set("x", "*", "\"vy/\\V<C-r>=escape(@v,'/\\')<CR><CR>")
 vim.keymap.set("n", "<leader>ff", ":find **/*")
-vim.keymap.set("n", "<leader>fq", ":Findqf ")
+vim.keymap.set("n", "<leader>fz", ":silent! args `git ls-files \\| fzf-tmux -p --multi` <CR>")
 vim.keymap.set("n", "<leader>fe", ":edit **/*")
 vim.keymap.set("n", "<leader>tt", ":tag ")
 
@@ -80,26 +80,6 @@ vim.api.nvim_create_user_command("Grep", function(opts)
 	vim.fn.setqflist({}, " ", { title = "Grep", lines = vim.split(grep(opts.args), "\n") })
 	vim.cmd("cwindow")
 end, { nargs = "+", complete = "file_in_path" })
-
-local function fd_set_quickfix(...)
-	local args = { ... }
-	local fdresults = vim.fn.systemlist("fd -t f --hidden " .. table.concat(args, " "))
-	if vim.v.shell_error ~= 0 then
-		vim.api.nvim_err_writeln("Fd error: " .. (fdresults[1] or "unknown error"))
-		return
-	end
-	local qflist = {}
-	for _, val in ipairs(fdresults) do
-		table.insert(qflist, { filename = val, lnum = 1, text = val })
-	end
-	vim.fn.setqflist(qflist)
-	vim.cmd("copen")
-end
-
-vim.api.nvim_create_user_command("Findqf", function(opts)
-	fd_set_quickfix(opts.args)
-end, { nargs = "+", complete = "file_in_path" })
-
 
 local function find_git_files(cmdarg, _)
 	local fnames = vim.fn.systemlist("git ls-files")
@@ -421,6 +401,34 @@ require("lazy").setup({
 			vim.lsp.config("postgres_lsp", {})
 		end,
 	},
+	{
+		"nvim-telescope/telescope.nvim",
+		branch = "0.1.x",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		config = function()
+			require("telescope").setup({
+				defaults = {
+					layout_strategy = "vertical",
+					layout_config = {
+						vertical = { mirror = true, prompt_position = 'top', width = 120, preview_cutoff = 60, height = 40 }
+					},
+					mappings = {
+						i = {
+							['<c-enter>'] = 'to_fuzzy_refine',
+							["<C-q>"] = require("telescope.actions").smart_send_to_qflist +
+							    require("telescope.actions").open_qflist
+						}
+					}
+				},
+			})
+			local builtin = require("telescope.builtin")
+			vim.keymap.set("n", "<leader>fg", builtin.live_grep)
+			vim.keymap.set("n", "<leader>fs", builtin.find_files)
+		end,
+	},
+
 	{
 		"stevearc/conform.nvim",
 		cmd = { "ConformInfo" },

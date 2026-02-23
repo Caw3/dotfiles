@@ -54,7 +54,7 @@ generate_with_openai() {
     -d "$(jq -nc \
         --arg model "$MODEL" \
         --arg prompt "$prompt" \
-        '{model: $model, messages: [{role: "user", content: $prompt}], temperature: 0.7}')")
+        '{model: $model, messages: [{role: "user", content: $prompt}], temperature: 0.1}')")
 
   if echo "$response" | jq -e '.error' >/dev/null; then
     echo "OpenAI API error:" >&2
@@ -133,7 +133,7 @@ if $DO_MR; then
   branch_name=$(git symbolic-ref --short HEAD)
   git_diff_summary=$(git log -1 --pretty=format:%B)
 
-  prompt="Generate a GitLab merge request title ,WITHOUT any formating and lower-case, the following commit:\n$git_diff_summary, you can use the following as inspiration $(glab mr list). If there is a format please respect it (i.e if there is a prefix shell: ... you should also include a prefix)"
+  prompt="Generate a GitLab merge request title: 1.WITHOUT any formating 2. You can include capital letters if they are part of a name such as a camelcase variable. Otherwise use only lowercase letters. 3 the following commit:\n$git_diff_summary, you can use the following as inspiration $(glab mr list). If there is a format please respect it (i.e if there is a prefix shell: ... you should also include a prefix)"
 
   mr_title=$(generate_with_openai "$prompt")
 
