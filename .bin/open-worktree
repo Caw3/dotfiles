@@ -9,6 +9,9 @@ cd "$REPO_ROOT"
 MAIN_BRANCH=$(git rev-parse --abbrev-ref main 2>/dev/null || echo "main")
 CURRENT_REF=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "$MAIN_BRANCH")
 
+# Canonical "primary" worktree path (usually the original checkout), used only for naming.
+PRIMARY_WORKTREE=$(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}' || echo "$REPO_ROOT")
+
 FZF_TMUX_OPTS="-d20 --reverse"
 FZF_PREVIEW_WINDOW="right:60%"
 
@@ -67,9 +70,9 @@ attach_or_create_tmux_session() {
   local path=$1
   local clean_session_name
   # If repo root then we switch to main session
-  if [[ "$path" == "$REPO_ROOT" ]]; then
+  if [[ "$path" == "$PRIMARY_WORKTREE" ]]; then
     local base
-    base=$(basename "$REPO_ROOT")
+    base=$(basename "$PRIMARY_WORKTREE")
     # remove dots
     clean_session_name="${base//./}"
   else
