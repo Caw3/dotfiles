@@ -17,7 +17,7 @@ FZF_PREVIEW_WINDOW="right:60%"
 
 FZF_KEY_SWITCH="enter"
 FZF_KEY_NEW_BRANCH="ctrl-b"
-FZF_KEY_MR="ctrl-g"
+FZF_KEY_MR="ctrl-r"
 FZF_KEY_DETACHED="ctrl-h"
 FZF_KEY_DELETE="ctrl-x"
 FZF_KEY_FETCH_BRANCHES="ctrl-f"

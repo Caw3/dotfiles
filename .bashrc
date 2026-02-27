@@ -109,6 +109,8 @@ alias gc='git checkout'
 alias ta="tmux a"
 alias tm="tmux"
 
+alias oc="opencode"
+
 ## FZF
 OPTIONS=" --preview='cat {}' --preview-window=hidden "
 BINDS="\
