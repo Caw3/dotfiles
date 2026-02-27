@@ -17,13 +17,13 @@ FZF_PREVIEW_WINDOW="right:60%"
 
 FZF_KEY_SWITCH="enter"
 FZF_KEY_NEW_BRANCH="ctrl-b"
+FZF_KEY_MR="ctrl-g"
 FZF_KEY_DETACHED="ctrl-h"
 FZF_KEY_DELETE="ctrl-x"
 FZF_KEY_FETCH_BRANCHES="ctrl-f"
 FZF_KEY_VIMDIFF="ctrl-v"
 FZF_KEY_GOBACK="esc"
 FZF_KEY_YOINK="ctrl-y"
-FZF_KEY_MR="ctrl-m"
 
 select_commit_with_fzf() {
   git log --oneline --decorate --graph --all \
@@ -68,11 +68,13 @@ select_mr_with_fzf() {
     | jq -r '.[] | [.iid, .author.username, .target_branch, .source_branch, .updated_at] | @tsv' \
     | column -t \
     | fzf \
-    --reverse
+    --reverse \
     --prompt "MR: " \
     --accept-nth=4 \
     --header "Select a merge request to create a worktree" \
+    --bind "${FZF_KEY_GOBACK}:become(open-worktree)" \
     --preview "glab mr view {1} --comments=false 2>/dev/null || echo 'glab mr view failed'" \
+    --footer "${FZF_KEY_GOBACK}: go back " \
     --preview-window="$FZF_PREVIEW_WINDOW"
   }
 
