@@ -17,6 +17,7 @@ FZF_KEY_NEW_BRANCH="ctrl-b"
 FZF_KEY_DETACHED="ctrl-d"
 FZF_KEY_DELETE="ctrl-x"
 FZF_KEY_CODE="ctrl-o"
+FZF_KEY_FETCH_BRANCHES="ctrl-f"
 FZF_KEY_GOBACK="esc"
 
 select_commit_with_fzf() {
@@ -48,7 +49,8 @@ select_branch_with_fzf() {
     git branch --format='%(refname:short)' | sort
   } | fzf $FZF_TMUX_OPTS \
     --bind "${FZF_KEY_GOBACK}:become(open-worktree)" \
-    --footer "${FZF_KEY_GOBACK}: go back | [create new branch]: make new" \
+    --bind "${FZF_KEY_FETCH_BRANCHES}:execute(git fetch --all --prune >/dev/null 2>&1)+reload(git branch --format='%(refname:short)' | sort)" \
+    --footer "${FZF_KEY_GOBACK}: go back | [create new branch]: make new | ${FZF_KEY_FETCH_BRANCHES}: fetch branches" \
     --prompt "branch: "
   }
 
