@@ -17,10 +17,11 @@ FZF_PREVIEW_WINDOW="right:60%"
 
 FZF_KEY_SWITCH="enter"
 FZF_KEY_NEW_BRANCH="ctrl-b"
-FZF_KEY_DETACHED="ctrl-d"
+FZF_KEY_DETACHED="ctrl-h"
 FZF_KEY_DELETE="ctrl-x"
 FZF_KEY_CODE="ctrl-o"
 FZF_KEY_FETCH_BRANCHES="ctrl-f"
+FZF_KEY_VIMDIFF="ctrl-v"
 FZF_KEY_GOBACK="esc"
 
 select_commit_with_fzf() {
@@ -29,7 +30,9 @@ select_commit_with_fzf() {
         --prompt "commit (detached): " \
         --header "Pick a commit to create a detached worktree" \
         --preview "git show --stat --color=always \$(echo {} | awk '{print \$2}')" \
-        --preview-window="$FZF_PREVIEW_WINDOW"
+        --preview-window="$FZF_PREVIEW_WINDOW"\
+        --bind "${FZF_KEY_GOBACK}:become(open-worktree)" \
+        --footer "${FZF_KEY_GOBACK}: go back"
 }
 
 select_worktree_with_fzf() {
@@ -37,13 +40,14 @@ select_worktree_with_fzf() {
   export REPO_ROOT MAIN_BRANCH
   echo "$worktree_lines" | fzf $FZF_TMUX_OPTS \
     --prompt "Select worktree: " \
-    --preview "git -C \"$REPO_ROOT\" diff \"$MAIN_BRANCH..\$(echo {} | awk '{print \$NF}' | tr -d '[]')\" 2>/dev/null || echo '(same as main)'" \
+    --preview "git -C \"$REPO_ROOT\" -c color.ui=always diff --color=always \"$CURRENT_REF..\$(echo {} | awk '{print \$NF}' | tr -d '[]')\" 2>/dev/null || echo '(same as $CURRENT_REF)'" \
     --preview-window="$FZF_PREVIEW_WINDOW" \
-    --bind "${FZF_KEY_CODE}:execute(code {1})+accept" \
+    --bind "${FZF_KEY_CODE}:execute(bash -lc 'path=\$(echo {} | awk \"{print \\$1}\"); code \"\$path\"')+accept" \
     --bind "${FZF_KEY_NEW_BRANCH}:execute(open-worktree --create)+abort" \
     --bind "${FZF_KEY_DETACHED}:execute(open-worktree --create-detached)+abort" \
-    --bind "${FZF_KEY_DELETE}:execute(OPEN_WORKTREE_DELETE_PATH={1} open-worktree --delete)+reload(git worktree list)" \
-    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_CODE}: code"
+    --bind "${FZF_KEY_DELETE}:execute(open-worktree --delete {})+reload(git worktree list)" \
+    --bind "${FZF_KEY_VIMDIFF}:execute(open-worktree --view-diff-files {})" \
+    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_CODE}: code | ${FZF_KEY_VIMDIFF}: vimdiff file list"
 }
 
 select_branch_with_fzf() {
@@ -145,10 +149,8 @@ create_detached_worktree() {
 
 delete_worktree() {
   local path
-  path="${OPEN_WORKTREE_DELETE_PATH:-}"
-  [[ -z "$path" ]] && path="${1:-}"
-
-  # In case we were passed the full `git worktree list` line, trim to first field (the path)
+  path="${1:-}"
+  # If we got a full `git worktree list` line, trim to just the path
   path=$(echo "$path" | awk '{print $1}')
 
   # Never delete the primary repo worktree
@@ -167,6 +169,31 @@ delete_worktree() {
   git worktree remove "$path"
 }
 
+view_diff_files_vimdiff() {
+  local line="$1"
+  local path commit file
+
+  # Extract just the worktree path from the full `git worktree list` line
+  path=$(echo "$line" | awk '{print $1}')
+
+  # Resolve the worktree's HEAD commit
+  commit=$(git -C "$path" rev-parse HEAD) || return 1
+
+  # List changed files between CURERNT_REF and this worktree's HEAD, pick one with fzf
+  file=$(
+    git -C "$REPO_ROOT" diff --name-only "$CURRENT_REF..$commit" \
+      | fzf $FZF_TMUX_OPTS \
+          --prompt "vimdiff file: " \
+          --preview "git -C \"$REPO_ROOT\" -c color.ui=always diff --color=always \"$CURRENT_REF..$commit\" -- {}" \
+          --preview-window="$FZF_PREVIEW_WINDOW"
+  )
+  [[ -z "$file" ]] && return 0
+
+  # Open the file in vimdiff: main/primary worktree vs selected worktree
+  nvim -d "$PRIMARY_WORKTREE/$file" "$path/$file"
+}
+
+
 if [[ "${1:-}" == "--create" ]]; then
   create_new_worktree
   exit 0
@@ -178,7 +205,14 @@ if [[ "${1:-}" == "--create-detached" ]]; then
 fi
 
 if [[ "${1:-}" == "--delete" ]]; then
-  delete_worktree
+  shift
+  delete_worktree "$@"
+  exit 0
+fi
+
+if [[ "${1:-}" == "--view-diff-files" ]]; then
+  shift
+  view_diff_files_vimdiff "$@"
   exit 0
 fi
 
