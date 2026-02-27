@@ -23,6 +23,7 @@ FZF_KEY_FETCH_BRANCHES="ctrl-f"
 FZF_KEY_VIMDIFF="ctrl-v"
 FZF_KEY_GOBACK="esc"
 FZF_KEY_YOINK="ctrl-y"
+FZF_KEY_MR="ctrl-m"
 
 select_commit_with_fzf() {
   git log --oneline --decorate --graph --all \
@@ -47,7 +48,8 @@ select_worktree_with_fzf() {
     --bind "${FZF_KEY_DELETE}:execute(open-worktree --delete {})+reload(git worktree list)" \
     --bind "${FZF_KEY_VIMDIFF}:execute(open-worktree --view-diff-files {})" \
     --bind "${FZF_KEY_YOINK}:execute(open-worktree --yoink {})+abort" \
-    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_VIMDIFF}: vimdiff file list | ${FZF_KEY_YOINK}: copy path"
+    --bind "${FZF_KEY_MR}:execute(open-worktree --mr-worktree)+abort" \
+    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_VIMDIFF}: vimdiff file list | ${FZF_KEY_YOINK}: copy path | ${FZF_KEY_MR}: MR worktree"
 }
 
 select_branch_with_fzf() {
@@ -59,6 +61,19 @@ select_branch_with_fzf() {
     --bind "${FZF_KEY_FETCH_BRANCHES}:execute(git fetch --all --prune >/dev/null 2>&1)+reload(git branch --format='%(refname:short)' | sort)" \
     --footer "${FZF_KEY_GOBACK}: go back | [create new branch]: make new | ${FZF_KEY_FETCH_BRANCHES}: fetch branches" \
     --prompt "branch: "
+  }
+
+select_mr_with_fzf() {
+  glab mr list --output json \
+    | jq -r '.[] | [.iid, .author.username, .target_branch, .source_branch, .updated_at] | @tsv' \
+    | column -t \
+    | fzf \
+    --reverse
+    --prompt "MR: " \
+    --accept-nth=4 \
+    --header "Select a merge request to create a worktree" \
+    --preview "glab mr view {1} --comments=false 2>/dev/null || echo 'glab mr view failed'" \
+    --preview-window="$FZF_PREVIEW_WINDOW"
   }
 
 worktree_to_session_name() {
@@ -239,6 +254,17 @@ fi
 if [[ "${1:-}" == "--yoink" ]]; then
   shift
   yoink_worktree_path "$@"
+  exit 0
+fi
+
+if [[ "${1:-}" == "--mr-worktree" ]]; then
+  git fetch --all --prune &
+  branch_selected=$(select_mr_with_fzf)
+
+  repo_basename=$(basename "$REPO_ROOT")
+  path="/tmp/mr/${repo_basename}/${branch_selected}"
+  git worktree add "$path" "$branch_selected"
+  attach_or_create_tmux_session "$path"
   exit 0
 fi
 
