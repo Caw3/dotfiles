@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# Manage git worktrees with fzf-tmux: list, switch (with tmux session), create new.
+# Run from inside a git repo. Uses fzf-tmux everywhere; preview shows diff from main.
+
+set -e
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "Not in a git repo." >&2; exit 1; }
+cd "$REPO_ROOT"
+MAIN_BRANCH=$(git rev-parse --abbrev-ref main 2>/dev/null || echo "main")
+CURRENT_REF=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "$MAIN_BRANCH")
+
+FZF_TMUX_OPTS="-d20 --reverse"
+
+select_worktree_with_fzf() {
+  local worktree_lines=$1
+  export REPO_ROOT MAIN_BRANCH
+  echo "$worktree_lines" | fzf $FZF_TMUX_OPTS \
+    --prompt "Select worktree: " \
+    --preview "git -C \"$REPO_ROOT\" diff \"$MAIN_BRANCH..\$(echo {} | awk '{print \$NF}' | tr -d '[]')\" 2>/dev/null || echo '(same as main)'" \
+    --preview-window=right:60% \
+    --bind 'ctrl-o:execute(code {1})+accept' \
+    --bind 'ctrl-space:execute(worktree-fzf --create)+abort' \
+    --footer "enter: switch | ctrl-space: new | ctrl-o: code"
+}
+
+select_branch_with_fzf() {
+  {
+    echo "[create new branch]"
+    git branch --format='%(refname:short)' | sort
+  } | fzf $FZF_TMUX_OPTS \
+        --footer "esc: go back | [create new branch]: make new" \
+        --prompt "branch: "
+}
+
+worktree_to_session_name() {
+  local path=$1
+  local repo_dir_base worktree session_name
+  repo_dir_base=$(basename "$(dirname "$path")")
+  worktree=$(basename "$path")
+  session_name="$repo_dir_base ($worktree)"
+  echo "${session_name//./}"
+}
+
+attach_or_create_tmux_session() {
+  local path=$1
+  local clean_session_name
+  # If repo root then we switch to main session
+  if [[ "$path" == "$REPO_ROOT" ]]; then
+    local base
+    base=$(basename "$REPO_ROOT")
+    # remove dots
+    clean_session_name="${base//./}"
+  else
+    clean_session_name=$(worktree_to_session_name "$path")
+  fi
+  if ! tmux has-session -t "$clean_session_name" 2>/dev/null; then
+    tmux new-session -c "$path" -s "$clean_session_name" -d
+  fi
+  tmux switch-client -t "$clean_session_name"
+}
+
+list_and_switch_worktrees() {
+  local worktree_lines path selected
+  worktree_lines=$(git worktree list)
+  selected=$(select_worktree_with_fzf "$worktree_lines")
+  [[ -z "$selected" ]] && return 0
+  path=$(echo "$selected" | awk '{print $1}')
+  attach_or_create_tmux_session "$path"
+}
+
+create_new_worktree() {
+  local repo_basename path branch_selected
+  repo_basename=$(basename "$REPO_ROOT")
+  branch_selected=$(select_branch_with_fzf) || return 0
+  [[ -z "$branch_selected" ]] && return 0
+
+  if [[ "$branch_selected" == "[create new branch]" ]]; then
+    # Use a tiny fzf prompt to read the new branch name (no stdin issues)
+    branch_selected=$(
+      printf '' | fzf $FZF_TMUX_OPTS \
+        --print-query \
+        --prompt "New branch name: " \
+        --header "Type a new git branch name and press enter" \
+        | head -n1
+    )
+    [[ -z "$branch_selected" ]] && return 0
+    if ! git check-ref-format --branch "$branch_selected" >/dev/null 2>&1; then
+      echo "Invalid branch name: '$branch_selected'" >&2
+      return 1
+    fi
+  fi
+
+  path="/tmp/${repo_basename}/${branch_selected}"
+
+  # If the branch already exists, use it; otherwise create it from MAIN_BRANCH
+  if git rev-parse --verify --quiet "$branch_selected" >/dev/null; then
+    git worktree add "$path" "$branch_selected"
+  else
+    git worktree add -b "$branch_selected" "$path" "$MAIN_BRANCH"
+  fi
+
+  attach_or_create_tmux_session "$path"
+}
+
+if [[ "${1:-}" == "--create" ]]; then
+  create_new_worktree
+  exit 0
+fi
+list_and_switch_worktrees
