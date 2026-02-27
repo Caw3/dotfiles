@@ -23,6 +23,7 @@ FZF_KEY_CODE="ctrl-o"
 FZF_KEY_FETCH_BRANCHES="ctrl-f"
 FZF_KEY_VIMDIFF="ctrl-v"
 FZF_KEY_GOBACK="esc"
+FZF_KEY_YOINK="ctrl-y"
 
 select_commit_with_fzf() {
   git log --oneline --decorate --graph --all \
@@ -47,7 +48,8 @@ select_worktree_with_fzf() {
     --bind "${FZF_KEY_DETACHED}:execute(open-worktree --create-detached)+abort" \
     --bind "${FZF_KEY_DELETE}:execute(open-worktree --delete {})+reload(git worktree list)" \
     --bind "${FZF_KEY_VIMDIFF}:execute(open-worktree --view-diff-files {})" \
-    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_CODE}: code | ${FZF_KEY_VIMDIFF}: vimdiff file list"
+    --bind "${FZF_KEY_YOINK}:execute(open-worktree --yoink {})+abort" \
+    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_CODE}: code | ${FZF_KEY_VIMDIFF}: vimdiff file list | ${FZF_KEY_YOINK}: copy path"
 }
 
 select_branch_with_fzf() {
@@ -179,7 +181,7 @@ view_diff_files_vimdiff() {
   # Resolve the worktree's HEAD commit
   commit=$(git -C "$path" rev-parse HEAD) || return 1
 
-  # List changed files between CURERNT_REF and this worktree's HEAD, pick one with fzf
+  # List changed files between CURRENT_REF and this worktree's HEAD, pick one with fzf
   file=$(
     git -C "$REPO_ROOT" diff --name-only "$CURRENT_REF..$commit" \
       | fzf $FZF_TMUX_OPTS \
@@ -189,8 +191,16 @@ view_diff_files_vimdiff() {
   )
   [[ -z "$file" ]] && return 0
 
-  # Open the file in vimdiff: main/primary worktree vs selected worktree
-  nvim -d "$PRIMARY_WORKTREE/$file" "$path/$file"
+  # Open the file in vimdiff: current worktree vs selected worktree
+  "${EDITOR:-nvim}" -d "$REPO_ROOT/$file" "$path/$file"
+}
+
+yoink_worktree_path() {
+  local line="$1"
+  local path
+  path=$(echo "$line" | awk '{print $1}')
+  printf '%s\n' "$path" | pbcopy
+  printf 'Copied worktree path: %s\n' "$path"
 }
 
 
@@ -213,6 +223,12 @@ fi
 if [[ "${1:-}" == "--view-diff-files" ]]; then
   shift
   view_diff_files_vimdiff "$@"
+  exit 0
+fi
+
+if [[ "${1:-}" == "--yoink" ]]; then
+  shift
+  yoink_worktree_path "$@"
   exit 0
 fi
 
