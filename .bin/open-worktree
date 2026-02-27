@@ -132,7 +132,7 @@ create_new_worktree() {
 }
 
 create_detached_worktree() {
-  local repo_basename commit_line commit_hash path
+  local repo_basename commit_line commit_hash path label
   repo_basename=$(basename "$REPO_ROOT")
 
   commit_line=$(select_commit_with_fzf) || return 0
@@ -141,7 +141,21 @@ create_detached_worktree() {
   commit_hash=$(echo "$commit_line" | awk '{print $2}')
   [[ -z "$commit_hash" ]] && return 1
 
-  path="/tmp/${repo_basename}/detached-${commit_hash}"
+  # Prompt for a human-friendly name/label for this detached worktree.
+  label=$(
+    printf '' | fzf $FZF_TMUX_OPTS \
+      --print-query \
+      --prompt "Detached worktree name: " \
+      --header "Type a name for this detached worktree (leave empty to use commit hash)" \
+      | head -n1
+  )
+
+  # Fallback to commit hash when no label provided.
+  if [[ -z "$label" ]]; then
+    label="$commit_hash"
+  fi
+
+  path="/tmp/${repo_basename}/detached-${label}"
 
   git worktree add --detach "$path" "$commit_hash"
   attach_or_create_tmux_session "$path"
@@ -171,20 +185,18 @@ delete_worktree() {
 
 view_diff_files_vimdiff() {
   local line="$1"
-  local path commit file
+  local path file
 
   # Extract just the worktree path from the full `git worktree list` line
   path=$(echo "$line" | awk '{print $1}')
 
-  # Resolve the worktree's HEAD commit
-  commit=$(git -C "$path" rev-parse HEAD) || return 1
-
-  # List changed files between CURRENT_REF and this worktree's HEAD, pick one with fzf
+  # List changed files between CURRENT_REF and this worktree's index+working tree, pick one with fzf.
+  # Using git -C "$path" diff CURRENT_REF so we include uncommitted changes in that worktree.
   file=$(
-    git -C "$REPO_ROOT" diff --name-only "$CURRENT_REF..$commit" \
+    git -C "$path" diff --name-only "$CURRENT_REF" \
       | fzf $FZF_TMUX_OPTS \
           --prompt "vimdiff file: " \
-          --preview "git -C \"$REPO_ROOT\" -c color.ui=always diff --color=always \"$CURRENT_REF..$commit\" -- {}" \
+          --preview "git -C \"$path\" -c color.ui=always diff --color=always \"$CURRENT_REF\" -- {}" \
           --preview-window="$FZF_PREVIEW_WINDOW"
   )
   [[ -z "$file" ]] && return 0
