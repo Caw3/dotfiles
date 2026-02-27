@@ -19,7 +19,6 @@ FZF_KEY_SWITCH="enter"
 FZF_KEY_NEW_BRANCH="ctrl-b"
 FZF_KEY_DETACHED="ctrl-h"
 FZF_KEY_DELETE="ctrl-x"
-FZF_KEY_CODE="ctrl-o"
 FZF_KEY_FETCH_BRANCHES="ctrl-f"
 FZF_KEY_VIMDIFF="ctrl-v"
 FZF_KEY_GOBACK="esc"
@@ -43,13 +42,12 @@ select_worktree_with_fzf() {
     --prompt "Select worktree: " \
     --preview "git -C \"$REPO_ROOT\" -c color.ui=always diff --color=always \"$CURRENT_REF..\$(echo {} | awk '{print \$NF}' | tr -d '[]')\" 2>/dev/null || echo '(same as $CURRENT_REF)'" \
     --preview-window="$FZF_PREVIEW_WINDOW" \
-    --bind "${FZF_KEY_CODE}:execute(bash -lc 'path=\$(echo {} | awk \"{print \\$1}\"); code \"\$path\"')+accept" \
     --bind "${FZF_KEY_NEW_BRANCH}:execute(open-worktree --create)+abort" \
     --bind "${FZF_KEY_DETACHED}:execute(open-worktree --create-detached)+abort" \
     --bind "${FZF_KEY_DELETE}:execute(open-worktree --delete {})+reload(git worktree list)" \
     --bind "${FZF_KEY_VIMDIFF}:execute(open-worktree --view-diff-files {})" \
     --bind "${FZF_KEY_YOINK}:execute(open-worktree --yoink {})+abort" \
-    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_CODE}: code | ${FZF_KEY_VIMDIFF}: vimdiff file list | ${FZF_KEY_YOINK}: copy path"
+    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_VIMDIFF}: vimdiff file list | ${FZF_KEY_YOINK}: copy path"
 }
 
 select_branch_with_fzf() {
