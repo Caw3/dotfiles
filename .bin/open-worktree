@@ -11,6 +11,15 @@ CURRENT_REF=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "$MAIN_BRANCH"
 
 FZF_TMUX_OPTS="-d20 --reverse"
 
+select_commit_with_fzf() {
+  git log --oneline --decorate --graph --all \
+    | fzf $FZF_TMUX_OPTS \
+        --prompt "commit (detached): " \
+        --header "Pick a commit to create a detached worktree" \
+        --preview "git show --stat --color=always \$(echo {} | awk '{print \$2}')" \
+        --preview-window=right:60%
+}
+
 select_worktree_with_fzf() {
   local worktree_lines=$1
   export REPO_ROOT MAIN_BRANCH
@@ -19,8 +28,9 @@ select_worktree_with_fzf() {
     --preview "git -C \"$REPO_ROOT\" diff \"$MAIN_BRANCH..\$(echo {} | awk '{print \$NF}' | tr -d '[]')\" 2>/dev/null || echo '(same as main)'" \
     --preview-window=right:60% \
     --bind 'ctrl-o:execute(code {1})+accept' \
-    --bind 'ctrl-space:execute(worktree-fzf --create)+abort' \
-    --footer "enter: switch | ctrl-space: new | ctrl-o: code"
+    --bind 'ctrl-space:execute(open-worktree --create)+abort' \
+    --bind 'ctrl-d:execute(open-worktree --create-detached)+abort' \
+    --footer "enter: switch | ctrl-space: new branch worktree | ctrl-d: detached | ctrl-o: code"
 }
 
 select_branch_with_fzf() {
@@ -102,8 +112,30 @@ create_new_worktree() {
   attach_or_create_tmux_session "$path"
 }
 
+create_detached_worktree() {
+  local repo_basename commit_line commit_hash path
+  repo_basename=$(basename "$REPO_ROOT")
+
+  commit_line=$(select_commit_with_fzf) || return 0
+  [[ -z "$commit_line" ]] && return 0
+
+  commit_hash=$(echo "$commit_line" | awk '{print $2}')
+  [[ -z "$commit_hash" ]] && return 1
+
+  path="/tmp/${repo_basename}/detached-${commit_hash}"
+
+  git worktree add --detach "$path" "$commit_hash"
+  attach_or_create_tmux_session "$path"
+}
+
 if [[ "${1:-}" == "--create" ]]; then
   create_new_worktree
   exit 0
 fi
+
+if [[ "${1:-}" == "--create-detached" ]]; then
+  create_detached_worktree
+  exit 0
+fi
+
 list_and_switch_worktrees
