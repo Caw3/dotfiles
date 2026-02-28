@@ -449,6 +449,30 @@ require("lazy").setup({
 			},
 		},
 	},
+	{
+		"nickjvandyke/opencode.nvim",
+		version = "*",
+		config = function()
+			vim.g.opencode_opts = { }
+			vim.keymap.set({ "n", "x" }, "<Leader>ap",
+				function() require("opencode").ask("@this: ", { submit = true }) end,
+				{ desc = "Ask opencode…" })
+			vim.keymap.set({ "n", "x" }, "<Leader>ax", function() require("opencode").select() end,
+				{ desc = "Execute opencode action…" })
+
+			vim.keymap.set({ "n", "x" }, "go", function() return require("opencode").operator("@this ") end,
+				{ desc = "Add range to opencode", expr = true })
+			vim.keymap.set("n", "goo", function() return require("opencode").operator("@this ") .. "_" end,
+				{ desc = "Add line to opencode", expr = true })
+
+			vim.keymap.set("n", "<S-C-u>", function() require("opencode").command("session.half.page.up") end,
+				{ desc = "Scroll opencode up" })
+			vim.keymap.set("n", "<S-C-d>",
+				function() require("opencode").command("session.half.page.down") end,
+				{ desc = "Scroll opencode down" })
+		end,
+	},
+	"norcalli/nvim-colorizer.lua"
 })
 
 local ft_group = vim.api.nvim_create_augroup("filetypes", { clear = true })
