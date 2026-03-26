@@ -2,7 +2,7 @@
 
 ## Thesse are a workaround for contrast in opencode
 [colors]
-indexed_colors = [ { index=237, color= "#434c5e"}, { index=238, color= "#4c566a"}, { index=239, color= "#4c566a"}]
+indexed_colors = [ { index=236, color= "#3b4252"}, { index=237, color= "#434c5e"}  ]
 
 # Default colors
 [colors.primary]

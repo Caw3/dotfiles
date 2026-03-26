@@ -49,6 +49,40 @@ vim.keymap.set("n", "<leader>fz", ":silent! args `git ls-files \\| fzf-tmux -p -
 vim.keymap.set("n", "<leader>fe", ":edit **/*")
 vim.keymap.set("n", "<leader>tt", ":tag ")
 
+local function _fname(bufnr) return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr or 0), ":.") end
+local function _copy_loc()
+	local c = vim.api.nvim_win_get_cursor(0)
+	vim.fn.setreg("+", string.format("%s:%d:%d", _fname(), c[1], c[2] + 1))
+end
+local function _copy_visual()
+	local v, c = vim.fn.getpos("v"), vim.fn.getpos(".")
+	local s, e = v[2], c[2]
+	if s > e then s, e = e, s end
+	vim.fn.setreg("+", string.format("%s:%d-%d", _fname(), s, e))
+end
+local function _copy_qf()
+	local q = vim.fn.getqflist()
+	if #q == 0 then return end
+	local t = {}
+	for _, i in ipairs(q) do
+		t[#t + 1] = string.format("%s:%d:%d: %s", _fname(i.bufnr), i.lnum or 0, i.col or 0, i.text or "")
+	end
+	vim.fn.setreg("+", table.concat(t, "\n"))
+end
+local function _copy_ll()
+	local q = vim.fn.getloclist(0)
+	if #q == 0 then return end
+	local t = {}
+	for _, i in ipairs(q) do
+		t[#t + 1] = string.format("%s:%d:%d: %s", _fname(i.bufnr), i.lnum or 0, i.col or 0, i.text or "")
+	end
+	vim.fn.setreg("+", table.concat(t, "\n"))
+end
+vim.keymap.set("n", "<leader>yf", _copy_loc, { desc = "Copy file:line:col" })
+vim.keymap.set("x", "<leader>yf", _copy_visual, { desc = "Copy file line range" })
+vim.keymap.set("n", "<leader>yq", _copy_qf, { desc = "Copy quickfix list" })
+vim.keymap.set("n", "<leader>yl", _copy_ll, { desc = "Copy local list" })
+
 vim.keymap.set("n", "<leader>co", "<cmd>copen<CR>")
 vim.keymap.set("n", "<leader>cc", "<cmd>cclose<CR>")
 vim.keymap.set("n", "]q", "<cmd>cnext<CR>")
@@ -268,12 +302,23 @@ require("lazy").setup({
 				end
 			end
 
-			local function populate_loclist()
+			local function populate_loclist(args)
+				if args and args.buf and args.buf ~= vim.api.nvim_get_current_buf() then
+					return
+				end
 				vim.diagnostic.setloclist({ open = false })
 			end
 
+			local loclist_group = vim.api.nvim_create_augroup("lsp-loclist", { clear = true })
 			vim.api.nvim_create_autocmd("DiagnosticChanged", {
+				group = loclist_group,
 				callback = populate_loclist,
+			})
+			vim.api.nvim_create_autocmd("LspAttach", {
+				group = loclist_group,
+				callback = function(args)
+					populate_loclist({ buf = args.buf })
+				end,
 			})
 
 			-- Diagnostic config (global)
@@ -399,6 +444,7 @@ require("lazy").setup({
 			vim.lsp.config("bashls", {})
 			vim.lsp.config("jdtls", {})
 			vim.lsp.config("postgres_lsp", {})
+			vim.lsp.config("buf_ls", {})
 		end,
 	},
 	{
@@ -449,30 +495,6 @@ require("lazy").setup({
 			},
 		},
 	},
-	{
-		"nickjvandyke/opencode.nvim",
-		version = "*",
-		config = function()
-			vim.g.opencode_opts = { }
-			vim.keymap.set({ "n", "x" }, "<Leader>ap",
-				function() require("opencode").ask("@this: ", { submit = true }) end,
-				{ desc = "Ask opencode…" })
-			vim.keymap.set({ "n", "x" }, "<Leader>ax", function() require("opencode").select() end,
-				{ desc = "Execute opencode action…" })
-
-			vim.keymap.set({ "n", "x" }, "go", function() return require("opencode").operator("@this ") end,
-				{ desc = "Add range to opencode", expr = true })
-			vim.keymap.set("n", "goo", function() return require("opencode").operator("@this ") .. "_" end,
-				{ desc = "Add line to opencode", expr = true })
-
-			vim.keymap.set("n", "<S-C-u>", function() require("opencode").command("session.half.page.up") end,
-				{ desc = "Scroll opencode up" })
-			vim.keymap.set("n", "<S-C-d>",
-				function() require("opencode").command("session.half.page.down") end,
-				{ desc = "Scroll opencode down" })
-		end,
-	},
-	"norcalli/nvim-colorizer.lua"
 })
 
 local ft_group = vim.api.nvim_create_augroup("filetypes", { clear = true })

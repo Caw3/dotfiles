@@ -73,6 +73,7 @@ select_mr_with_fzf() {
     --accept-nth=4 \
     --header "Select a merge request to create a worktree" \
     --bind "${FZF_KEY_GOBACK}:become(open-worktree)" \
+    --bind "${FZF_KEY_MR}:become(open-worktree --mr-worktree)" \
     --preview "glab mr view {1} --comments=false 2>/dev/null || echo 'glab mr view failed'" \
     --footer "${FZF_KEY_GOBACK}: go back " \
     --preview-window="$FZF_PREVIEW_WINDOW"
