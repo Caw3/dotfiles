@@ -119,17 +119,8 @@ gnome-settings: dconf-editor $(FONT_PACKAGE_NAME) ## Init Gnome specific setting
 slock:
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 dwm: slock dwm/config.def.h ## Build and install dwm
-	@if [ ! -d /tmp/dwm ]; then \
-		mkdir /tmp/dwm; \
-		git clone https://git.suckless.org/dwm /tmp/dwm; \
-	else \
-		git -C /tmp/dwm checkout .; \
-	fi
-	@for patch in $$(ls $(PWD)/dwm/patches/*.diff $(PWD)/dwm/patches/*.patch 2>/dev/null); do \
-		git -C /tmp/dwm apply "$$patch"; \
-	done
-	cp -v $(PWD)/dwm/config.def.h /tmp/dwm/config.h
-	cd /tmp/dwm && sudo make clean install
+	git submodule update --init --recursive dwm
+	cd dwm && sudo make clean install
 	$(LN)/.xinitrc
 
 run install: ## Run full system install
