@@ -18,7 +18,7 @@ ifneq ($(shell command -v apt-get),)
 	FONT_PACKAGE_NAME = fonts-jetbrains-mono
 endif
 
-.PHONY: help install init
+.PHONY: help install init dwm
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -115,3 +115,23 @@ gnome-settings: dconf-editor $(FONT_PACKAGE_NAME) ## Init Gnome specific setting
 	dconf write /org/gnome/desktop/peripherals/mouse/accel-profile "'flat'"
 	dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
 	dconf write /org/gnome/shell/favorite-apps '["firefox.desktop", "Alacritty.desktop"]'
+
+slock:
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+dwm: slock dwm/config.def.h ## Build and install dwm
+	@if [ ! -d /tmp/dwm ]; then \
+		mkdir /tmp/dwm; \
+		git clone https://git.suckless.org/dwm /tmp/dwm; \
+	else \
+		git -C /tmp/dwm checkout .; \
+	fi
+	@for patch in $$(ls $(PWD)/dwm/patches/*.diff $(PWD)/dwm/patches/*.patch 2>/dev/null); do \
+		git -C /tmp/dwm apply "$$patch"; \
+	done
+	cp -v $(PWD)/dwm/config.def.h /tmp/dwm/config.h
+	cd /tmp/dwm && sudo make clean install
+	$(LN)/.xinitrc
+
+run install: ## Run full system install
+	$(MAKE) install
+
