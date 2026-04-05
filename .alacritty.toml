@@ -4,6 +4,10 @@
 [colors]
 indexed_colors = [ { index=236, color= "#3b4252"}, { index=237, color= "#434c5e"}  ]
 
+[terminal.shell]
+program = "tmux"
+args = ["new-session", "-A", "-s", "main"]
+
 # Default colors
 [colors.primary]
 background = '#2E3440'
