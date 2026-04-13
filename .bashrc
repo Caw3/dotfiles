@@ -65,6 +65,22 @@ vifzf() {
 export -f vifzf
 
 
+gw-new() {
+  local branch="$1"
+  local repo_root=$(basename $(git rev-parse --show-toplevel 2>/dev/null)) 
+  local path="$HOME/repos/${repo_root//./}-worktree-${branch//./}"
+  local session_name="${repo_root//./} (${branch//./})"
+
+  if tmux has-session -t "$session_name" 2> /dev/null; then
+     tmux switch-client -t "$session_name";
+  else
+    git worktree add "$path" "$branch" \
+      && tmux new-session -c "$path" -s "$session_name" -d \
+      && tmux switch-client -t "$session_name";
+  fi
+}
+export -f gw-new
+
 ## Prompt
 export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] '
 export PROMPT_COMMAND='history -a'
