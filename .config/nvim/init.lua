@@ -290,7 +290,7 @@ require("lazy").setup({
 					local bufnr = vim.api.nvim_get_current_buf()
 					local clients = vim.lsp.get_clients({ bufnr = bufnr })
 					if #clients == 0 then
-						vim.cmd("LspStart")
+						vim.cmd("lsp enable")
 						vim.api.nvim_create_autocmd("LspAttach", {
 							buffer = bufnr,
 							once = true,
@@ -339,7 +339,7 @@ require("lazy").setup({
 					end
 					vim.notify("All LSPs stopped", vim.log.levels.INFO)
 				else
-					vim.cmd("LspStart")
+					vim.cmd("lsp enable")
 					vim.api.nvim_create_autocmd("LspAttach", {
 						buffer = 0,
 						once = true,
