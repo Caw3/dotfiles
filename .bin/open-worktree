@@ -21,9 +21,18 @@ FZF_KEY_MR="ctrl-r"
 FZF_KEY_DETACHED="ctrl-h"
 FZF_KEY_DELETE="ctrl-x"
 FZF_KEY_FETCH_BRANCHES="ctrl-f"
-FZF_KEY_VIMDIFF="ctrl-v"
 FZF_KEY_GOBACK="esc"
 FZF_KEY_YOINK="ctrl-y"
+
+WORKTREE_ROOT="${WORKTREE_ROOT:-$HOME/repos/worktrees}"
+
+safe_worktree_path() {
+  local repo_basename name
+  repo_basename=$(basename "$REPO_ROOT")
+  name="$1"
+  name=${name//\//__}
+  printf '%s/%s/%s\n' "$WORKTREE_ROOT" "$repo_basename" "$name"
+}
 
 select_commit_with_fzf() {
   git log --oneline --decorate --graph --all \
@@ -46,10 +55,9 @@ select_worktree_with_fzf() {
     --bind "${FZF_KEY_NEW_BRANCH}:execute(open-worktree --create)+abort" \
     --bind "${FZF_KEY_DETACHED}:execute(open-worktree --create-detached)+abort" \
     --bind "${FZF_KEY_DELETE}:execute(open-worktree --delete {})+reload(git worktree list)" \
-    --bind "${FZF_KEY_VIMDIFF}:execute(open-worktree --view-diff-files {})" \
     --bind "${FZF_KEY_YOINK}:execute(open-worktree --yoink {})+abort" \
     --bind "${FZF_KEY_MR}:execute(open-worktree --mr-worktree)+abort" \
-    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_VIMDIFF}: vimdiff file list | ${FZF_KEY_YOINK}: copy path | ${FZF_KEY_MR}: MR worktree"
+    --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_NEW_BRANCH}: new branch worktree | ${FZF_KEY_DETACHED}: detached | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_YOINK}: copy path | ${FZF_KEY_MR}: MR worktree"
 }
 
 select_branch_with_fzf() {
@@ -66,8 +74,9 @@ select_branch_with_fzf() {
 select_mr_with_fzf() {
   glab mr list --output json \
     | jq -r '.[] | [.iid, .author.username, .target_branch, .source_branch, .updated_at] | @tsv' \
-    | column -t \
     | fzf $FZF_TMUX_OPTS \
+    --delimiter '\t' \
+    --with-nth=1,2,3,4,5 \
     --prompt "MR: " \
     --accept-nth=4 \
     --header "Select a merge request to create a worktree" \
@@ -116,7 +125,6 @@ list_and_switch_worktrees() {
 
 create_new_worktree() {
   local repo_basename path branch_selected
-  repo_basename=$(basename "$REPO_ROOT")
   branch_selected=$(select_branch_with_fzf) || return 0
   [[ -z "$branch_selected" ]] && return 0
 
@@ -136,7 +144,8 @@ create_new_worktree() {
     fi
   fi
 
-  path="/tmp/${repo_basename}/${branch_selected}"
+  path=$(safe_worktree_path "$branch_selected")
+  mkdir -p "$(dirname "$path")"
 
   # If the branch already exists, use it; otherwise create it from MAIN_BRANCH
   if git rev-parse --verify --quiet "$branch_selected" >/dev/null; then
@@ -150,7 +159,6 @@ create_new_worktree() {
 
 create_detached_worktree() {
   local repo_basename commit_line commit_hash path label
-  repo_basename=$(basename "$REPO_ROOT")
 
   commit_line=$(select_commit_with_fzf) || return 0
   [[ -z "$commit_line" ]] && return 0
@@ -172,7 +180,8 @@ create_detached_worktree() {
     label="$commit_hash"
   fi
 
-  path="/tmp/${repo_basename}/detached-${label}"
+  path=$(safe_worktree_path "detached-${label}")
+  mkdir -p "$(dirname "$path")"
 
   git worktree add --detach "$path" "$commit_hash"
   attach_or_create_tmux_session "$path"
@@ -200,28 +209,6 @@ delete_worktree() {
   git worktree remove "$path"
 }
 
-view_diff_files_vimdiff() {
-  local line="$1"
-  local path file
-
-  # Extract just the worktree path from the full `git worktree list` line
-  path=$(echo "$line" | awk '{print $1}')
-
-  # List changed files between CURRENT_REF and this worktree's index+working tree, pick one with fzf.
-  # Using git -C "$path" diff CURRENT_REF so we include uncommitted changes in that worktree.
-  file=$(
-    git -C "$path" diff --name-only "$CURRENT_REF" \
-      | fzf $FZF_TMUX_OPTS \
-          --prompt "vimdiff file: " \
-          --preview "git -C \"$path\" -c color.ui=always diff --color=always \"$CURRENT_REF\" -- {}" \
-          --preview-window="$FZF_PREVIEW_WINDOW"
-  )
-  [[ -z "$file" ]] && return 0
-
-  # Open the file in vimdiff: current worktree vs selected worktree
-  "${EDITOR:-nvim}" -d "$REPO_ROOT/$file" "$path/$file"
-}
-
 yoink_worktree_path() {
   local line="$1"
   local path
@@ -247,12 +234,6 @@ if [[ "${1:-}" == "--delete" ]]; then
   exit 0
 fi
 
-if [[ "${1:-}" == "--view-diff-files" ]]; then
-  shift
-  view_diff_files_vimdiff "$@"
-  exit 0
-fi
-
 if [[ "${1:-}" == "--yoink" ]]; then
   shift
   yoink_worktree_path "$@"
@@ -260,12 +241,13 @@ if [[ "${1:-}" == "--yoink" ]]; then
 fi
 
 if [[ "${1:-}" == "--mr-worktree" ]]; then
-  git fetch --all --prune &
+  git fetch --all --prune
   branch_selected=$(select_mr_with_fzf)
+  [[ -z "$branch_selected" ]] && exit 0
 
-  repo_basename=$(basename "$REPO_ROOT")
-  path="/tmp/mr/${repo_basename}/${branch_selected}"
-  git worktree add "$path" "$branch_selected"
+  path=$(safe_worktree_path "$branch_selected")
+  mkdir -p "$(dirname "$path")"
+
   attach_or_create_tmux_session "$path"
   exit 0
 fi
