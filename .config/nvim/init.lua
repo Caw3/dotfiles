@@ -82,6 +82,7 @@ vim.keymap.set("n", "<leader>yf", _copy_loc, { desc = "Copy file:line:col" })
 vim.keymap.set("x", "<leader>yf", _copy_visual, { desc = "Copy file line range" })
 vim.keymap.set("n", "<leader>yq", _copy_qf, { desc = "Copy quickfix list" })
 vim.keymap.set("n", "<leader>yl", _copy_ll, { desc = "Copy local list" })
+vim.keymap.set("n", "<leader>rr", "<cmd>e! %<CR>", { desc = "Reload file" })
 
 vim.keymap.set("n", "<leader>co", "<cmd>copen<CR>")
 vim.keymap.set("n", "<leader>cc", "<cmd>cclose<CR>")
@@ -174,9 +175,6 @@ require("lazy").setup({
 		end,
 	},
 	"tpope/vim-surround",
-	"tpope/vim-dotenv",
-	"tpope/vim-dadbod",
-	{ 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
 	"romainl/vim-qf",
 	{
 		"github/copilot.vim", cmd = "Copilot",
@@ -280,171 +278,80 @@ require("lazy").setup({
 	},
 	{
 		"neovim/nvim-lspconfig",
-		dependencies = {
-			{ "j-hui/fidget.nvim", opts = {} },
-		},
 		config = function()
-			-- Helper to ensure LSP is running before calling LSP function
-			local function with_lsp(fn)
-				return function()
-					local bufnr = vim.api.nvim_get_current_buf()
-					local clients = vim.lsp.get_clients({ bufnr = bufnr })
-					if #clients == 0 then
-						vim.cmd("lsp enable")
-						vim.api.nvim_create_autocmd("LspAttach", {
-							buffer = bufnr,
-							once = true,
-							callback = vim.schedule_wrap(fn),
-						})
-					else
-						fn()
-					end
-				end
-			end
-
-			local function populate_loclist(args)
-				if args and args.buf and args.buf ~= vim.api.nvim_get_current_buf() then
-					return
-				end
-				vim.diagnostic.setloclist({ open = false })
-			end
-
-			local loclist_group = vim.api.nvim_create_augroup("lsp-loclist", { clear = true })
-			vim.api.nvim_create_autocmd("DiagnosticChanged", {
-				group = loclist_group,
-				callback = populate_loclist,
-			})
-			vim.api.nvim_create_autocmd("LspAttach", {
-				group = loclist_group,
-				callback = function(args)
-					populate_loclist({ buf = args.buf })
-				end,
-			})
-
-			-- Diagnostic config (global)
 			vim.diagnostic.config({
 				virtual_text = false,
 				signs = true,
 				underline = true,
 				severity_sort = true,
-				update_in_insert = false
+				update_in_insert = false,
 			})
 
-			-- Global LSP keymaps (will start LSP if needed)
-			local lsp_enabled = false
-			local function toggle_all_lsps()
-				if lsp_enabled then
-					for _, client in pairs(vim.lsp.get_clients()) do
-						client.stop()
-					end
-					vim.notify("All LSPs stopped", vim.log.levels.INFO)
-				else
-					vim.cmd("lsp enable")
-					vim.api.nvim_create_autocmd("LspAttach", {
-						buffer = 0,
-						once = true,
-						callback = function()
-							vim.notify("LSP started", vim.log.levels.INFO)
-						end,
-					})
-				end
-				lsp_enabled = not lsp_enabled
-			end
-
-			local border = { " ", " ", " ", " ", " ", " ", " ", " " }
-
-			vim.keymap.set("n", "<leader>ds", toggle_all_lsps, { desc = "Toggle all LSPs" })
-			vim.keymap.set("n", "<leader>rr", "<cmd>e! %<CR>", { desc = "Reload file" })
-			vim.keymap.set("n", "]e", vim.diagnostic.goto_next, { noremap = true, silent = true })
-			vim.keymap.set("n", "[e", vim.diagnostic.goto_prev, { noremap = true, silent = true })
 			vim.keymap.set("n", "gh", vim.diagnostic.open_float)
+			vim.keymap.set("n", "<leader>dl", function()
+				vim.diagnostic.setloclist({ open = true })
+			end, { desc = "Diagnostics → location list" })
 
-			vim.keymap.set("i", "<c-s>", with_lsp(function()
-				vim.lsp.buf.signature_help({ focusable = true, max_width = 80, border = border })
-			end))
 
-			vim.keymap.set("n", "<C-]>", function()
-				with_lsp(vim.lsp.buf.definition)()
-			end, { desc = "Tag or LSP definition" })
-			vim.keymap.set("n", "<leader>gD", with_lsp(vim.lsp.buf.declaration))
-			vim.keymap.set("n", "<leader>gd", with_lsp(vim.lsp.buf.definition))
-			vim.keymap.set("n", "<leader>gr", with_lsp(vim.lsp.buf.references))
-			vim.keymap.set("n", "<leader>gI", with_lsp(function()
+
+			vim.keymap.set("n", "<C-]>", vim.lsp.buf.definition, { desc = "LSP definition" })
+			vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration)
+			vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition)
+			vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references)
+			vim.keymap.set("n", "<leader>gI", function()
 				require("telescope.builtin").lsp_implementations()
-			end))
-			vim.keymap.set("n", "<leader>gi", with_lsp(vim.lsp.buf.implementation))
-			vim.keymap.set("n", "<leader>gt", with_lsp(vim.lsp.buf.type_definition))
-			vim.keymap.set("n", "<leader>@", with_lsp(function()
-				vim.lsp.buf.document_symbol()
-			end))
-			vim.keymap.set("n", "<leader>#", with_lsp(function()
+			end)
+			vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation)
+			vim.keymap.set("n", "<leader>gt", vim.lsp.buf.type_definition)
+			vim.keymap.set("n", "<leader>@", vim.lsp.buf.document_symbol)
+			vim.keymap.set("n", "<leader>#", function()
 				local query = vim.fn.input("#")
-				if query == "" then
-					return
+				if query ~= "" then
+					vim.lsp.buf.workspace_symbol(query)
 				end
-				vim.lsp.buf.workspace_symbol(query)
-			end))
-			vim.keymap.set("n", "<leader>rn", with_lsp(vim.lsp.buf.rename))
-			vim.keymap.set({ "n", "x" }, "<leader>ca", with_lsp(vim.lsp.buf.code_action))
-			vim.keymap.set("n", "<leader>oc", with_lsp(vim.lsp.buf.outgoing_calls))
-			vim.keymap.set("n", "<leader>ic", with_lsp(vim.lsp.buf.incoming_calls))
-			vim.keymap.set("n", "<leader>gp", with_lsp(function()
-				local params = vim.lsp.util.make_position_params(0, 'utf-8')
-				vim.lsp.buf_request(0, "textDocument/definition", params,
-					function(err, result, ctx, _)
-						if err or not result or vim.tbl_isempty(result) then
-							return
-						end
-						local location = vim.islist(result) and result[1] or result
-						local uri = location.uri or location.targetUri
-						local range = location.range or location.targetSelectionRange
-						if not uri or not range then
-							return
-						end
-						local path = vim.uri_to_fname(uri)
-						vim.cmd("pedit +" ..
-							range.start.line + 1 .. " " .. vim.fn.fnameescape(path))
-					end)
-			end))
+			end)
+			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
+			vim.keymap.set({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action)
+			vim.keymap.set("n", "<leader>oc", vim.lsp.buf.outgoing_calls)
+			vim.keymap.set("n", "<leader>ic", vim.lsp.buf.incoming_calls)
 
-			-- LspAttach for buffer-local setup
-			vim.api.nvim_create_autocmd("LspAttach", {
-				group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
-				callback = function(event)
-					vim.lsp.completion.enable(true, event.data.client_id, event.buf,
-						{ autotrigger = false })
-				end,
-			})
-
-			local function is_deno_project()
-				local cwd = vim.fn.getcwd()
-				return vim.fn.filereadable(cwd .. "/deno.json") == 1 or
-				    vim.fn.filereadable(cwd .. "/deno.jsonc") == 1
+			local lsps = {
+				(vim.fn.filereadable(vim.fn.getcwd() .. "/deno.json") == 1 and
+					{ "denols", { settings = { organizeImports = true } } } or
+					{ "ts_ls", { settings = { organizeImports = true } } }),
+				{ "lua_ls" },
+				{ "clangd" },
+				{ "gopls" },
+				{ "pyright" },
+				{ "rust_analyzer" },
+				{ "terraformls" },
+				{ "bashls" },
+				{ "jdtls" },
+				{ "postgres_lsp" },
+				{ "buf_ls" },
+			}
+			local lsp_server_names = {}
+			for _, entry in ipairs(lsps) do
+				local name, opts = entry[1], entry[2]
+				table.insert(lsp_server_names, name)
+				if opts then
+					vim.lsp.config(name, opts)
+				end
 			end
 
-			if is_deno_project() then
-				vim.lsp.config("denols", {
-					settings = {
-						organizeImports = true,
-					},
-				})
-			else
-				vim.lsp.config("ts_ls", {
-					settings = {
-						organizeImports = true,
-					},
-				})
-			end
-			vim.lsp.config("lua_ls", {})
-			vim.lsp.config("clangd", {})
-			vim.lsp.config("gopls", {})
-			vim.lsp.config("pyright", {})
-			vim.lsp.config("rust_analyzer", {})
-			vim.lsp.config("terraformls", {})
-			vim.lsp.config("bashls", {})
-			vim.lsp.config("jdtls", {})
-			vim.lsp.config("postgres_lsp", {})
-			vim.lsp.config("buf_ls", {})
+			local lsp_enabled = false
+			vim.keymap.set("n", "<leader>ds", function()
+				lsp_enabled = not lsp_enabled
+				for _, name in ipairs(lsp_server_names) do
+					vim.lsp.enable(name, lsp_enabled)
+				end
+				if not lsp_enabled then
+					for _, client in ipairs(vim.lsp.get_clients()) do
+						client:stop(true)
+					end
+				end
+				vim.notify("LSP " .. (lsp_enabled and "enabled" or "disabled"), vim.log.levels.INFO)
+			end, { desc = "LSP: stop/start globally" })
 		end,
 	},
 	{
@@ -474,26 +381,6 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>fs", builtin.find_files)
 			vim.keymap.set("n", "<leader>f#", builtin.lsp_dynamic_workspace_symbols)
 		end,
-	},
-
-	{
-		"stevearc/conform.nvim",
-		cmd = { "ConformInfo" },
-		keys = {
-			{
-				"<leader>cr",
-				function()
-					require("conform").format({ async = true, lsp_format = "fallback" })
-				end,
-				mode = "",
-			},
-		},
-		opts = {
-			notify_on_error = false,
-			formatters_by_ft = {
-				lua = { "stylua" },
-			},
-		},
 	},
 })
 
