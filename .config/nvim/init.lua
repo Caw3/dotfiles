@@ -282,6 +282,9 @@ require("lazy").setup({
 	},
 	{
 		"neovim/nvim-lspconfig",
+		dependencies = {
+			{ "j-hui/fidget.nvim", opts = {} },
+		},
 		config = function()
 			vim.diagnostic.config({
 				virtual_text = false,
@@ -295,29 +298,6 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>dl", function()
 				vim.diagnostic.setloclist({ open = true })
 			end, { desc = "Diagnostics → location list" })
-
-
-
-			vim.keymap.set("n", "<C-]>", vim.lsp.buf.definition, { desc = "LSP definition" })
-			vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration)
-			vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition)
-			vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references)
-			vim.keymap.set("n", "<leader>gI", function()
-				require("telescope.builtin").lsp_implementations()
-			end)
-			vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation)
-			vim.keymap.set("n", "<leader>gt", vim.lsp.buf.type_definition)
-			vim.keymap.set("n", "<leader>@", vim.lsp.buf.document_symbol)
-			vim.keymap.set("n", "<leader>#", function()
-				local query = vim.fn.input("#")
-				if query ~= "" then
-					vim.lsp.buf.workspace_symbol(query)
-				end
-			end)
-			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
-			vim.keymap.set({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action)
-			vim.keymap.set("n", "<leader>oc", vim.lsp.buf.outgoing_calls)
-			vim.keymap.set("n", "<leader>ic", vim.lsp.buf.incoming_calls)
 
 			local lsps = {
 				(vim.fn.filereadable(vim.fn.getcwd() .. "/deno.json") == 1 and
@@ -344,6 +324,64 @@ require("lazy").setup({
 			end
 
 			local lsp_enabled = false
+
+
+			local function with_lazy_lsp(fn)
+				local function lsp_ensure_workspace()
+					if lsp_enabled then
+						return
+					end
+					lsp_enabled = true
+					for _, name in ipairs(lsp_server_names) do
+						vim.lsp.enable(name, true)
+					end
+				end
+				return function()
+					local bufnr = vim.api.nvim_get_current_buf()
+					if #vim.lsp.get_clients({ bufnr = bufnr }) > 0 then
+						return fn()
+					end
+					lsp_ensure_workspace()
+					if #vim.lsp.get_clients({ bufnr = bufnr }) > 0 then
+						return fn()
+					end
+					vim.api.nvim_create_autocmd("LspAttach", {
+						buffer = bufnr,
+						once = true,
+						callback = function()
+							vim.schedule(fn)
+						end,
+					})
+				end
+			end
+
+			for _, name in ipairs(lsp_server_names) do
+				vim.lsp.enable(name, false)
+			end
+
+			vim.keymap.set("n", "<C-]>", with_lazy_lsp(vim.lsp.buf.definition), { desc = "LSP definition" })
+			vim.keymap.set("n", "<leader>gD", with_lazy_lsp(vim.lsp.buf.declaration))
+			vim.keymap.set("n", "<leader>gd", with_lazy_lsp(vim.lsp.buf.definition))
+			vim.keymap.set("n", "<leader>gr", with_lazy_lsp(vim.lsp.buf.references))
+			vim.keymap.set("n", "<leader>gI", with_lazy_lsp(function()
+				require("telescope.builtin").lsp_implementations()
+			end))
+			vim.keymap.set("n", "<leader>K", with_lazy_lsp(vim.lsp.buf.hover))
+			vim.keymap.set("n", "<leader>gi", with_lazy_lsp(vim.lsp.buf.implementation))
+			vim.keymap.set("n", "<leader>gt", with_lazy_lsp(vim.lsp.buf.type_definition))
+			vim.keymap.set("n", "<leader>@", with_lazy_lsp(vim.lsp.buf.document_symbol))
+			vim.keymap.set("n", "<leader>#", with_lazy_lsp(function()
+				local query = vim.fn.input("#")
+				if query ~= "" then
+					vim.lsp.buf.workspace_symbol(query)
+				end
+			end))
+			vim.keymap.set("n", "<leader>rn", with_lazy_lsp(vim.lsp.buf.rename))
+			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action)
+			vim.keymap.set("x", "<leader>ca", vim.lsp.buf.code_action)
+			vim.keymap.set("n", "<leader>oc", with_lazy_lsp(vim.lsp.buf.outgoing_calls))
+			vim.keymap.set("n", "<leader>ic", with_lazy_lsp(vim.lsp.buf.incoming_calls))
+
 			vim.keymap.set("n", "<leader>ds", function()
 				lsp_enabled = not lsp_enabled
 				for _, name in ipairs(lsp_server_names) do
