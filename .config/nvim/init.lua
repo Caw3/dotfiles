@@ -45,6 +45,7 @@ vim.keymap.set("n", "<leader>s", ":%s//g<Left><Left>")
 vim.keymap.set("v", "<leader>s", ":s//g<Left><Left>")
 vim.keymap.set("x", "*", "\"vy/\\V<C-r>=escape(@v,'/\\')<CR><CR>")
 vim.keymap.set("n", "<leader>ff", ":find **/*")
+vim.keymap.set("n", "<leader>fq", ":Findqf ")
 vim.keymap.set("n", "<leader>fz", ":silent! args `git ls-files \\| fzf-tmux -p --multi` <CR>")
 vim.keymap.set("n", "<leader>fe", ":edit **/*")
 vim.keymap.set("n", "<leader>tt", ":tag ")
@@ -80,6 +81,7 @@ local function _copy_ll()
 end
 vim.keymap.set("n", "<leader>yf", _copy_loc, { desc = "Copy file:line:col" })
 vim.keymap.set("x", "<leader>yf", _copy_visual, { desc = "Copy file line range" })
+vim.keymap.set("n", "<leader>yg", "<cmd>.GBrowse!<CR>", { desc = "Copy Git URL for current line" })
 vim.keymap.set("n", "<leader>yq", _copy_qf, { desc = "Copy quickfix list" })
 vim.keymap.set("n", "<leader>yl", _copy_ll, { desc = "Copy local list" })
 vim.keymap.set("n", "<leader>rr", "<cmd>e! %<CR>", { desc = "Reload file" })
@@ -114,6 +116,32 @@ end
 vim.api.nvim_create_user_command("Grep", function(opts)
 	vim.fn.setqflist({}, " ", { title = "Grep", lines = vim.split(grep(opts.args), "\n") })
 	vim.cmd("cwindow")
+end, { nargs = "+", complete = "file_in_path" })
+
+local function fd_set_quickfix(...)
+	local args = { ... }
+	for i, arg in ipairs(args) do
+		args[i] = vim.fn.expand(arg)
+	end
+
+	local cmd = { "fd", "-t", "f" }
+	vim.list_extend(cmd, args)
+	local fd_results = vim.fn.systemlist(cmd)
+	if vim.v.shell_error ~= 0 then
+		vim.notify("Fd error: " .. (fd_results[1] or "unknown error"), vim.log.levels.ERROR)
+		return
+	end
+
+	local items = {}
+	for _, path in ipairs(fd_results) do
+		table.insert(items, { filename = path, lnum = 1, text = path })
+	end
+	vim.fn.setqflist(items, "r")
+	vim.cmd("copen")
+end
+
+vim.api.nvim_create_user_command("Findqf", function(opts)
+	fd_set_quickfix((table.unpack or unpack)(opts.fargs))
 end, { nargs = "+", complete = "file_in_path" })
 
 local function find_git_files(cmdarg, _)
