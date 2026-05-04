@@ -39,15 +39,11 @@ vim.keymap.set("x", "<leader>*", "\"vy:Grep -F <C-r>=shellescape(@v)<CR><CR>")
 
 vim.keymap.set("i", "{<CR>", "{<CR>}<C-o>O")
 vim.keymap.set("n", "<leader>nn", "<cmd>set nu!<CR>")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("n", "<leader>s", ":%s//g<Left><Left>")
 vim.keymap.set("v", "<leader>s", ":s//g<Left><Left>")
 vim.keymap.set("x", "*", "\"vy/\\V<C-r>=escape(@v,'/\\')<CR><CR>")
 vim.keymap.set("n", "<leader>ff", ":find **/*")
 vim.keymap.set("n", "<leader>fq", ":Findqf ")
-vim.keymap.set("n", "<leader>fz", ":silent! args `git ls-files \\| fzf-tmux -p --multi` <CR>")
-vim.keymap.set("n", "<leader>fe", ":edit **/*")
 vim.keymap.set("n", "<leader>tt", ":tag ")
 
 local function _fname(bufnr) return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr or 0), ":.") end
@@ -156,16 +152,6 @@ if vim.fn.system("git rev-parse --is-inside-work-tree"):match("^true") then
 	_G.FindGitFiles = find_git_files
 end
 
--- Quickfix autocommands
-local quickfix_group = vim.api.nvim_create_augroup("quickfix", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-	group = quickfix_group,
-	pattern = "qf",
-	callback = function()
-		vim.opt_local.wrap = true
-	end,
-})
-
 local check_update_timer = nil
 local function check_update()
 	vim.cmd("silent! checktime")
@@ -176,7 +162,6 @@ if not check_update_timer then
 	check_update_timer:start(vim.o.updatetime, vim.o.updatetime, vim.schedule_wrap(check_update))
 end
 
-vim.cmd("packadd cfilter")
 vim.cmd("packadd termdebug")
 vim.g.termdebug_wide = 1
 
@@ -204,16 +189,7 @@ require("lazy").setup({
 	},
 	"tpope/vim-surround",
 	"romainl/vim-qf",
-	{
-		"github/copilot.vim", cmd = "Copilot",
-
-	},
-	{
-		"romainl/vim-cool",
-		config = function()
-			vim.g.cool_total_matches = 1
-		end,
-	},
+	"romainl/vim-cool",
 	'shumphrey/fugitive-gitlab.vim',
 	{
 		"tpope/vim-fugitive",
@@ -413,23 +389,6 @@ require("lazy").setup({
 })
 
 local ft_group = vim.api.nvim_create_augroup("filetypes", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-	group = ft_group,
-	pattern = "javascript",
-	callback = function()
-		vim.opt_local.shiftwidth = 2
-		vim.opt_local.expandtab = true
-	end,
-})
-
-vim.api.nvim_create_autocmd("FileType", {
-	group = ft_group,
-	pattern = "typescript",
-	callback = function()
-		vim.opt_local.shiftwidth = 2
-		vim.opt_local.expandtab = true
-	end,
-})
 
 vim.api.nvim_create_autocmd("FileType", {
 	group = ft_group,
@@ -447,25 +406,5 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.expandtab = false
 		vim.opt_local.spell = true
 		vim.opt_local.spelllang = "en_us,sv"
-	end,
-})
-
-vim.api.nvim_create_autocmd("FileType", {
-	group = ft_group,
-	pattern = "sh",
-	callback = function()
-		vim.cmd("compiler shellcheck")
-	end,
-})
-
-vim.api.nvim_create_autocmd("FileType", {
-	group = ft_group,
-	pattern = "tex",
-	callback = function()
-		vim.g.tex_flavor = "latex"
-		vim.g.vimtex_fold_enabled = 1
-		vim.g.vimtex_quickfix_mode = 0
-		vim.opt_local.spell = true
-		vim.opt_local.spelllang = "en,sv"
 	end,
 })
