@@ -347,7 +347,7 @@ require("lazy").setup({
 					if #vim.lsp.get_clients({ bufnr = bufnr }) > 0 then
 						return fn()
 					end
-					vim.api.nvim_create_autocmd("LspAttach", {
+					vim.api.nvim_create_autocmd("LspTokenUpdate", {
 						buffer = bufnr,
 						once = true,
 						callback = function()
