@@ -45,6 +45,8 @@ vim.keymap.set("x", "*", "\"vy/\\V<C-r>=escape(@v,'/\\')<CR><CR>")
 vim.keymap.set("n", "<leader>ff", ":find **/*")
 vim.keymap.set("n", "<leader>fq", ":Findqf ")
 vim.keymap.set("n", "<leader>tt", ":tag ")
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
 
 local function _fname(bufnr) return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr or 0), ":.") end
 local function _copy_loc()
