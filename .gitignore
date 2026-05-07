@@ -14,3 +14,5 @@ key
 /.emacs.d/backups/
 /.emacs.d/auto-save-list/
 /.vim/.netrwbook
+.bin/
+/.bin

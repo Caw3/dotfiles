@@ -43,10 +43,22 @@ vim.keymap.set("n", "<leader>s", ":%s//g<Left><Left>")
 vim.keymap.set("v", "<leader>s", ":s//g<Left><Left>")
 vim.keymap.set("x", "*", "\"vy/\\V<C-r>=escape(@v,'/\\')<CR><CR>")
 vim.keymap.set("n", "<leader>ff", ":find **/*")
-vim.keymap.set("n", "<leader>fq", ":Findqf ")
-vim.keymap.set("n", "<leader>tt", ":tag ")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
+
+vim.keymap.set("n", "<leader>co", "<cmd>copen<CR>")
+vim.keymap.set("n", "<leader>cc", "<cmd>cclose<CR>")
+vim.keymap.set("n", "]q", "<cmd>cnext<CR>")
+vim.keymap.set("n", "[q", "<cmd>cprev<CR>")
+vim.keymap.set("n", "]Q", "<cmd>clast<CR>")
+vim.keymap.set("n", "[Q", "<cmd>cfirst<CR>")
+
+vim.keymap.set("n", "<leader>lo", "<cmd>lopen<CR>")
+vim.keymap.set("n", "<leader>lc", "<cmd>lclose<CR>")
+vim.keymap.set("n", "]l", "<cmd>lnext<CR>")
+vim.keymap.set("n", "[l", "<cmd>lprev<CR>")
+vim.keymap.set("n", "]L", "<cmd>llast<CR>")
+vim.keymap.set("n", "[L", "<cmd>lfirst<CR>")
 
 local function _fname(bufnr) return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr or 0), ":.") end
 local function _copy_loc()
@@ -77,6 +89,7 @@ local function _copy_ll()
 	end
 	vim.fn.setreg("+", table.concat(t, "\n"))
 end
+
 vim.keymap.set("n", "<leader>yf", _copy_loc, { desc = "Copy file:line:col" })
 vim.keymap.set("x", "<leader>yf", _copy_visual, { desc = "Copy file line range" })
 vim.keymap.set("n", "<leader>yg", "<cmd>.GBrowse!<CR>", { desc = "Copy Git URL for current line" })
@@ -84,24 +97,6 @@ vim.keymap.set("n", "<leader>yq", _copy_qf, { desc = "Copy quickfix list" })
 vim.keymap.set("n", "<leader>yl", _copy_ll, { desc = "Copy local list" })
 vim.keymap.set("n", "<leader>rr", "<cmd>e! %<CR>", { desc = "Reload file" })
 
-vim.keymap.set("n", "<leader>co", "<cmd>copen<CR>")
-vim.keymap.set("n", "<leader>cc", "<cmd>cclose<CR>")
-vim.keymap.set("n", "]q", "<cmd>cnext<CR>")
-vim.keymap.set("n", "[q", "<cmd>cprev<CR>")
-vim.keymap.set("n", "]Q", "<cmd>clast<CR>")
-vim.keymap.set("n", "[Q", "<cmd>cfirst<CR>")
-
-vim.keymap.set("n", "<leader>lo", "<cmd>lopen<CR>")
-vim.keymap.set("n", "<leader>lc", "<cmd>lclose<CR>")
-vim.keymap.set("n", "]l", "<cmd>lnext<CR>")
-vim.keymap.set("n", "[l", "<cmd>lprev<CR>")
-vim.keymap.set("n", "]L", "<cmd>llast<CR>")
-vim.keymap.set("n", "[L", "<cmd>lfirst<CR>")
-
-vim.keymap.set("n", "]t", "<cmd>tnext<CR>")
-vim.keymap.set("n", "[t", "<cmd>tprev<CR>")
-
--- Grep function using ripgrep
 local function grep(...)
 	local args = { ... }
 	for i, arg in ipairs(args) do
@@ -114,32 +109,6 @@ end
 vim.api.nvim_create_user_command("Grep", function(opts)
 	vim.fn.setqflist({}, " ", { title = "Grep", lines = vim.split(grep(opts.args), "\n") })
 	vim.cmd("cwindow")
-end, { nargs = "+", complete = "file_in_path" })
-
-local function fd_set_quickfix(...)
-	local args = { ... }
-	for i, arg in ipairs(args) do
-		args[i] = vim.fn.expand(arg)
-	end
-
-	local cmd = { "fd", "-t", "f" }
-	vim.list_extend(cmd, args)
-	local fd_results = vim.fn.systemlist(cmd)
-	if vim.v.shell_error ~= 0 then
-		vim.notify("Fd error: " .. (fd_results[1] or "unknown error"), vim.log.levels.ERROR)
-		return
-	end
-
-	local items = {}
-	for _, path in ipairs(fd_results) do
-		table.insert(items, { filename = path, lnum = 1, text = path })
-	end
-	vim.fn.setqflist(items, "r")
-	vim.cmd("copen")
-end
-
-vim.api.nvim_create_user_command("Findqf", function(opts)
-	fd_set_quickfix((table.unpack or unpack)(opts.fargs))
 end, { nargs = "+", complete = "file_in_path" })
 
 local function find_git_files(cmdarg, _)
@@ -183,10 +152,9 @@ require("lazy").setup({
 	{
 		"tpope/vim-dispatch",
 		config = function()
-			local map = vim.keymap.set
-			map("n", "<Leader>mm", "<cmd>Make<cr>")
-			map("n", "<Leader>mM", ":Make ")
-			map("n", "<Leader>md", ":Dispatch -compiler=")
+			vim.keymap.set("n", "<Leader>mm", "<cmd>Make<cr>")
+			vim.keymap.set("n", "<Leader>mM", ":Make ")
+			vim.keymap.set("n", "<Leader>md", ":Dispatch -compiler=")
 		end,
 	},
 	"tpope/vim-surround",
@@ -208,22 +176,21 @@ require("lazy").setup({
 
 			})
 
-			local map = vim.keymap.set
 			local opts = { noremap = true, silent = true }
 
-			map("n", "<Leader>gs", ":vert Git | vertical resize 80<CR>", opts)
-			map("n", "<Leader>gb", ":G blame<CR>", opts)
-			map("n", "<Leader>gl", ":Gclog<CR>", opts)
-			map(
+			vim.keymap.set("n", "<Leader>gs", ":vert Git | vertical resize 80<CR>", opts)
+			vim.keymap.set("n", "<Leader>gb", ":G blame<CR>", opts)
+			vim.keymap.set("n", "<Leader>gl", ":Gclog<CR>", opts)
+			vim.keymap.set(
 				"v",
 				"<Leader>gl",
 				"<ESC>:execute 'vert G log -L' . line(\"'<\") . ',' . line(\"'>\") . ':' . expand('%') <CR>"
 			)
-			map("n", "<Leader>gv", ":Gvdiffsplit<CR>", opts)
-			map("n", "<Leader>gV", ":Gvdiffsplit!<CR>", opts)
-			map("n", "<Leader>gm", ":G mergetool<CR>", opts)
-			map("n", "dgh", ":diffget //2<CR>", opts)
-			map("n", "dgl", ":diffget //3<CR>", opts)
+			vim.keymap.set("n", "<Leader>gv", ":Gvdiffsplit<CR>", opts)
+			vim.keymap.set("n", "<Leader>gV", ":Gvdiffsplit!<CR>", opts)
+			vim.keymap.set("n", "<Leader>gm", ":G mergetool<CR>", opts)
+			vim.keymap.set("n", "dgh", ":diffget //2<CR>", opts)
+			vim.keymap.set("n", "dgl", ":diffget //3<CR>", opts)
 		end,
 	},
 	{
@@ -271,6 +238,25 @@ require("lazy").setup({
 			vim.keymap.set("x", "ih", "<plug>(GitGutterTextObjectInnerVisual)", { silent = true })
 			vim.keymap.set("o", "ah", "<plug>(GitGutterTextObjectOuterPending)", { silent = true })
 			vim.keymap.set("x", "ah", "<plug>(GitGutterTextObjectOuterVisual)", { silent = true })
+
+			vim.api.nvim_create_autocmd("FocusGained", {
+				group = checktime_group,
+				callback = function()
+					if vim.fn.exists(":GitGutter") == 2 then
+						vim.cmd("silent! GitGutter")
+					end
+				end,
+			})
+
+			vim.api.nvim_create_autocmd("FileChangedShellPost", {
+				group = checktime_group,
+				callback = function()
+					if vim.fn.exists(":GitGutter") == 2 then
+						vim.cmd("silent! GitGutter")
+					end
+				end,
+			})
+
 		end,
 	},
 	{
