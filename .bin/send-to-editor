@@ -13,6 +13,24 @@ VIM_PANE_ID=$(tmux list-panes -t "$SESSION:$WINDOW" -F '#{pane_id} #{pane_curren
 
 cd "$(tmux display -t "$SESSION:$WINDOW" -p -F "#{pane_current_path}")" || exit
 
+# Normalize common git-diff prefixes such as "+++ b/file" or "--- a/file".
+INPUT="${INPUT#+++ }"
+INPUT="${INPUT#--- }"
+
+FILE_PART="${INPUT%%:*}"
+LINE_PART=""
+if [[ "$INPUT" == *:* ]]; then
+    LINE_PART=":${INPUT##*:}"
+fi
+
+if [[ "$FILE_PART" =~ ^[ab]/ ]]; then
+    TOP_LEVEL_DIR=$(git rev-parse --show-toplevel 2>/dev/null)
+    STRIPPED_FILE="${FILE_PART:2}"
+    if [[ -n "$TOP_LEVEL_DIR" && ! -e "$FILE_PART" && -e "$TOP_LEVEL_DIR/$STRIPPED_FILE" ]]; then
+        INPUT="$TOP_LEVEL_DIR/$STRIPPED_FILE$LINE_PART"
+    fi
+fi
+
 FILE_AND_LINE=$(echo "$INPUT" | perl -nE '
     use Cwd "realpath";
     
