@@ -367,6 +367,9 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>rn", with_lazy_lsp(vim.lsp.buf.rename))
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action)
 			vim.keymap.set("x", "<leader>ca", vim.lsp.buf.code_action)
+			vim.keymap.set("n", "<leader>cr", with_lazy_lsp(function()
+				vim.lsp.buf.format({ async = true })
+			end), { desc = "LSP format buffer" })
 			vim.keymap.set("n", "<leader>oc", with_lazy_lsp(vim.lsp.buf.outgoing_calls))
 			vim.keymap.set("n", "<leader>ic", with_lazy_lsp(vim.lsp.buf.incoming_calls))
 
