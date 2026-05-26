@@ -12,13 +12,12 @@ set splitbelow
 set splitright
 set scrolloff=8
 set signcolumn=yes
-set nu
+set number
 set incsearch
 set hlsearch
 set hidden
 set noswapfile
 set nobackup writebackup
-set nocompatible
 set backspace=indent,eol,start
 set updatetime=100
 set completeopt=fuzzy,menuone,popup
@@ -27,17 +26,16 @@ set pumheight=40
 set wildignore=*.o,node_modules/**,dist/**,build/**
 set path=src/,apps/,libs/,test/,e2e/,cmd/,utils/
 
-if !isdirectory("/var/tmp/vim/undo") && !has('nvim')
+if !isdirectory("/var/tmp/vim/undo")
     call mkdir("/var/tmp/vim/undo", "p", 0700)
-    set undodir=/var/tmp/vim/undo
-    set undofile
 endif
+set undodir=/var/tmp/vim/undo
+set undofile
 
 "Keymaps
 map <Space> <Leader>
 inoremap {<cr> {<cr>}<c-o><s-o>
 nnoremap <Leader>rr <cmd>e! %<CR>
-nnoremap <Leader>nn <cmd>set nu!<CR>
 nnoremap <silent> <Leader>* :Grep <C-R><C-W><CR>
 nnoremap <Leader>/ :Grep 
 nnoremap n nzzzv
@@ -104,18 +102,6 @@ else
 endif
 
 
-function! FdSetQuickfix(...) abort
-    let fdresults = systemlist("fd -t f --hidden " .. join(a:000, " "))
-    if v:shell_error
-        echoerr "Fd error: " .. fdresults[0]
-        return
-    endif
-    call setqflist(map(fdresults, {_, val -> 
-        \{'filename': val, 'lnum': 1, 'text': val}}))
-    copen
-endfunction
-
-command! -nargs=+ -complete=file_in_path Findqf call FdSetQuickfix(<f-args>)
 command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
 command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
 
@@ -163,11 +149,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     Plug 'CervEdin/vim-minizinc', { 'for': 'zinc' }
     Plug 'neovimhaskell/haskell-vim', { 'for' : 'haskell' }
     Plug 'Caw3/ale', { 'on' : ['ALEToggle', 'ALEGoToDefinition', 'ALEFindReferences', 'ALEHover', 'ALERename', 'ALESymbolSearch', 'ALEFix'] }
-    Plug 'github/copilot.vim', { 'on' : ['Copilot'] }
     Plug 'airblade/vim-gitgutter'
     Plug 'romainl/vim-cool'
     Plug 'romainl/vim-qf'
-    Plug 'romainl/vim-devdocs'
     call plug#end()
 
     "Vim Cool
@@ -192,8 +176,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim")) && !has('nvim')
     nnoremap <Leader>oi <Cmd>ALEOrganizeImports<CR>
     nnoremap <Leader>ci <Cmd>ALEImport<CR>
     nnoremap <Leader># :ALESymbolSearch 
-    nnoremap [e <Cmd>ALEPrevious<CR>
-    nnoremap ]e <Cmd>ALENext<CR>
+    nnoremap [d <Cmd>ALEPrevious<CR>
+    nnoremap ]d <Cmd>ALENext<CR>
     let g:ale_enabled = 0
     let g:ale_hover_cursor = 0
     let g:ale_set_highlights = 0

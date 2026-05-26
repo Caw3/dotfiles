@@ -6,20 +6,6 @@
 [[ $- != *i* ]] && return
 
 ## Functions
-vimtag() {
-  TAGS="./tags"
-  QUERY=$1
-  if [[ -z "$QUERY" ]]; then
-      FZF_CMD="fzf"
-  else
-      FZF_CMD="fzf -q $QUERY"
-  fi
-  ctags --tag-relative $(git ls-files)
-  TAG=$(grep -v ^\! $TAGS | cut -f 1,2,3 | column -t -s $'\t' | $FZF_CMD | awk '{print $1}')
-  $EDITOR -t "$TAG"
-}
-export -f vimtag
-
 vimgrep() {
   HELP="Usage: vimgrep {pattern} [files...]"
   [[ $# -lt 1 ]] && echo "$HELP" && return 1
@@ -48,12 +34,6 @@ vimgrep() {
 }
 export -f vimgrep
 
-
-cht() {
-  curl -s cht.sh/"$1" | less -R
-}
-export -f cht
-
 vifzf() {
   if command -v fd >/dev/null 2>&1; then
     FD_CMD=(fd)
@@ -80,6 +60,35 @@ gw-new() {
   fi
 }
 export -f gw-new
+
+gw-switch() {
+  local branch="$1"
+  local repo_root=$(basename $(git rev-parse --show-toplevel 2>/dev/null)) 
+  local session_name="${repo_root//./} (${branch//./})"
+  local path="$(git worktree list | grep -F "[$branch]" | cut -d' ' -f1)"
+
+  local repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "Not in a git repo." >&2; exit 1; }
+  local primary_worktree=$(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}' || echo "$REPO_ROOT")
+
+  if ! [[ -d "$path" ]]; then
+    echo "No worktree at $path — run gw-new $branch first" >&2
+    return 1
+  fi
+
+  if [[ "$path" == "$primary_worktree" ]]; then
+    local base
+    base=$(basename "$primary_worktree")
+    session_name="${base//./}"
+  fi
+
+  if tmux has-session -t "$session_name" 2> /dev/null; then
+     tmux switch-client -t "$session_name";
+  else
+      tmux new-session -c "$path" -s "$session_name" -d;
+      tmux switch-client -t "$session_name";
+  fi
+}
+export -f gw-switch
 
 ## Prompt
 export PS1='\[\e[32m\]\u@\h\[\e[0m\] \[\e[34m\]\W\[\e[0m\] '
@@ -124,9 +133,6 @@ alias gc='git checkout'
 
 alias ta="tmux a"
 alias tm="tmux"
-
-alias oc="opencode --port"
-alias ocr="opencode run"
 alias ca="cursor-agent"
 
 ## FZF
@@ -155,15 +161,3 @@ prompt:bright-black'"
 export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
 export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git" -g "!node_modules" || find .'
 export FZF_TMUX_OPTS="-p -w 80% -h 80%"
-
-vterm_printf() {
-    if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ]); then
-        # Tell tmux to pass the escape sequences through
-        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
-    elif [ "${TERM%%-*}" = "screen" ]; then
-        # GNU screen (screen, screen-256color, screen-256color-bce)
-        printf "\eP\e]%s\007\e\\" "$1"
-    else
-        printf "\e]%s\e\\" "$1"
-    fi
-}
