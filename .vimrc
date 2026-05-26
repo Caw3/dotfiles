@@ -49,6 +49,12 @@ nnoremap <Leader>fq :Findqf
 nnoremap <Leader>fe :edit **/*
 nnoremap <Leader>tt :tag 
 
+nnoremap <Leader>yf <Cmd>call s:CopyLoc()<CR>
+xnoremap <Leader>yf <Cmd>call s:CopyVisual()<CR>
+nnoremap <Leader>yg <Cmd>GBrowse!<CR>
+nnoremap <Leader>yq <Cmd>call s:CopyList('qf')<CR>
+nnoremap <Leader>yl <Cmd>call s:CopyList('loc')<CR>
+
 nnoremap <leader>co <cmd>cope<cr>
 nnoremap <leader>cc <cmd>cclose<cr>
 nnoremap ]q <cmd>cnext<cr>
@@ -67,6 +73,44 @@ nnoremap ]t <cmd>tprev<cr>
 nnoremap [t <cmd>tnext<cr>
 
 "Functions
+function! s:Fname(...) abort
+  let l:bufnr = a:0 > 0 ? a:1 : bufnr('%')
+  return fnamemodify(bufname(l:bufnr), ':.')
+endfunction
+
+function! s:CopyLoc() abort
+  let l:pos = getcurpos()
+  call setreg('+', printf('%s:%d:%d', s:Fname(), l:pos[2], l:pos[3]))
+endfunction
+
+function! s:CopyVisual() abort
+  let l:s = line("'<")
+  let l:e = line("'>")
+  if l:s > l:e
+    let [l:s, l:e] = [l:e, l:s]
+  endif
+  call setreg('+', printf('%s:%d-%d', s:Fname(), l:s, l:e))
+endfunction
+
+function! s:CopyList(which) abort
+  let l:items = a:which ==# 'loc' ? getloclist(0) : getqflist()
+  if empty(l:items)
+    return
+  endif
+  let l:lines = []
+  for l:item in l:items
+    let l:fname = get(l:item, 'bufnr', 0) > 0
+          \ ? s:Fname(l:item.bufnr)
+          \ : fnamemodify(get(l:item, 'filename', ''), ':.')
+    call add(l:lines, printf('%s:%d:%d: %s',
+          \ l:fname,
+          \ get(l:item, 'lnum', 0),
+          \ get(l:item, 'col', 0),
+          \ get(l:item, 'text', '')))
+  endfor
+  call setreg('+', join(l:lines, "\n"))
+endfunction
+
 function! ExecAndRestorePos(cmd)
 	let save_pos = getpos(".")
 	silent execute a:cmd

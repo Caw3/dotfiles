@@ -44,7 +44,6 @@ vifzf() {
 }
 export -f vifzf
 
-
 gw-new() {
   local branch="$1"
   local repo_root=$(basename $(git rev-parse --show-toplevel 2>/dev/null)) 
