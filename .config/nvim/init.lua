@@ -290,7 +290,7 @@ require("lazy").setup({
 			local lsps = {
 				(vim.fn.filereadable(vim.fn.getcwd() .. "/deno.json") == 1 and
 					{ "denols", { settings = { organizeImports = true } } } or
-					{ "ts_ls", { settings = { organizeImports = true } } }),
+					{ "ts_ls", { settings = { organizeImports = true }, init_options = { maxTsServerMemory = 8192 } } }),
 				{ "lua_ls" },
 				{ "clangd" },
 				{ "gopls" },
