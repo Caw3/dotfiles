@@ -1,0 +1,184 @@
+#!/bin/bash
+
+set -e
+
+# --- FLAGS ---
+DO_BRANCH=false
+DO_COMMIT=false
+DO_PR=false
+FLAGS_GIVEN=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --branch)
+      DO_BRANCH=true
+      shift
+      ;;
+    --commit)
+      DO_COMMIT=true
+      FLAGS_GIVEN=true
+      shift
+      ;;
+    --pr)
+      DO_PR=true
+      FLAGS_GIVEN=true
+      shift
+      ;;
+    *)
+      echo "Unknown flag: $1"
+      exit 1
+      ;;
+  esac
+done
+
+# If no flags provided, run everything
+if ! $FLAGS_GIVEN; then
+  DO_BRANCH=true
+  DO_COMMIT=true
+  DO_PR=true
+fi
+
+# --- FUNCTIONS ---
+
+generate_with_claude() {
+  local prompt="$1"
+  claude -p --no-session-persistence "$prompt"
+}
+
+edit_in_editor() {
+  local content="$1"
+  local tmpfile
+  tmpfile=$(mktemp)
+  echo "$content" > "$tmpfile"
+  ${EDITOR:-vi} "$tmpfile" </dev/tty >/dev/tty
+  cat "$tmpfile"
+  rm -f "$tmpfile"
+}
+
+# --- STEP 1: Create new branch ---
+if $DO_BRANCH; then
+  current_branch=$(git symbolic-ref --short HEAD)
+
+  if [[ "$current_branch" =~ ^(main|master|develop)$ ]]; then
+    echo "You're on a protected branch: $current_branch"
+    git fetch --all
+
+    git_diff=$(git diff --cached)
+    if [[ -z "$git_diff" ]]; then
+      echo "No changes detected in diff. Cannot generate branch name."
+      exit 1
+    fi
+
+    prompt="Generate a git branch name for these changes. Use the format: {fix,feat,refactor,chore}/<brief-descriptor> where the descriptor is lowercase, hyphen-separated, and max 20 chars. Include a component scope only if obvious from the diff (e.g. feat/auth-login, fix/parser-crash, chore/deps). Only return the branch name, nothing else. Diff: $git_diff Existing branches for context: $(git branch)"
+    new_branch=$(generate_with_claude "$prompt" | tr -d '[:space:]')
+
+    echo -e "\nProposed branch: $new_branch"
+
+    while true; do
+      read -rp $'\nAccept, edit, or cancel? [y/e/N]: ' confirm </dev/tty
+      case "$confirm" in
+        [Yy])
+          break
+          ;;
+        [Ee])
+          new_branch=$(edit_in_editor "$new_branch" | tr -d '[:space:]')
+          if [[ -z "$new_branch" ]]; then
+            echo "Empty branch name. Cancelled."
+            exit 1
+          fi
+          break
+          ;;
+        *)
+          echo "Branch creation cancelled."
+          exit 1
+          ;;
+      esac
+    done
+
+    echo "Creating and switching to branch: $new_branch"
+    git checkout -b "$new_branch"
+  else
+    echo "You're on branch: $current_branch"
+  fi
+fi
+
+# --- STEP 2: Commit changes ---
+if $DO_COMMIT; then
+  if [[ -z $(git status --porcelain) ]]; then
+    echo "No changes to commit."
+  else
+    git_diff=$(git diff --cached)
+
+    prompt="Generate a clear, concise, all lower-case Git commit message (max 80 chars) for the following diff. Use these recent commits as style inspiration and respect any prefix convention (e.g. fix:, feat:, chore:). Only return the message, nothing else. Diff: $git_diff Recent commits: $(git log --oneline -n 20)" commit_message=$(generate_with_claude "$prompt")
+    echo -e "\nProposed commit message:\n$commit_message"
+
+    while true; do
+      read -rp $'\nAccept, edit, or cancel the commit? [y/e/N]: ' confirm_commit </dev/tty
+      case "$confirm_commit" in
+        [Yy])
+          git commit -m "$commit_message"
+          break
+          ;;
+        [Ee])
+          commit_message=$(edit_in_editor "$commit_message")
+          if [[ -z "$commit_message" ]]; then
+            echo "Empty commit message. Cancelled."
+            git switch -
+            exit 1
+          fi
+          git commit -m "$commit_message"
+          break
+          ;;
+        *)
+          git switch -
+          echo "Commit cancelled."
+          exit 1
+          ;;
+      esac
+    done
+  fi
+fi
+
+# --- STEP 3: Push and create Pull Request ---
+if $DO_PR; then
+  branch_name=$(git symbolic-ref --short HEAD)
+  git_log=$(git log origin/main..HEAD --pretty=format:"%h %s" 2>/dev/null || git log -5 --pretty=format:"%h %s")
+  git_diff_full=$(git diff origin/main..HEAD 2>/dev/null || git diff HEAD~1)
+
+  title_prompt="Generate a GitHub pull request title. Rules: no markdown formatting, lowercase except for proper names or camelCase identifiers. Match the style of existing PRs if possible. Only return the title, nothing else. Commits: $git_log Existing PRs for style reference: $(gh pr list 2>/dev/null)" body_prompt="Generate a GitHub pull request description for these changes. Use markdown. Include a short summary section and list the key changes. Be concise. Only return the body, nothing else. Commits: $git_log Diff: $git_diff_full"
+  pr_title=$(generate_with_claude "$title_prompt") pr_body=$(generate_with_claude "$body_prompt")
+
+  echo -e "\nProposed PR Title: $pr_title"
+  echo -e "\nProposed PR Body:\n$pr_body"
+
+  while true; do
+    read -rp $'\nAccept, edit, or cancel push + PR creation? [y/e/N]: ' confirm_push </dev/tty
+    case "$confirm_push" in
+      [Yy])
+        git push -u origin "$branch_name"
+        echo "Creating Pull Request..."
+        gh pr create --title "$pr_title" --body "$pr_body"
+        break
+        ;;
+      [Ee])
+        combined=$(edit_in_editor "$(printf '%s\n---\n%s' "$pr_title" "$pr_body")")
+        pr_title=$(echo "$combined" | sed '/^---$/,$d')
+        pr_body=$(echo "$combined" | sed '1,/^---$/d')
+        if [[ -z "$pr_title" ]]; then
+          echo "Empty PR title. Cancelled."
+          git switch -
+          exit 1
+        fi
+        git push -u origin "$branch_name"
+        echo "Creating Pull Request..."
+        gh pr create --title "$pr_title" --body "$pr_body"
+        break
+        ;;
+      *)
+        echo "Push and pull request creation canceled."
+        git switch -
+        exit 1
+        ;;
+    esac
+  done
+fi
