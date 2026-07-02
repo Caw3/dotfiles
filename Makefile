@@ -1,5 +1,5 @@
 SHELL=/bin/bash 
-REMOTE_KEY = ~/.ssh/key
+REMOTE_KEY = ~/.ssh/private_key
 LN = @ln -vsfn {${PWD},${HOME}}
 PKG_CHECK = @command -v $@ > /dev/null 2>&1
 
@@ -76,8 +76,11 @@ wget:
 curl:
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
 
-key: ## Decrypt ssh-key
-	@ansible-vault decrypt --output $(REMOTE_KEY) ~/.ssh/key
+key: ansible ## Decrypt ssh-key and updates origin remote url
+	@ansible-vault decrypt --output $(REMOTE_KEY) ./encrypted_key
+	@eval $(ssh-agent) && ssh-add $(REMOTE_KEY)
+	@git remote set-url origin git@github.com:Caw3/dotfiles.gitgit
+
 
 scripts: ## Make a .bin dir, update path, and symlink scripts to it
 	$(LN)/.bin
