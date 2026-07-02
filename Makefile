@@ -79,7 +79,7 @@ curl:
 key: ansible ## Decrypt ssh-key and updates origin remote url
 	@ansible-vault decrypt --output $(REMOTE_KEY) ./encrypted_key
 	@eval $(ssh-agent) && ssh-add $(REMOTE_KEY)
-	@git remote set-url origin git@github.com:Caw3/dotfiles.gitgit
+	@git remote set-url origin git@github.com:Caw3/dotfiles.git
 
 
 scripts: ## Make a .bin dir, update path, and symlink scripts to it
