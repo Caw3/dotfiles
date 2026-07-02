@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
+if [[ -z "$REPO_SEARCH_PATH" ]]; then
+    echo "REPO_SEARCH_PATH is not set" >&2
+    exit 1
+fi
+
 IFS=' ' read -r -a search_path <<< "$REPO_SEARCH_PATH"
 prompt="Select project: "
 
-repo_dir="$(find "${search_path[@]}" -maxdepth 1 -mindepth 1 -not -path '*/[@.]*' -not -name '.git' -not -name 'node_modules' -type d,l | \
+repo_dir="$(find "${search_path[@]}" -maxdepth 1 -mindepth 1 -not -path '*/[@.]*' -not -name '.git' -not -name 'node_modules' \( -type d -o -type l \) | \
     sort | uniq | \
     fzf \
     --reverse \
