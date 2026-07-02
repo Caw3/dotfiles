@@ -41,7 +41,7 @@ vim: ## Init vim
 
 neovim: ## Init neovim
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
-	mkdir -p ${HOME}/.config/init.lua
+	mkdir -p ${HOME}/.config/nvim
 	$(LN)/.config/nvim/init.lua
 jq: 
 	$(PKG_CHECK) || $(PKG_INSTALL) $@
