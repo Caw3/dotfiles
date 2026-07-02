@@ -1,13 +1,5 @@
 # Colors (Nord)
 
-## Thesse are a workaround for contrast in opencode
-[colors]
-indexed_colors = [ { index=236, color= "#3b4252"}, { index=237, color= "#434c5e"}  ]
-
-[terminal.shell]
-program = "tmux"
-args = ["new-session", "-A", "-s", "main"]
-
 # Default colors
 [colors.primary]
 background = '#2E3440'
@@ -75,13 +67,15 @@ binding = { key = "O", mods = "Control|Shift" }
 regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
 
 [[hints.enabled]]
-command = { program = "/Users/cararo/.dotfiles/.bin/open-in-code" }
+# IMPORTANT: alacritty fails inresolving variables such as $HOME and $USER.
+# That is why the path is hardcoded
+command = { program = "/Users/cwillman/repos/dotfiles/.bin/open-in-code" }
 mouse = { enabled = true, mods = "Command|Shift" }
 binding = { key = "f", mods = "Command|Shift" }
 regex = '(\.?([(file://)~\/])?[-a-zA-Z0-9_+-,.\/@\[\]]+)(?:(?::|", line )(\d+))?'
 
 [[hints.enabled]]
-command = { program = "/Users/cararo/.dotfiles/.bin/send-to-editor" }
+command = { program = "/Users/cwillman/repos/dotfiles/.bin/send-to-editor" }
 mouse = { enabled = true, mods = "Control|Shift" }
 binding = { key = "f", mods = "Control|Shift" }
 regex = '(\.?([(file://)~\/])?[-a-zA-Z0-9_+-,.\/@\[\]]+)(?:(?::|", line )(\d+))?'
