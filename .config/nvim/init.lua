@@ -292,6 +292,18 @@ require("lazy").setup({
 				vim.diagnostic.setloclist({ open = true })
 			end, { desc = "Diagnostics → location list" })
 
+			vim.api.nvim_create_autocmd("DiagnosticChanged", {
+				callback = function(args)
+					local bufnr = args.buf
+					if not vim.api.nvim_buf_is_valid(bufnr) then return end
+					local wins = vim.fn.win_findbuf(bufnr)
+					if #wins == 0 then return end
+					local diagnostics = vim.diagnostic.get(bufnr)
+					local items = vim.diagnostic.toqflist(diagnostics)
+					vim.fn.setloclist(wins[1], {}, " ", { title = "Diagnostics", items = items })
+				end,
+			})
+
 			local lsps = {
 				(vim.fn.filereadable(vim.fn.getcwd() .. "/deno.json") == 1 and
 					{ "denols", { settings = { organizeImports = true } } } or
