@@ -160,7 +160,12 @@ require("lazy").setup({
 	"tpope/vim-surround",
 	"romainl/vim-qf",
 	"romainl/vim-cool",
-	'shumphrey/fugitive-gitlab.vim',
+	{
+		"tpope/vim-rhubarb",
+		config = function()
+			vim.g.github_enterprise_urls = { "https://spotify.ghe.com" }
+		end,
+	},
 	{
 		"tpope/vim-fugitive",
 		config = function()
