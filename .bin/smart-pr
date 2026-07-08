@@ -109,7 +109,7 @@ if $DO_COMMIT; then
   else
     git_diff=$(git diff --cached)
 
-    prompt="Generate a clear, concise, all lower-case Git commit message (max 80 chars) for the following diff. Use these recent commits as style inspiration and respect any prefix convention (e.g. fix:, feat:, chore:). Only return the message, nothing else. Diff: $git_diff Recent commits: $(git log --oneline -n 20)" commit_message=$(generate_with_claude "$prompt")
+    prompt="Generate a clear, concise, all lower-case (except for camelCase and names) Git commit message (max 80 chars) for the following diff. Use these recent commits as style inspiration and respect any prefix convention (e.g. fix:, feat:, chore:). Only return the message, nothing else. Diff: $git_diff Recent commits: $(git log --oneline -n 20)" commit_message=$(generate_with_claude "$prompt")
     echo -e "\nProposed commit message:\n$commit_message"
 
     while true; do
