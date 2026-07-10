@@ -109,7 +109,16 @@ end
 vim.api.nvim_create_user_command("Grep", function(opts)
 	vim.fn.setqflist({}, " ", { title = "Grep", lines = vim.split(grep(opts.args), "\n") })
 	vim.cmd("cwindow")
-end, { nargs = "+", complete = "file_in_path" })
+end, {
+	nargs = "+",
+	complete = function(ArgLead, CmdLine, CursorPos)
+		local prefix = CmdLine:sub(1, CursorPos - #ArgLead)
+		local argc = 0
+		for _ in prefix:gmatch("%S+") do argc = argc + 1 end
+		if argc < 2 then return {} end
+		return vim.fn.getcompletion(ArgLead, "file")
+	end,
+})
 
 local function find_git_files(cmdarg, _)
 	local fnames = vim.fn.systemlist("git ls-files")

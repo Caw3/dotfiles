@@ -34,6 +34,13 @@ vimgrep() {
 }
 export -f vimgrep
 
+_vimgrep() {
+  if [[ $COMP_CWORD -ge 2 ]]; then
+    COMPREPLY=($(compgen -f -- "${COMP_WORDS[COMP_CWORD]}"))
+  fi
+}
+complete -F _vimgrep vimgrep
+
 vifzf() {
   if command -v fd >/dev/null 2>&1; then
     FD_CMD=(fd)
@@ -160,3 +167,4 @@ prompt:bright-black'"
 export FZF_DEFAULT_OPTS=$OPTIONS$BINDS$COLORS
 export FZF_DEFAULT_COMMAND='rg -L --files --hidden -g "!.git" -g "!node_modules" || find .'
 export FZF_TMUX_OPTS="-p -w 80% -h 80%"
+export PATH=/opt/spotify-devex/bin:$PATH
