@@ -26,3 +26,8 @@ eslint -f unix src/ > errors.err
 
 # grep -n already gives file:line:
 grep -rn 'TODO' src/ > errors.err
+
+## Security policy
+
+NEVER send a slack message, edit google drive document or contact anyone using
+MCP or other tools without my explicit approval and confirmation.
