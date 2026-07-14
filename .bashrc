@@ -9,28 +9,11 @@
 vimgrep() {
   HELP="Usage: vimgrep {pattern} [files...]"
   [[ $# -lt 1 ]] && echo "$HELP" && return 1
-
   PATTERN=$1
   shift
-
-  if [[ $# -eq 0 ]]; then
-    if git rev-parse --is-inside-work-tree &>/dev/null; then
-      mapfile -t FILES < <(git ls-files)
-    else
-      mapfile -t FILES < <(find . -type f)
-    fi
-  else
-    FILES=("$@")
-  fi
-
-  if command -v rg >/dev/null 2>&1; then
-    GREP_CMD=(rg --vimgrep "$PATTERN" "${FILES[@]}")
-  else
-    GREP_CMD=(grep -Hin "$PATTERN" "${FILES[@]}")
-  fi
   tmpfile=$(mktemp)
-  ${GREP_CMD[@]} > $tmpfile
-  "$EDITOR" -q $tmpfile
+  rg --vimgrep "$PATTERN" "$@" > "$tmpfile"
+  "$EDITOR" -q "$tmpfile"
 }
 export -f vimgrep
 
@@ -67,7 +50,6 @@ gw-new() {
      tmux switch-client -t "$session_name";
   else
     git worktree add "$path" "$branch" \
-      && git ls-files --others --ignored --exclude-standard -z | xargs -0 -I{} sh -c 'mkdir -p "$(dirname "$1/$2")" && ln -s "$(pwd)/$2" "$1/$2"' _ "$path" {} \
       && tmux new-session -c "$path" -s "$session_name" -d \
       && tmux switch-client -t "$session_name";
   fi
@@ -90,8 +72,8 @@ gw-switch() {
   local primary_worktree=$(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}' || echo "$REPO_ROOT")
 
   if ! [[ -d "$path" ]]; then
-    echo "No worktree at $path — run gw-new $branch first" >&2
-    return 1
+    gw-new $branch
+    return 0
   fi
 
   if [[ "$path" == "$primary_worktree" ]]; then
@@ -131,7 +113,7 @@ gw-delete() {
     tmux kill-session -t "$session_name"
   fi
 
-  git worktree remove "$path"
+  git worktree remove --force "$path"
 }
 export -f gw-delete
 
@@ -142,7 +124,12 @@ _branches() {
 }
 complete -F _branches gw-new
 complete -F _branches gw-switch
-complete -F _branches gw-delete
+_worktrees() {
+  local branches
+  branches=$(git worktree list --porcelain 2>/dev/null | awk '/^branch /{sub(/.*\//, ""); print}')
+  COMPREPLY=($(compgen -W "$branches" -- "${COMP_WORDS[COMP_CWORD]}"))
+}
+complete -F _worktrees gw-delete
 
 
 
@@ -184,6 +171,8 @@ alias gb='git branch'
 alias gbl='git branch -vva --sort=-committerdate'
 alias gs='git status -s'
 alias gw='git worktree'
+_gw() { COMP_WORDS=(git worktree "${COMP_WORDS[@]:1}"); ((COMP_CWORD++)); __git_wrap__git_main; }
+complete -o default -o nospace -F _gw gw
 alias gl='git log --oneline --graph --abbrev-commit'
 alias gc='git checkout'
 
