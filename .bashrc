@@ -34,17 +34,34 @@ vifzf() {
 }
 export -f vifzf
 
+
+_gw-primary-worktree() {
+  git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}'
+}
+
+_gw-branch-to-session() {
+  local branch="$1"
+  local primary_worktree=$(_gw-primary-worktree)
+  local session_name="$(basename $primary_worktree)-worktree-${branch}"
+  session_name=${session_name//\//__}
+  session_name=${session_name//.//}
+  echo $session_name
+}
+
+_gw-worktree-path() {
+  local branch="$1"
+  local primary_worktree=$(_gw-primary-worktree)
+  echo "${primary_worktree}-worktree-${branch}"
+}
+
 gw-new() {
   if [[ -z "$1" ]]; then
     echo "Usage: gw-new <branch>" >&2
     return 1
   fi
   local branch="$1"
-  local repo_root=$(basename $(git rev-parse --show-toplevel 2>/dev/null))
-  local session_name="${repo_root}-worktree-${branch}"
-  session_name=${session_name//\//__}
-  session_name=${session_name//.//}
-  local path="$HOME/repos/${session_name}"
+  local path=$(_gw-worktree-path "$branch")
+  local session_name=$(_gw-branch-to-session "$branch")
 
   if tmux has-session -t "$session_name" 2> /dev/null; then
      tmux switch-client -t "$session_name";
@@ -62,20 +79,16 @@ gw-switch() {
     return 1
   fi
   local branch="$1"
-  local repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "Not in a git repo." >&2; exit 1; }
-
-  local session_name="$(basename $repo_root)-worktree-${branch}"
-  session_name=${session_name//\//__}
-  session_name=${session_name//.//}
   local path="$(git worktree list | grep -F "[$branch]" | cut -d' ' -f1)"
 
-  local primary_worktree=$(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}' || echo "$REPO_ROOT")
+  session_name=$(_gw-branch-to-session $branch)
 
   if ! [[ -d "$path" ]]; then
     gw-new $branch
     return 0
   fi
 
+  local primary_worktree=$(_gw-primary-worktree)
   if [[ "$path" == "$primary_worktree" ]]; then
     local base
     base=$(basename "$primary_worktree")
@@ -97,8 +110,7 @@ gw-delete() {
     return 1
   fi
   local branch="$1"
-  local repo_root=$(basename $(git rev-parse --show-toplevel 2>/dev/null))
-  local primary_worktree=$(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}')
+  local primary_worktree=$(_gw-primary-worktree)
   local path="$(git worktree list | grep -F "[$branch]" | cut -d' ' -f1)"
 
   if [[ -z "$path" || "$path" == "$primary_worktree" ]]; then
@@ -106,9 +118,7 @@ gw-delete() {
     return 1
   fi
 
-  local session_name="$(basename $repo_root)-worktree-${branch}"
-  session_name=${session_name//\//__}
-  session_name=${session_name//.//}
+  local session_name=$(_gw-branch-to-session "$branch")
   if tmux has-session -t "$session_name" 2>/dev/null; then
     tmux kill-session -t "$session_name"
   fi
