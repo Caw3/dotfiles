@@ -38,6 +38,7 @@ export -f vifzf
 _gw-primary-worktree() {
   git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}'
 }
+export -f _gw-primary-worktree
 
 _gw-branch-to-session() {
   local branch="$1"
@@ -47,12 +48,14 @@ _gw-branch-to-session() {
   session_name=${session_name//.//}
   echo $session_name
 }
+export -f _gw-branch-to-session
 
 _gw-worktree-path() {
   local branch="$1"
   local primary_worktree=$(_gw-primary-worktree)
   echo "${primary_worktree}-worktree-${branch}"
 }
+export -f _gw-worktree-path
 
 gw-new() {
   if [[ -z "$1" ]]; then
@@ -104,6 +107,22 @@ gw-switch() {
 }
 export -f gw-switch
 
+gw-yoink() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: gw-yoink <branch>" >&2
+    return 1
+  fi
+  local branch="$1"
+  local path="$(git worktree list | grep -F "[$branch]" | cut -d' ' -f1)"
+  if [[ -z "$path" ]]; then
+    echo "No worktree found for branch: $branch" >&2
+    return 1
+  fi
+  printf '%s\n' "$path" | pbcopy
+  printf 'Copied worktree path: %s\n' "$path"
+}
+export -f gw-yoink
+
 gw-delete() {
   if [[ -z "$1" ]]; then
     echo "Usage: gw-delete <branch>" >&2
@@ -140,6 +159,7 @@ _worktrees() {
   COMPREPLY=($(compgen -W "$branches" -- "${COMP_WORDS[COMP_CWORD]}"))
 }
 complete -F _worktrees gw-delete
+complete -F _worktrees gw-yoink
 
 
 

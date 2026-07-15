@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
-# Manage git worktrees with fzf-tmux: list, switch (with tmux session), create new.
-# Run from inside a git repo. Uses fzf-tmux everywhere; preview shows diff from main.
+# Manage git worktrees with fzf: list, switch (with tmux session), delete.
+# Run from inside a git repo. Delegates to the gw-* functions for worktree/tmux operations.
 
 set -e
 
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "Not in a git repo." >&2; exit 1; }
 cd "$REPO_ROOT"
-MAIN_BRANCH=$(git rev-parse --abbrev-ref main 2>/dev/null || echo "main")
-CURRENT_REF=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "$MAIN_BRANCH")
-
-# Canonical "primary" worktree path (usually the original checkout), used only for naming.
-PRIMARY_WORKTREE=$(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}' || echo "$REPO_ROOT")
+CURRENT_REF=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
 
 FZF_TMUX_OPTS="-d20 --reverse"
 FZF_PREVIEW_WINDOW="right:60%"
@@ -20,9 +16,12 @@ FZF_KEY_DELETE="ctrl-x"
 FZF_KEY_GOBACK="esc"
 FZF_KEY_YOINK="ctrl-y"
 
+branch_from_line() {
+  echo "$1" | awk '{print $NF}' | tr -d '[]'
+}
+
 select_worktree_with_fzf() {
   local worktree_lines=$1
-  export REPO_ROOT MAIN_BRANCH
   echo "$worktree_lines" | fzf $FZF_TMUX_OPTS \
     --prompt "Select worktree: " \
     --preview "git -C \"$REPO_ROOT\" -c color.ui=always diff --color=always \"$CURRENT_REF..\$(echo {} | awk '{print \$NF}' | tr -d '[]')\" 2>/dev/null || echo '(same as $CURRENT_REF)'" \
@@ -32,82 +31,22 @@ select_worktree_with_fzf() {
     --footer "${FZF_KEY_SWITCH}: switch | ${FZF_KEY_DELETE}: delete | ${FZF_KEY_YOINK}: copy path"
 }
 
-
-worktree_to_session_name() {
-  local path=$1
-  local repo_root=$(basename "$REPO_ROOT")
-  local branch=$(basename "$path")
-  echo "${repo_root//./}-worktree-${branch//./}"
-}
-
-attach_or_create_tmux_session() {
-  local path=$1
-  local clean_session_name
-  # If repo root then we switch to main session
-  if [[ "$path" == "$PRIMARY_WORKTREE" ]]; then
-    local base
-    base=$(basename "$PRIMARY_WORKTREE")
-    # remove dots
-    clean_session_name="${base//./}"
-  else
-    clean_session_name=$(worktree_to_session_name "$path")
-  fi
-  if ! tmux has-session -t "$clean_session_name" 2>/dev/null; then
-    tmux new-session -c "$path" -s "$clean_session_name" -d
-  fi
-  tmux switch-client -t "$clean_session_name"
-}
-
-list_and_switch_worktrees() {
-  local worktree_lines path selected
-  worktree_lines=$(git worktree list)
-  selected=$(select_worktree_with_fzf "$worktree_lines")
-  [[ -z "$selected" ]] && return 0
-  path=$(echo "$selected" | awk '{print $1}')
-  attach_or_create_tmux_session "$path"
-}
-
-delete_worktree() {
-  local path
-  path="${1:-}"
-  # If we got a full `git worktree list` line, trim to just the path
-  path=$(echo "$path" | awk '{print $1}')
-
-  # Never delete the primary repo worktree
-  if [[ -z "$path" || "$path" == "$REPO_ROOT" ]]; then
-    echo "Refusing to delete primary worktree: $path" >&2
-    return 1
-  fi
-
-  # Kill associated tmux session if it exists
-  local session_name
-  session_name=$(worktree_to_session_name "$path")
-  if tmux has-session -t "$session_name" 2>/dev/null; then
-    tmux kill-session -t "$session_name"
-  fi
-
-  git worktree remove "$path"
-}
-
-yoink_worktree_path() {
-  local line="$1"
-  local path
-  path=$(echo "$line" | awk '{print $1}')
-  printf '%s\n' "$path" | pbcopy
-  printf 'Copied worktree path: %s\n' "$path"
-}
-
-
 if [[ "${1:-}" == "--delete" ]]; then
   shift
-  delete_worktree "$@"
+  branch=$(branch_from_line "$*")
+  gw-delete "$branch"
   exit 0
 fi
 
 if [[ "${1:-}" == "--yoink" ]]; then
   shift
-  yoink_worktree_path "$@"
+  branch=$(branch_from_line "$*")
+  gw-yoink "$branch"
   exit 0
 fi
 
-list_and_switch_worktrees
+worktree_lines=$(git worktree list)
+selected=$(select_worktree_with_fzf "$worktree_lines")
+[[ -z "$selected" ]] && exit 0
+branch=$(branch_from_line "$selected")
+gw-switch "$branch"
