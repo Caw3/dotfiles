@@ -82,6 +82,12 @@ key: ansible ## Decrypt ssh-key and updates origin remote url
 	@git remote set-url origin git@github.com:Caw3/dotfiles.git
 
 
+claude-code: ## Symlink CLAUDE.md and skills to home directory
+	$(PKG_CHECK) || $(PKG_INSTALL) $@
+	mkdir -p ${HOME}/.claude
+	$(LN)/.claude/CLAUDE.md
+	$(LN)/.claude/skills
+
 scripts: ## Make a .bin dir, update path, and symlink scripts to it
 	$(LN)/.bin
 	grep '$$HOME/.bin' $(HOME)/.bash_profile || \

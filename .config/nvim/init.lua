@@ -43,8 +43,6 @@ vim.keymap.set("n", "<leader>s", ":%s//g<Left><Left>")
 vim.keymap.set("v", "<leader>s", ":s//g<Left><Left>")
 vim.keymap.set("x", "*", "\"vy/\\V<C-r>=escape(@v,'/\\')<CR><CR>")
 vim.keymap.set("n", "<leader>ff", ":find **/*")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
 
 vim.keymap.set("n", "<leader>co", "<cmd>copen<CR>")
 vim.keymap.set("n", "<leader>cc", "<cmd>cclose<CR>")
@@ -107,7 +105,7 @@ local function grep(...)
 end
 
 vim.api.nvim_create_user_command("Grep", function(opts)
-	vim.fn.setqflist({}, " ", { title = "Grep", lines = vim.split(grep(opts.args), "\n") })
+	vim.fn.setqflist({}, " ", { title = "Grep", lines = vim.split(grep(unpack(opts.fargs)), "\n") })
 	vim.cmd("cwindow")
 end, {
 	nargs = "+",
@@ -377,6 +375,7 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>gD", with_lazy_lsp(vim.lsp.buf.declaration))
 			vim.keymap.set("n", "<leader>gd", with_lazy_lsp(vim.lsp.buf.definition))
 			vim.keymap.set("n", "<leader>gr", with_lazy_lsp(vim.lsp.buf.references))
+			vim.keymap.set("n", "<leader>gr", with_lazy_lsp(vim.lsp.buf.implementation))
 			vim.keymap.set("n", "<leader>gI", with_lazy_lsp(function()
 				require("telescope.builtin").lsp_implementations()
 			end))
@@ -437,6 +436,8 @@ require("lazy").setup({
 			})
 			local builtin = require("telescope.builtin")
 			vim.keymap.set("n", "<leader>%", builtin.live_grep)
+			vim.keymap.set("n", "<leader>fb", builtin.buffers)
+			vim.keymap.set("n", "<leader>fj", builtin.jumplist)
 			vim.keymap.set("n", "<leader>fs", builtin.find_files)
 			vim.keymap.set("n", "<leader>f#", builtin.lsp_dynamic_workspace_symbols)
 		end,

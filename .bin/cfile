@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+ERROR_FILE="errors.err"
+CMD=$*
+
+$CMD | tee "$ERROR_FILE" && \
+	sed -i -r 's/\x1B\[[0-9;]*[A-Za-z]//g' "$ERROR_FILE"
+
+rm -f "$ERROR_FILE-r"
