@@ -1,6 +1,6 @@
 ---
 name: quickfix
-description: Generate an errors.err file in Vim quickfix format from Claude findings or tool output
+description: Use when the user asks for a quickfix list in vim. Generates an errors.err file in Vim quickfix format from Claude findings or tool output
 user_invocable: true
 ---
 

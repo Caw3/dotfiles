@@ -1,0 +1,4 @@
+interface:
+  display_name: "Daily Review"
+  short_description: "Summarize active GitHub and Linear work"
+  default_prompt: "Use $daily-review to create my daily work summary."
