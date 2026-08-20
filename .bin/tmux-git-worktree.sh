@@ -58,9 +58,19 @@ _gw-worktree-path() {
 }
 export -f _gw-worktree-path
 
+_gw-run-bootstrap-script() {
+  local session_name="$1"
+  local bootstrap_script="${2:-./scripts/bootstrap-worktree.sh}"
+
+  if [[ -f $bootstrap_script ]]; then
+    tmux send-keys -t "$session_name" "$bootstrap_script" Enter
+  fi
+}
+export -f _gw-run-bootstrap-script
+
 gw-new() {
   if [[ -z "$1" ]]; then
-    echo "Usage: gw-new <branch>" >&2
+    echo "Usage: gw-new <branch> [bootstrap script]" >&2
     return 1
   fi
   local branch="$1"
@@ -72,7 +82,8 @@ gw-new() {
   else
     git worktree add "$path" "$branch" \
       && tmux new-session -c "$path" -s "$session_name" -d \
-      && tmux switch-client -t "$session_name";
+      && tmux switch-client -t "$session_name" \
+      && _gw-run-bootstrap-script "$session_name" "$2";
   fi
 }
 export -f gw-new
@@ -216,4 +227,3 @@ open-worktree() (
   gw-switch "$branch"
 )
 export -f open-worktree
-
