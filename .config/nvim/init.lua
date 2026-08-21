@@ -30,6 +30,12 @@ vim.opt.path = "src/,apps/,libs/,test/,e2e/,cmd/,utils/"
 vim.opt.undofile = true
 vim.opt.fillchars = "vert:│,stl:―,stlnc:―"
 vim.opt.laststatus = 0
+function _G.nvim_ruler_lsp_names()
+	local client_names = vim.tbl_map(function(client) return "[" .. client.name .. "]" end, vim.lsp.get_clients({ bufnr = 0 }))
+	table.sort(client_names)
+	return #client_names > 0 and table.concat(client_names, " ") .. " " or ""
+end
+vim.opt.rulerformat = "%40(%=%{v:lua.nvim_ruler_lsp_names()}%l,%c%V %P%)"
 vim.opt.termguicolors = false
 vim.opt.grepprg = "rg --vimgrep --hidden --iglob=!.git/*"
 
@@ -314,7 +320,8 @@ require("lazy").setup({
 			local lsps = {
 				(vim.fn.filereadable(vim.fn.getcwd() .. "/deno.json") == 1 and
 					{ "denols", { settings = { organizeImports = true } } } or
-					{ "ts_ls", { settings = { organizeImports = true }, init_options = { maxTsServerMemory = 8192 } } }),
+					-- { "ts_ls", { settings = { organizeImports = true }, init_options = { maxTsServerMemory = 8192 } } }),
+					{ "tsgo", { settings = { organizeImports = true }, init_options = { maxTsServerMemory = 8192 } } }),
 				{ "lua_ls" },
 				{ "clangd" },
 				{ "gopls" },
@@ -375,7 +382,10 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>gD", with_lazy_lsp(vim.lsp.buf.declaration))
 			vim.keymap.set("n", "<leader>gd", with_lazy_lsp(vim.lsp.buf.definition))
 			vim.keymap.set("n", "<leader>gr", with_lazy_lsp(vim.lsp.buf.references))
-			vim.keymap.set("n", "<leader>gr", with_lazy_lsp(vim.lsp.buf.implementation))
+			vim.keymap.set("n", "<leader>gR", with_lazy_lsp(function()
+				require("telescope.builtin").lsp_references()
+			end))
+			vim.keymap.set("n", "<leader>gi", with_lazy_lsp(vim.lsp.buf.implementation))
 			vim.keymap.set("n", "<leader>gI", with_lazy_lsp(function()
 				require("telescope.builtin").lsp_implementations()
 			end))
@@ -417,9 +427,17 @@ require("lazy").setup({
 		branch = "0.1.x",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
+			"nvim-telescope/telescope-ui-select.nvim",
 		},
 		config = function()
 			require("telescope").setup({
+				extensions = {
+					["ui-select"] = {
+						require("telescope.themes").get_dropdown({
+							layout_config = { height = 10 },
+						}),
+					},
+				},
 				defaults = {
 					layout_strategy = "vertical",
 					layout_config = {
@@ -440,6 +458,8 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>fj", builtin.jumplist)
 			vim.keymap.set("n", "<leader>fs", builtin.find_files)
 			vim.keymap.set("n", "<leader>f#", builtin.lsp_dynamic_workspace_symbols)
+			require("telescope").load_extension("ui-select")
+
 		end,
 	},
 })
