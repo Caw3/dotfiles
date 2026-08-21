@@ -87,6 +87,10 @@ claude-code: ## Symlink CLAUDE.md and skills to home directory
 	mkdir -p ${HOME}/.claude
 	$(LN)/.claude/CLAUDE.md
 	$(LN)/.claude/skills
+agents: ## Symlink shared agent instructions and skills to the home directory
+	mkdir -p ${HOME}/.agents
+	$(LN)/.agents/AGENTS.md
+	$(LN)/.agents/skills
 
 scripts: ## Make a .bin dir, update path, and symlink scripts to it
 	$(LN)/.bin

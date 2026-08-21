@@ -1,0 +1,3 @@
+interface:
+  display_name: "Local Review"
+  short_description: "Review a checked out code branch against the main/master branch"

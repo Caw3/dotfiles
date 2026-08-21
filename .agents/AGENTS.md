@@ -7,6 +7,10 @@
   synonym rotation. No contractions, keep articles and "that". Delete filler:
   simply, robust, seamlessly, leverage. Code and identifiers stay exact.
 
+- Implementation: Always prefer implementing vertical slices: that means that if you
+  have a larger set of tasks, write the related tests, frontend, backend, and
+  database tables for iteratively. DO NOT IMPLEMENT IT LAYER BY LAYER.
+
 ## File format
 
 Always return filelocations in this format: <project-path>:<line>:<col>
@@ -39,12 +43,11 @@ grep -rn 'TODO' src/ > errors.err
 remind the user to load it in vim with `:cfile`
 
 
-## General typescript code 
+## General typescript code guide
 
 With low effort, find and reuse functionality in the codebase instead of adding
-new helper functions. Prefer longer descriptive names of variables. Group block
-of lines of codes if they are related. Try and use a compositional and
-functional pattern with working with typescript i.e array methods. Avoid deeply
-nesting, prefer extracting into separate functions if it helps avoiding nesting.
-Prefer creating errors as values with discriminated unions. Avoid throwing
-exceptions. Create type for the results and return them.
+new helper functions. Prefer longer descriptive names of variables. Try and use
+a compositional and functional pattern with working with typescript i.e array
+methods. Avoid deeply nesting, prefer extracting into separate functions if it
+helps avoiding nesting. Prefer creating errors as values with discriminated
+unions. Avoid throwing exceptions. Create type for the results and return them.
