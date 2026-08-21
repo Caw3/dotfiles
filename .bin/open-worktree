@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+script_directory=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=tmux-git-worktree-functions.sh
+# shellcheck disable=SC1091
+source "$script_directory/tmux-git-worktree-functions.sh"
+
+open-worktree() (
+  set -euo pipefail
+
+  repository_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+    echo "open-worktree: not in a Git repository" >&2
+    exit 1
+  }
+  cd "$repository_root"
+  current_ref=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+
+  fzf_preview_window="right:60%"
+
+  fzf_key_switch="enter"
+  fzf_key_delete="ctrl-x"
+  fzf_key_yoink="ctrl-y"
+  fzf_key_mark="tab"
+
+  branch_from_line() {
+    echo "$1" | awk '{print $NF}' | tr -d '[]'
+  }
+
+  select_worktree_with_fzf() {
+    local worktree_lines=$1
+    echo "$worktree_lines" | fzf -d20 --reverse \
+      --multi \
+      --expect "$fzf_key_delete" \
+      --prompt "Select worktree: " \
+      --preview "git -C \"$repository_root\" -c color.ui=always diff --color=always \"$current_ref..\$(echo {} | awk '{print \$NF}' | tr -d '[]')\" 2>/dev/null || echo '(same as $current_ref)'" \
+      --preview-window="$fzf_preview_window" \
+      --bind "${fzf_key_mark}:toggle+down,${fzf_key_switch}:clear-selection+accept" \
+      --bind "${fzf_key_yoink}:execute(open-worktree --yoink {})+abort" \
+      --footer "${fzf_key_mark}: mark | ${fzf_key_delete}: delete marked | ${fzf_key_switch}: switch | ${fzf_key_yoink}: copy path"
+  }
+
+  if [[ "${1:-}" == "--delete" ]]; then
+    shift
+    branch=$(branch_from_line "$*")
+    gw-delete "$branch"
+    exit 0
+  fi
+
+  if [[ "${1:-}" == "--yoink" ]]; then
+    shift
+    branch=$(branch_from_line "$*")
+    gw-yoink "$branch"
+    exit 0
+  fi
+
+  worktree_lines=$(git worktree list)
+  selected=$(select_worktree_with_fzf "$worktree_lines")
+  [[ -z "$selected" ]] && exit 0
+
+  selection_key=${selected%%$'\n'*}
+  selected_lines=${selected#*$'\n'}
+
+  if [[ "$selection_key" == "$fzf_key_delete" ]]; then
+    branches_to_delete=()
+    while IFS= read -r selected_line; do
+      branches_to_delete+=("$(branch_from_line "$selected_line")")
+    done <<< "$selected_lines"
+
+    nohup bash -c '_gw-delete-concurrently "$@"' \
+      _ "${branches_to_delete[@]}" </dev/null >/dev/null 2>&1 &
+    background_process_id=$!
+    disown "$background_process_id" 2>/dev/null || true
+    tmux display-message -d 3000 \
+      "Deleting ${#branches_to_delete[@]} worktrees in background"
+    exit 0
+  fi
+
+  selected_line=${selected_lines%%$'\n'*}
+  branch=$(branch_from_line "$selected_line")
+  gw-switch "$branch"
+)
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  open-worktree "$@"
+fi

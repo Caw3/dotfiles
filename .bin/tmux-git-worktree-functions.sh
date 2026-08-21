@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# Provides a set of utility functions for mapping git worktrees to tmux sessions.
+
+if [[ -n "${TMUX_GIT_WORKTREE_FUNCTIONS_LOADED:-}" ]]; then
+  return 0
+fi
+TMUX_GIT_WORKTREE_FUNCTIONS_LOADED=1
+
+# Provides shared utility functions for mapping git worktrees to tmux sessions.
 # Takes any commit-ish (branch name, tag, ref) and derives a tmux session name
 # and worktree path directly from it. The ref is sanitized for tmux compatibility:
 # slashes become "__" and dots are stripped.
@@ -13,16 +19,12 @@
 #   gw-switch feature/login       # switch back to it later
 #   gw-yoink feature/login        # copy the worktree path to clipboard
 #   gw-delete feature/login       # remove worktree and kill session
-#   open-worktree                 # interactive fzf picker for the above
-#   open-pr-worktree              # create or open a worktree for a pull request
 #
 # Functions:
 #   gw-new <branch>      Create a worktree + tmux session and switch to it
 #   gw-switch <branch>   Switch to an existing worktree's session (creates if needed)
 #   gw-yoink <branch>    Copy a worktree's path to the clipboard
 #   gw-delete <branch>   Remove a worktree and kill its tmux session
-#   open-worktree        Interactive fzf picker for the above operations
-#   open-pr-worktree     Interactive pull request worktree picker
 
 
 missing_deps=0
@@ -210,172 +212,3 @@ _worktrees() {
 }
 complete -F _worktrees gw-delete
 complete -F _worktrees gw-yoink
-
-
-# Manage git worktrees with fzf: list, switch (with tmux session), delete.
-# Run from inside a git repo. Delegates to the gw-* functions for worktree/tmux operations.
-open-worktree() (
-  set -e
-
-  REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "Not in a git repo." >&2; exit 1; }
-  cd "$REPO_ROOT"
-  CURRENT_REF=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
-
-  FZF_TMUX_OPTS="-d20 --reverse"
-  FZF_PREVIEW_WINDOW="right:60%"
-
-  FZF_KEY_SWITCH="enter"
-  FZF_KEY_DELETE="ctrl-x"
-  FZF_KEY_GOBACK="esc"
-  FZF_KEY_YOINK="ctrl-y"
-  FZF_KEY_MARK="tab"
-
-  branch_from_line() {
-    echo "$1" | awk '{print $NF}' | tr -d '[]'
-  }
-
-  select_worktree_with_fzf() {
-    local worktree_lines=$1
-    echo "$worktree_lines" | fzf $FZF_TMUX_OPTS \
-      --multi \
-      --expect "$FZF_KEY_DELETE" \
-      --prompt "Select worktree: " \
-      --preview "git -C \"$REPO_ROOT\" -c color.ui=always diff --color=always \"$CURRENT_REF..\$(echo {} | awk '{print \$NF}' | tr -d '[]')\" 2>/dev/null || echo '(same as $CURRENT_REF)'" \
-      --preview-window="$FZF_PREVIEW_WINDOW" \
-      --bind "${FZF_KEY_MARK}:toggle+down,${FZF_KEY_SWITCH}:clear-selection+accept" \
-      --bind "${FZF_KEY_YOINK}:execute(open-worktree --yoink {})+abort" \
-      --footer "${FZF_KEY_MARK}: mark | ${FZF_KEY_DELETE}: delete marked | ${FZF_KEY_SWITCH}: switch | ${FZF_KEY_YOINK}: copy path"
-  }
-
-  if [[ "${1:-}" == "--delete" ]]; then
-    shift
-    branch=$(branch_from_line "$*")
-    gw-delete "$branch"
-    exit 0
-  fi
-
-  if [[ "${1:-}" == "--yoink" ]]; then
-    shift
-    branch=$(branch_from_line "$*")
-    gw-yoink "$branch"
-    exit 0
-  fi
-
-  worktree_lines=$(git worktree list)
-  selected=$(select_worktree_with_fzf "$worktree_lines")
-  [[ -z "$selected" ]] && exit 0
-
-  selection_key=${selected%%$'\n'*}
-  selected_lines=${selected#*$'\n'}
-
-  if [[ "$selection_key" == "$FZF_KEY_DELETE" ]]; then
-    branches_to_delete=()
-    while IFS= read -r selected_line; do
-      branches_to_delete+=("$(branch_from_line "$selected_line")")
-    done <<< "$selected_lines"
-
-    nohup bash -c '_gw-delete-concurrently "$@"' \
-      _ "${branches_to_delete[@]}" </dev/null >/dev/null 2>&1 &
-    background_process_id=$!
-    disown "$background_process_id" 2>/dev/null || true
-    tmux display-message -d 3000 \
-      "Deleting ${#branches_to_delete[@]} worktrees in background"
-    exit 0
-  fi
-
-  selected_line=${selected_lines%%$'\n'*}
-  branch=$(branch_from_line "$selected_line")
-  gw-switch "$branch"
-)
-export -f open-worktree
-
-open-pr-worktree() (
-  set -euo pipefail
-
-  if ! command -v gh >/dev/null 2>&1; then
-    echo "open-pr-worktree: missing dependency: gh" >&2
-    exit 1
-  fi
-
-  repository_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
-    echo "open-pr-worktree: not in a Git repository" >&2
-    exit 1
-  }
-  cd "$repository_root"
-
-  pull_requests=$(gh pr list \
-    --state open \
-    --limit 1000 \
-    --json number,author,headRefName,title \
-    --jq '.[] |
-      [
-        .number,
-        (.author.login // "unknown"),
-        .headRefName,
-        .title,
-        ("PR #\(.number)  |  Author: @\(.author.login // "unknown")  |  Branch: \(.headRefName)  |  Title: \(.title)")
-      ] |
-      @tsv')
-
-  if [[ -z "$pull_requests" ]]; then
-    echo "open-pr-worktree: no open pull requests"
-    exit 0
-  fi
-
-  selection=$(printf '%s\n' "$pull_requests" | fzf \
-    --expect=ctrl-r \
-    --delimiter=$'\t' \
-    --with-nth=5 \
-    --reverse \
-    --prompt='Select pull request: ' \
-    --preview='gh pr view {1}' \
-    --preview-window='right:60%' \
-    --footer='enter: open worktree | ctrl-r: open worktree and review') || exit 0
-
-  selection_key=${selection%%$'\n'*}
-  selected_pull_request=${selection#*$'\n'}
-  IFS=$'\t' read -r pull_request_number pull_request_author head_branch _ \
-    <<< "$selected_pull_request"
-
-  if [[ -z "$pull_request_number" || -z "$pull_request_author" || -z "$head_branch" ]]; then
-    echo "open-pr-worktree: invalid pull request selection" >&2
-    exit 1
-  fi
-
-  local_branch="pr/${pull_request_number}/${head_branch}"
-  remote_pull_request_ref="refs/remotes/pull/${pull_request_number}/head"
-
-  git fetch --force origin \
-    "pull/${pull_request_number}/head:${remote_pull_request_ref}"
-
-  if git show-ref --verify --quiet "refs/heads/${local_branch}"; then
-    existing_worktree=$(git worktree list --porcelain | awk -v branch="refs/heads/${local_branch}" '
-      $1 == "worktree" { worktree = $2 }
-      $1 == "branch" && $2 == branch { print worktree; exit }
-    ')
-
-    if [[ -n "$existing_worktree" ]]; then
-      printf 'open-pr-worktree: reuse existing worktree for %s\n' "$local_branch"
-      git -C "$existing_worktree" merge --ff-only "$remote_pull_request_ref"
-      gw-switch "$local_branch"
-
-      if [[ "$selection_key" == "ctrl-r" ]]; then
-        session_name=$(_gw-branch-to-session "$local_branch")
-        tmux send-keys -t "$session_name" "codex '\$local-review'" Enter
-      fi
-
-      exit 0
-    fi
-
-    git branch --force "$local_branch" "$remote_pull_request_ref"
-  else
-    git branch "$local_branch" "$remote_pull_request_ref"
-  fi
-
-  if [[ "$selection_key" == "ctrl-r" ]]; then
-    gw-new "$local_branch" "" "codex '\$local-review'"
-  else
-    gw-new "$local_branch"
-  fi
-)
-export -f open-pr-worktree

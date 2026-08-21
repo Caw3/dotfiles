@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+script_directory=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=tmux-git-worktree-functions.sh
+# shellcheck disable=SC1091
+source "$script_directory/tmux-git-worktree-functions.sh"
+
+open-pr-worktree() (
+  set -euo pipefail
+
+  if ! command -v gh >/dev/null 2>&1; then
+    echo "open-pr-worktree: missing dependency: gh" >&2
+    exit 1
+  fi
+
+  repository_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+    echo "open-pr-worktree: not in a Git repository" >&2
+    exit 1
+  }
+  cd "$repository_root"
+
+  pull_requests=$(gh pr list \
+    --state open \
+    --limit 1000 \
+    --json number,author,headRefName,title \
+    --jq '.[] |
+      [
+        .number,
+        (.author.login // "unknown"),
+        .headRefName,
+        .title
+      ] |
+      @tsv')
+
+  if [[ -z "$pull_requests" ]]; then
+    echo "open-pr-worktree: no open pull requests"
+    exit 0
+  fi
+
+  formatted_pull_requests=$(printf '%s\n' "$pull_requests" |
+    awk -F $'\t' 'BEGIN { OFS = "\t" } { print $1, $4, "@" $2, $3 }' |
+    column -t -s $'\t')
+
+  selection=$(printf '%s\n' "$formatted_pull_requests" | fzf \
+    --expect=ctrl-r \
+    --reverse \
+    --prompt='Pull request › ' \
+    --header='NUMBER  TITLE  AUTHOR  BRANCH' \
+    --preview='gh pr view {1} --json body --jq .body' \
+    --preview-window='right:60%' \
+    --footer='enter: open worktree | ctrl-r: open worktree and review') || exit 0
+
+  selection_key=${selection%%$'\n'*}
+  selected_pull_request=${selection#*$'\n'}
+  pull_request_number=${selected_pull_request%%[[:space:]]*}
+  selected_pull_request=$(printf '%s\n' "$pull_requests" |
+    awk -F $'\t' -v number="$pull_request_number" '$1 == number { print; exit }')
+  IFS=$'\t' read -r pull_request_number pull_request_author head_branch _ \
+    <<< "$selected_pull_request"
+
+  if [[ -z "$pull_request_number" || -z "$pull_request_author" || -z "$head_branch" ]]; then
+    echo "open-pr-worktree: invalid pull request selection" >&2
+    exit 1
+  fi
+
+  local_branch="pr/${pull_request_number}/${head_branch}"
+  remote_pull_request_ref="refs/remotes/pull/${pull_request_number}/head"
+
+  git fetch --force origin \
+    "pull/${pull_request_number}/head:${remote_pull_request_ref}"
+
+  if git show-ref --verify --quiet "refs/heads/${local_branch}"; then
+    existing_worktree=$(git worktree list --porcelain | awk -v branch="refs/heads/${local_branch}" '
+      $1 == "worktree" { worktree = $2 }
+      $1 == "branch" && $2 == branch { print worktree; exit }
+    ')
+
+    if [[ -n "$existing_worktree" ]]; then
+      printf 'open-pr-worktree: reuse existing worktree for %s\n' "$local_branch"
+      git -C "$existing_worktree" merge --ff-only "$remote_pull_request_ref"
+      gw-switch "$local_branch"
+
+      if [[ "$selection_key" == "ctrl-r" ]]; then
+        session_name=$(_gw-branch-to-session "$local_branch")
+        tmux send-keys -t "$session_name" "codex '\$local-review'" Enter
+      fi
+
+      exit 0
+    fi
+
+    git branch --force "$local_branch" "$remote_pull_request_ref"
+  else
+    git branch "$local_branch" "$remote_pull_request_ref"
+  fi
+
+  if [[ "$selection_key" == "ctrl-r" ]]; then
+    gw-new "$local_branch" "" "codex '\$local-review'"
+  else
+    gw-new "$local_branch"
+  fi
+)
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  open-pr-worktree "$@"
+fi

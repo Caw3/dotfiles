@@ -5,8 +5,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-[[ -f "$HOME/.bin/tmux-git-worktree.sh" ]] && source $HOME/.bin/tmux-git-worktree.sh
-
 ## Functions
 vimgrep() {
   HELP="Usage: vimgrep {pattern} [files...]"
