@@ -63,7 +63,7 @@ open-pr-worktree() (
     exit 1
   fi
 
-  local_branch="pr/${pull_request_number}/${head_branch}"
+  local_branch="$head_branch"
   remote_pull_request_ref="refs/remotes/pull/${pull_request_number}/head"
 
   git fetch --force origin \

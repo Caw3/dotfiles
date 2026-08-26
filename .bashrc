@@ -5,6 +5,10 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# shellcheck source=.bin/tmux-git-worktree-functions.sh
+# shellcheck disable=SC1091
+source "$HOME/.bin/tmux-git-worktree-functions.sh"
+
 ## Functions
 vimgrep() {
   HELP="Usage: vimgrep {pattern} [files...]"
