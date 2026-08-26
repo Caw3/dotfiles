@@ -1,0 +1,227 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+script_path="$script_directory/$(basename -- "${BASH_SOURCE[0]}")"
+state_file=${CODEX_AGENT_STATE_PATH:-$HOME/.codex/running-agents.json}
+
+show_error() {
+  local message=$1
+
+  if [[ -n ${TMUX:-} ]]; then
+    tmux display-message -d 5000 "$message"
+  else
+    printf '%s\n' "$message" >&2
+  fi
+}
+
+list_agents() {
+  local agent_rows
+  local column_rows
+  local column_header
+  local formatted_rows
+  local agent_rows_with_context
+  local agent_key
+  local pane_id
+  local status
+  local folder
+  local agent_type
+  local prompt
+  local updated_at
+  local context
+  local live_panes
+
+  if [[ ! -f $state_file ]]; then
+    return
+  fi
+
+  live_panes=$(tmux list-panes -a -F '#{pane_id}') || return
+
+  agent_rows=$(jq -r \
+    --arg home "$HOME" \
+    --arg live_panes "$live_panes" '
+    def clean:
+      tostring | gsub("[\\t\\r\\n]"; " ");
+
+    def shorten_home:
+      tostring
+      | if . == $home then
+          "~"
+        elif startswith($home + "/") then
+          "~" + .[($home | length):]
+        else
+          .
+        end;
+
+    .agents
+    | to_entries
+    | map(
+        select(
+          .value.pane as $pane
+          | $pane != null and ($live_panes | split("\n") | index($pane))
+        )
+      )
+    | sort_by([
+        (if .value.status == "waiting" then 0 else 1 end),
+        .value.is_subagent,
+        .value.updated_at
+      ])
+    | .[]
+    | [
+        .key,
+        (.value.pane // "" | clean),
+        (.value.status // "unknown" | clean),
+        (.value.cwd // "unknown" | shorten_home | clean),
+        (if .value.is_subagent then "subagent" else "main" end),
+        (.value.label // .value.id // .key | clean),
+        (.value.updated_at // "unknown" | clean)
+      ]
+    | @tsv
+  ' "$state_file" 2>/dev/null) || return
+
+  if [[ -z $agent_rows ]]; then
+    return
+  fi
+
+  agent_rows_with_context=$(while IFS=$'\t' read -r \
+    agent_key pane_id status folder agent_type prompt updated_at; do
+    context=$(tmux capture-pane -p -S -2000 -t "$pane_id" 2>/dev/null \
+      | sed -n 's/.*Context \([0-9][0-9]*%\) left.*/\1/p' \
+      | tail -1) || true
+
+    printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+      "$agent_key" "$pane_id" "$status" "${context:-unknown}" \
+      "$folder" "$agent_type" "$prompt" "$updated_at"
+  done <<< "$agent_rows")
+
+  column_rows=$({
+    printf 'STATUS\tCONTEXT LEFT\tFOLDER\tTYPE\tPROMPT\tUPDATED\n'
+    printf '%s\n' "$agent_rows_with_context" | cut -f3-8
+  } | column -t -s $'\t')
+  column_header=${column_rows%%$'\n'*}
+  formatted_rows=${column_rows#*$'\n'}
+
+  printf '\t\t%s\n' "$column_header"
+  paste \
+    <(printf '%s\n' "$agent_rows_with_context" | cut -f1-2) \
+    <(printf '%s\n' "$formatted_rows")
+}
+
+show_preview() {
+  local agent_key=${1:-}
+
+  if [[ ! -f $state_file ]]; then
+    printf 'The agent state file does not exist.\n'
+    return
+  fi
+
+  jq -r --arg agent_key "$agent_key" '
+    .agents[$agent_key] as $agent
+    | if $agent == null then
+        "The agent is no longer running."
+      else
+        "\($agent.label)\n\n" +
+        "Status:    \($agent.status)\n" +
+        "Type:      \(if $agent.is_subagent then "subagent" else "main" end)\n" +
+        "Folder:    \($agent.cwd)\n" +
+        "Pane:      \($agent.pane // "not available")\n" +
+        "Session:   \($agent.parent_session_id // $agent.id)\n" +
+        "Updated:   \($agent.updated_at)"
+      end
+  ' "$state_file"
+}
+
+poll_agents() {
+  local port=${1:-}
+  local list_command
+  local request_body
+  local response_line
+
+  if [[ ! $port =~ ^[0-9]+$ ]]; then
+    return 1
+  fi
+
+  printf -v list_command '%q --list' "$script_path"
+  request_body="reload($list_command)"
+
+  while sleep 2.5; do
+    exec 3<>"/dev/tcp/127.0.0.1/$port" || return
+    printf 'POST / HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: text/plain\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s' \
+      "${#request_body}" "$request_body" >&3
+    IFS= read -r response_line <&3 || true
+    exec 3>&- 3<&-
+
+    if [[ $response_line != *" 200 "* ]]; then
+      return
+    fi
+  done
+}
+
+for required_command in tmux fzf jq column; do
+  if ! command -v "$required_command" >/dev/null 2>&1; then
+    show_error "open-codex-session: $required_command was not found"
+    exit 1
+  fi
+done
+
+case ${1:-} in
+  --list)
+    list_agents
+    exit
+    ;;
+  --poll)
+    poll_agents "${2:-}"
+    exit
+    ;;
+  --preview)
+    show_preview "${2:-}"
+    exit
+    ;;
+  "")
+    ;;
+  *)
+    show_error "Usage: open-codex-session [--list | --poll PORT | --preview AGENT_KEY]"
+    exit 2
+    ;;
+esac
+
+agent_rows=$(list_agents)
+if [[ -z $agent_rows ]]; then
+  show_error "open-codex-session: no running Codex agents were found"
+  exit
+fi
+
+printf -v preview_command '%q --preview {1}' "$script_path"
+printf -v quoted_script_path '%q' "$script_path"
+poll_command="$quoted_script_path --poll \"\$FZF_PORT\" >/dev/null 2>&1 &"
+
+selection=$(printf '%s\n' "$agent_rows" | fzf \
+  --listen \
+  --delimiter=$'\t' \
+  --with-nth=3 \
+  --header-lines=1 \
+  --track \
+  --id-nth=1 \
+  --no-sort \
+  --reverse \
+  --prompt='Codex agent › ' \
+  --bind="start:execute-silent($poll_command)" \
+  --preview="$preview_command" \
+  --preview-window='right:45%:wrap' \
+  --footer='enter: switch to agent pane') || exit
+
+IFS=$'\t' read -r _ pane_id _ <<< "$selection"
+if [[ -z $pane_id ]]; then
+  show_error "open-codex-session: the selected agent has no tmux pane"
+  exit 1
+fi
+
+session_name=$(tmux display-message -p -t "$pane_id" '#{session_name}') || {
+  show_error "open-codex-session: tmux pane $pane_id no longer exists"
+  exit 1
+}
+
+tmux select-window -t "$pane_id"
+tmux select-pane -t "$pane_id"
+tmux switch-client -t "=$session_name"

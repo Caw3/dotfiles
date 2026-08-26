@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+state_file=${CODEX_AGENT_STATE_PATH:-$HOME/.codex/running-agents.json}
+lock_directory="$state_file.lock"
+temporary_file=""
+lock_acquired=false
+
+release_lock() {
+  if [[ -n $temporary_file && -f $temporary_file ]]; then
+    rm -f "$temporary_file"
+  fi
+
+  if [[ $lock_acquired == true ]]; then
+    rmdir "$lock_directory" 2>/dev/null || true
+  fi
+}
+
+trap release_lock EXIT INT TERM
+
+if ! command -v jq >/dev/null 2>&1; then
+  printf 'codex-agent-state: jq was not found\n' >&2
+  exit 1
+fi
+
+hook_input=$(jq -ce 'select(type == "object")') || {
+  printf 'codex-agent-state: hook input must be a JSON object\n' >&2
+  exit 1
+}
+
+session_id=$(jq -r '.session_id // empty' <<< "$hook_input")
+if [[ -z $session_id ]]; then
+  printf 'codex-agent-state: hook input has no session_id\n' >&2
+  exit 1
+fi
+
+mkdir -p "$(dirname -- "$state_file")"
+
+for _ in {1..100}; do
+  if mkdir "$lock_directory" 2>/dev/null; then
+    lock_acquired=true
+    break
+  fi
+  sleep 0.02
+done
+
+if [[ $lock_acquired == false ]]; then
+  printf 'codex-agent-state: state lock timed out\n' >&2
+  exit 1
+fi
+
+if [[ ! -f $state_file ]] || ! jq -e '.agents | type == "object"' "$state_file" >/dev/null 2>&1; then
+  printf '{"version":1,"agents":{}}\n' > "$state_file"
+fi
+
+temporary_file=$(mktemp "$state_file.tmp.XXXXXX")
+updated_at=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+
+jq \
+  --argjson hook_input "$hook_input" \
+  --arg pane "${TMUX_PANE:-}" \
+  --arg updated_at "$updated_at" '
+  def root_key:
+    "session:\($hook_input.session_id)";
+
+  def agent_key:
+    "agent:\($hook_input.agent_id)";
+
+  def existing_root:
+    .agents[root_key] // {};
+
+  def root_cwd:
+    $hook_input.cwd // existing_root.cwd // "unknown";
+
+  def root_label:
+    (
+      $hook_input.prompt
+      // existing_root.label
+      // (root_cwd | split("/") | last)
+      // $hook_input.session_id
+    )
+    | tostring
+    | split("\n")[0]
+    | .[0:120];
+
+  def root_agent:
+    {
+      cwd: root_cwd,
+      id: $hook_input.session_id,
+      is_subagent: false,
+      label: root_label,
+      pane: (
+        if $pane == "" then existing_root.pane // null else $pane end
+      ),
+      parent_session_id: null,
+      status: (
+        if $hook_input.hook_event_name == "Stop" then "waiting" else "running" end
+      ),
+      updated_at: $updated_at
+    };
+
+  def subagent:
+    {
+      cwd: ($hook_input.cwd // "unknown"),
+      id: $hook_input.agent_id,
+      is_subagent: true,
+      label: "\($hook_input.agent_type // "subagent"): \($hook_input.agent_id)",
+      pane: (if $pane == "" then null else $pane end),
+      parent_session_id: $hook_input.session_id,
+      status: "running",
+      updated_at: $updated_at
+    };
+
+  def remove_replaced_root:
+    if $pane == "" then
+      .
+    else
+      .agents |= with_entries(
+        select(
+          .key == root_key
+          or .value.is_subagent
+          or .value.pane != $pane
+        )
+      )
+    end;
+
+  if ["SessionStart", "UserPromptSubmit", "Stop"] | index($hook_input.hook_event_name) then
+    remove_replaced_root
+    | .agents[root_key] = root_agent
+  elif $hook_input.hook_event_name == "SessionEnd" then
+    del(.agents[root_key])
+    | .agents |= with_entries(
+        select(.value.parent_session_id != $hook_input.session_id)
+      )
+  elif $hook_input.hook_event_name == "SubagentStart" and $hook_input.agent_id then
+    .agents[agent_key] = subagent
+  elif $hook_input.hook_event_name == "SubagentStop" and $hook_input.agent_id then
+    del(.agents[agent_key])
+  else
+    .
+  end
+' "$state_file" > "$temporary_file"
+
+mv "$temporary_file" "$state_file"
+temporary_file=""
+
+printf '{}\n'

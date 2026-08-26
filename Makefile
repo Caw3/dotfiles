@@ -91,6 +91,8 @@ agents: ## Symlink shared agent instructions and skills to the home directory
 	mkdir -p ${HOME}/.agents
 	$(LN)/.agents/AGENTS.md
 	$(LN)/.agents/skills
+	mkdir -p ${HOME}/.codex
+	ln -vsfn ${PWD}/.config/codex/hooks.json ${HOME}/.codex/hooks.json
 
 scripts: ## Make a .bin dir, update path, and symlink scripts to it
 	$(LN)/.bin
